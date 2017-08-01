@@ -1,0 +1,34 @@
+<?php
+/* @var $this DefaultController */
+
+$this->breadcrumbs=array(   
+    null
+);
+?>
+
+<h1>Добро пожаловать в систему управления</h1>
+
+
+<h3>Выберите, пожалуйуста, раздел сайта</h3>
+
+
+
+
+<div class="well" id="containerSection" style="background-color:white; margin-top:3px;">
+<?php
+    
+    $tree = Tree::model()->getTreeForMain();    
+    if (count($tree)) {
+        $this->widget('CTreeView', array(
+            'data'=>$tree,            
+        ));
+    } else {
+?>
+    <h4 class="well">Нет данных</h4>
+<?php   
+    }  
+    
+?>
+
+</div>
+

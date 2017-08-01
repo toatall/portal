@@ -1,0 +1,11 @@
+/assets/
+/images/
+/files/
+/files_static/
+/old_media/
+/temp/
+/.settings/
+/.idea/
+.buildpath
+.project
+web.config

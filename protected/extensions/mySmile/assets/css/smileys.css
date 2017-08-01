@@ -1,0 +1,23 @@
+[class^="smile-"],
+[class*=" smile-"] {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-top: 1px;
+  *margin-right: .3em;
+  line-height: 14px;
+  vertical-align: text-top;
+  background-image: url("../img/vk.png");
+  background-position: 14px 14px;
+  background-repeat: no-repeat;
+}
+
+.icon-smile1 {
+  background-position: 0 0;
+}
+
+
+div.smileys{float:left;width:430px;margin-left:5px;padding-bottom:5px;}
+div.smiley{float:left;margin:1px;}
+div.smiley img{border:0px;}
+div.clear{clear:both;}
