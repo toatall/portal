@@ -162,12 +162,19 @@ class Comment extends CActiveRecord
 		if ((Yii::app()->user->inRole(['admin']) || $this->username == UserInfo::inst()->userLogin))
 		{
 			$url = Yii::app()->controller->createUrl('comment/delete',['id'=>$this->id]);
-			return '<button onclick="deleteComment(' . $this->id . ', \'' . $url . '\');" class="btn btn-danger">Удалить</button>';
+			return '<button onclick="deleteComment(' . $this->id . ', \'' . $url . '\');" class="btn btn-default" title="Удалить"><i class="icon-trash"></i></button>';
 		}
 	}
 	
 	
-	
+	public function getButtonUpdate()
+	{
+		if ((Yii::app()->user->inRole(['admin']) || $this->username == UserInfo::inst()->userLogin))
+		{
+			$url = Yii::app()->controller->createUrl('comment/update',['id'=>$this->id]);			
+			return '<button onclick="updateComment(\'' . $url . '\');" class="btn btn-default" title="Изменить" data-toggle="modal" data-target="#modal-comment"><i class="icon-pencil"></i></button>';
+		}
+	}
 	
 	
 }

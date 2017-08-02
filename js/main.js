@@ -5,6 +5,15 @@
 $(function() {
 	// load container 
 	loadAjaxConferenceToday();
+	
+	// disable scroll in background if open modal
+	$('.modal')
+		.on('shown', function(){ 
+			$('body').css({overflow: 'hidden'}); 
+		}) 
+		.on('hidden', function(){ 
+			$('body').css({overflow: ''}); 
+		});
 });
 
 

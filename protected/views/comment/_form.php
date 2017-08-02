@@ -11,13 +11,11 @@
 ?>
 	<div class="alert alert-<?= $key ?>"><?= $message ?></div>
 	<script type="text/javascript">
-		loadData('<?= Yii::app()->controller->createUrl('comment/index',array('id'=>$id)) ?>', '#container-comments-<?= $id ?>');	
+		loadDataComments();
 	</script>
 <?php 		
 	}
 ?>
-
-<h4>Добавить комментарий</h4>
 
 <?php if (UserInfo::inst()->userAuth): ?>
 
@@ -30,47 +28,64 @@
 		),	
 )); ?>
 	
+	<?php 
+		$commentDivId = 'commentDiv' . ($model->isNewRecord ? '_new' : '_' . $model->id);
+	?>
+	
 	<?php echo $form->errorSummary($model); ?>
 	
-	<?php echo $form->textFieldRow($model,'username', array('disabled'=>'disabled')); ?>	
+	<?php ///echo $form->textFieldRow($model,'username', array('disabled'=>'disabled')); ?>	
 	
 	<?php echo $form->textAreaRow($model,'comment',
 		array('class'=>'span5','style'=>'height:100px;display:none;')); ?>	
-	<div class="uneditable-input span5" contenteditable="true" id="commentDiv" style="height: 200px;">		
-	</div>
+	<div class="uneditable-input span5" contenteditable="true" id="<?= $commentDivId ?>" style="height: 200px;"></div>
+	
 	<?php $this->widget('application.extensions.mySmile.SmileysWidget',array(                    		   	             
-	   'textareaId'=>'commentDiv', // the ID of the textarea where we will put the smileys	  
+	   'textareaId'=>$commentDivId, // the ID of the textarea where we will put the smileys	 
+	   'prefix'=>$model->isNewRecord ? 'new' : $model->id,
 	 ));?>
    
     <script type="text/javascript">
     	$('#comment-form').on('submit', function() { 
-			$('#<?= CHtml::activeId($model, 'comment') ?>').val($('#commentDiv').html());
+        	
+			$('#<?= CHtml::activeId($model, 'comment') ?>').val($('#<?= $commentDivId ?>').html());
         	
         	var dataForm = $('#comment-form').serialize();
-    		$('#container-comment-form-<?= $id ?>').html('<img src="/images/loading.gif" />');  		
+    		$('#container-comment-form-<?= $id ?>').html('<img src="/images/loading.gif" />');
+
+			var urlPost = '<?= ($model->isNewRecord ?  Yii::app()->controller->createUrl('comment/form',array('id'=>$id)) : Yii::app()->controller->createUrl('comment/update',array('id'=>$model->id))) ?>';
+    		  		
    	   		$.ajax({
    	   			type: 'POST',
-				url: '<?= Yii::app()->controller->createUrl('comment/form',array('id'=>$id)) ?>',
+				url: urlPost,
 				data: dataForm
    	   	   	})
 	   	   	.done(function(data){
-				$('#container-comment-form-<?= $id ?>').html(data);
+		   	   	if (data == 'OK')
+		   	   	{
+		   	   		loadDataComments();
+		   	   		$('#modal-comment').modal('hide');			   	   	
+		   	   	}
+		   	   	else
+		   	   	{
+					$('#modal-comment-div').html(data);
+		   	   	}
 			})
 			.error(function(jqXHR){
-				$('#container-comment-form-<?= $id ?>').html(jqXHR.statusText);
+				$('#modal-comment-div').html(jqXHR.statusText);
 			});
 
    	   		return false;
-	   	});        
+	   	});    
+
+		$(document).ready(function() {			
+
+			// Заголовок
+			$('#modal-comment-title').html('<?php if ($model->isNewRecord): ?>Добавить комментарий<?php else: ?>Изменить комментарий<?php endif; ?>');			
+			$('#<?= $commentDivId ?>').html($('#<?= CHtml::activeId($model, 'comment') ?>').val());
+		});
+	   	    
     </script>
-    
-	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'=>'submit',
-			'type'=>'primary',
-			'label'=>'Отправить',			
-		)); ?>
-	</div>
 
 <?php $this->endWidget(); ?>
 

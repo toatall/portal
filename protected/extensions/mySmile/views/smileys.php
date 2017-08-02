@@ -1,14 +1,14 @@
 <style>
-	#smile-box {
+	#smile-box-<?= $prefix ?> {
 		background: url('/css/images/smile_icon.png') no-repeat;
 		width: 17px;
 		height: 17px;
 		cursor: pointer;
 	}
-	#smile-content a:hover {
+	#smile-content-<?= $prefix ?> a:hover {
 		background: #aaa;
 	}
-	#smile-content {
+	#smile-content-<?= $prefix ?> {
 		background: while;
 		width:300px; 
 		position: absolute; 
@@ -23,8 +23,8 @@
 	}
 </style>
 
-<div id="smile-box" style="position: relative;">
-	<div id="smile-content" class="<?php echo $containerCssClass;?> well">	
+<div id="smile-box-<?= $prefix ?>" style="position: relative;">
+	<div id="smile-content-<?= $prefix ?>" class="<?php echo $containerCssClass;?> well">	
 		<?php 
 			for ($i=0; $i<32;$i++)
 			{
@@ -74,12 +74,12 @@
 	}
 		
 	$(function(){
-		$('#smile-box').hover(
+		$('#smile-box-<?= $prefix ?>').hover(
 			function() {
-				$(this).find('#smile-content').fadeIn();  
+				$(this).find('#smile-content-<?= $prefix ?>').fadeIn();  
 			},
 			function() {
-				$(this).find('#smile-content').fadeOut();				
+				$(this).find('#smile-content-<?= $prefix ?>').fadeOut();				
 			}
 		);
 	})

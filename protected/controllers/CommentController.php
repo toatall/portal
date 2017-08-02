@@ -11,11 +11,10 @@ class CommentController extends Controller
 	{
 		return array(
 			 array('allow',
-			 		'users'=>array('@'),
+		 		'users'=>array('@'),
 			 ),
 		);
 	}
-	
 	
 	
 	
@@ -58,9 +57,9 @@ class CommentController extends Controller
 		{			
 			$model->attributes=$_POST['Comment'];
 			if($model->save())
-			{
-				Yii::app()->user->setFlash('success', 'Ваш комментарий успешно сохранен!');
-				$model->comment = '';
+			{				
+				echo 'OK';
+				Yii::app()->end();
 			}
 		}
 		
@@ -80,6 +79,32 @@ class CommentController extends Controller
 		));
 	}
 	
+	
+	
+	public function actionUpdate($id)
+	{
+		$model=$this->loadModel($id);
+		
+		if (Yii::app()->user->inRole('admin') || $model->username == UserInfo::inst()->userLogin)
+		{
+			if(isset($_POST['Comment']))
+			{
+				$model->attributes=$_POST['Comment'];
+				if ($model->save())
+					echo 'OK';
+					Yii::app()->end();
+			}
+			return  $this->renderPartial('_form',array(
+				'id'=>$id,
+				'model'=>$model,
+				'modelAll'=>$this->loadModels($id),
+			));
+		}
+		else
+		{
+			throw new CHttpException(403,'Доступ ограничен!');
+		}
+	}
 	
 	
 	private function loadModel($id)

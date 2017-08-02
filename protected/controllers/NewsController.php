@@ -10,7 +10,7 @@ class NewsController extends Controller
     public function accessRules()
 	{
 		return array(
-			 array('allow',                
+			 array('allow',
                 'users'=>array('@'),
             ),            
 		);
@@ -24,8 +24,7 @@ class NewsController extends Controller
 	 */
 	public function actionView($id)
 	{
-		VisitNews::saveVisit($id);
-		
+
 		$dirImage = str_replace('{code_no}', Yii::app()->session['organization'],
 				Yii::app()->params['pathImages']);
 		$dirImage = str_replace('{module}', 'news', $dirImage);
@@ -36,8 +35,12 @@ class NewsController extends Controller
 		$dirFile = str_replace('{module}', 'news', $dirFile);
 		$dirFile = str_replace('{id}', $id, $dirFile);
 				
+		$model = $this->loadModel($id);
+		
+		VisitNews::saveVisit($id);		
+		
 		$this->render('view',array(
-			'model'=>$this->loadModel($id),           
+			'model'=>$model,           
 			'dirImage'=>$dirImage,
 			'dirFile'=>$dirFile,
 		));

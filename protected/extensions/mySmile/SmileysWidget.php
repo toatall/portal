@@ -47,6 +47,8 @@ class SmileysWidget extends CWidget{
     * If this value is greather than 0, after $perRow smileys, a line break will be inserted.
     **/
     public $perRow=0;
+    
+    public $prefix;
 
     /**
      * SmileysWidget::run()
@@ -63,6 +65,7 @@ class SmileysWidget extends CWidget{
             'wrapperCssClass'=>$this->wrapperCssClass,
             'smileys'=>$this->loadSmileys(),            
             'perRow'=>$this->perRow,
+        	'prefix'=>$this->prefix,
             //'assetsUrl'=>$this->publishAssets(),
         ));
     }

@@ -23,7 +23,7 @@ class SiteController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'contact', 'captcha', 'a22'),
+				'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'contact', 'captcha', 'error'),
 				'users' => array('@'),
 			),
 			array(
