@@ -1,8 +1,12 @@
 <?php
-	$this->breadcrumbs=array(
-		'Отделы' => array('department/index'),
-		$model->concatened . ' (структура)',
-	);
+	
+$this->pageTitle = $model->department_name . ': Cтруктура';
+	
+$this->breadcrumbs=array(
+	'Отделы' => array('department/index'),
+	$model->concatened => array('department/view', 'id'=>$model->id),
+	'Структура',
+);
 ?>
 
 <h1><?= $model->department_name . ' (структура)' ?></h1>

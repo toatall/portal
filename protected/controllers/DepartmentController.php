@@ -47,7 +47,7 @@ class DepartmentController extends Controller
 			$methodName = 'render_' . $this->modelTree->module;
 			if (in_array($this->modelTree->module, $this->useModules) && method_exists($this, $methodName))
 			{						
-				return call_user_func(array($this, $methodName), $idTree);
+				return call_user_func(array($this, $methodName), $id, $idTree);
 			}
 		}
 		
@@ -206,12 +206,12 @@ class DepartmentController extends Controller
 	 * Render for module ratings
 	 * @param unknown $idDepartment
 	 */
-	private function render_ratingData($idTree)
+	private function render_ratingData($idDepartment, $idTree)
 	{
 		$model = $this->loadModelRatingMainByTreeId($idTree);
 		$this->render('rating', [
-			'model'=>$model, 
-			//'modelYear'=>$this->loadModelRatingDataYears($model->id), 
+			'model'=>$model, 			
+			'modelDepartment'=>$this->loadModel($idDepartment),
 			'modelTree'=>$this->modelTree,			
 		]);
 	}
@@ -224,8 +224,7 @@ class DepartmentController extends Controller
 	 * @param integer the ID of the model to be loaded
 	 */
 	public function loadModel($id)
-	{
-	   
+	{	   
 		$model = Department::model()->findByPk($id);
 		       
 		if($model===null)

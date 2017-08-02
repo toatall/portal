@@ -1,5 +1,7 @@
 <?php
 
+$this->pageTitle = $model->typeName;
+
 $this->breadcrumbs = array(
 	$model->typeName,
 );

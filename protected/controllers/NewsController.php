@@ -37,6 +37,8 @@ class NewsController extends Controller
 				
 		$model = $this->loadModel($id);
 		
+		$this->pageTitle = $model->title;
+		
 		VisitNews::saveVisit($id);		
 		
 		$this->render('view',array(
@@ -138,6 +140,7 @@ class NewsController extends Controller
 				$treeModel->name => ['news/index', 'section'=>$section],
 				(($organizationModel===null) ? 'Все налоговые органы' : $organizationModel->fullName),
 			];
+			$this->pageTitle = ($organizationModel === null ? '' : $organizationModel->name . ': ') . $treeModel->name;
 		}
 		else
 		{
@@ -145,6 +148,7 @@ class NewsController extends Controller
 				'Новости' => ['news/index'],
 				(($organizationModel===null) ? 'Все налоговые органы' : $organizationModel->fullName),
 			];
+			$this->pageTitle = ($organizationModel === null ? '' : $organizationModel->name . ': ') . 'Новости';
 		}
 		
 		
@@ -177,7 +181,7 @@ class NewsController extends Controller
 		
 		$this->render('index',array(
 			'model'=>$model->searchPublic(),            
-            'organization'=>$organization,
+            'organization'=>$organization,			
 			'allOrganization'=>($organization===null),
 			'breadcrumbs' => $breadcrumbs,
 		));

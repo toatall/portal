@@ -1,4 +1,7 @@
 <?php
+	
+	$this->pageTitle = $model->typeName . ': ' . $model->theme;
+	
 	$this->breadcrumbs=array(
 		$model->typeName => array('conference/' . $model->typeController),
 		$model->theme . ' (#' . $model->id . ')',

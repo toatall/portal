@@ -76,6 +76,8 @@ class SiteController extends Controller
 	 */
 	public function actionError()
 	{
+		$this->pageTitle = Yii::app()->name . ' - Ошибка';
+		
 		if($error=Yii::app()->errorHandler->error)
 		{
 			if(Yii::app()->request->isAjaxRequest)
@@ -117,6 +119,7 @@ class SiteController extends Controller
     
     public function actionBrowsers()
     {
+    	$this->pageTitle = 'Рекомендуемые браузеры';    	
         $this->render('browsers');
     }
 	
@@ -140,12 +143,6 @@ class SiteController extends Controller
    			throw new CHttpException(404,'Страница не найдена.');
    		if (!$model->downloadFile())
    			throw new CHttpException(404,'Страница не найдена.');
-   	}
-	
-    
-   	public function actionA22()
-   	{
-   		$this->render('rating_test');
    	}
    
     

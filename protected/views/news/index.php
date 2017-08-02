@@ -1,5 +1,8 @@
 <?php
 
+
+
+
 if (isset($breadcrumbs))
 {
 	$this->breadcrumbs = $breadcrumbs;

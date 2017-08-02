@@ -1,6 +1,10 @@
 <?php
+	
+$this->pageTitle = $modelDepartment->department_name . ': Рейтинг';
+
 $this->breadcrumbs=array(
 	'Отделы' => array('department/index'),
+	$modelDepartment->concatened => array('department/view', 'id'=>$modelDepartment->id),
 	$modelTree->name,
 );
 ?>
