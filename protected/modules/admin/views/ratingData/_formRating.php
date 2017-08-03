@@ -23,7 +23,7 @@
                 'name'=>'files',
                 'accept'=>'*',
                 'duplicate'=>'Файл уже выбран!',
-                'remove'=>'<i class="icon-remove"></i>',       
+                'remove'=>'<i class="icon-remove"></i>',
             ));        
         ?>
         <?php

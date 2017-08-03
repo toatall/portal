@@ -1,5 +1,7 @@
-<?php 
+<hr class="hr-sm" />
 
+<?php 
+    
 	$flagActive=true;
 	
 	$tabs = array();
@@ -22,6 +24,5 @@
 	'htmlOptions'=>['class'=>'bold', 'id'=>'tabs_' . $model->id],
 	'tabs'=>$tabs,
 ));
-
-
-
+?>
+</div>

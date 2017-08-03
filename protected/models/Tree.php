@@ -14,6 +14,8 @@
  * @property string $date_create
  * @property string $date_modification
  * @property bool $disable_child
+ * 
+ * @property bool allowAccess
  *
  * The followings are the available model relations:
  * @property TreeOrganization[] $TreeOrganizations
@@ -394,6 +396,26 @@ class Tree extends CActiveRecord
 			return false;
 		
 		return true;
+	}
+	
+	
+	
+	/**
+	 * Get allow user to node tree
+	 * @author tvog17
+	 * @return bool
+	 */
+	public function getAllowAccess()
+	{
+	    return Yii::app()->user->inRole(['admin']) || 
+	        Yii::app()->db->createCommand()
+        	    ->from('{{view_access_tree}}')
+        	    ->where('id=:id and id_user=:id_user and id_organization=:organization', array(
+        	        ':id' => $this->id,
+        	        ':id_user' => Yii::app()->user->id,
+        	        ':organization' => Yii::app()->session['organization'],
+        	    ))
+        	    ->queryScalar();	    
 	}
     
     

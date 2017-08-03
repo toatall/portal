@@ -469,5 +469,8 @@ img.[class*=" smile-"] {
 	background-position: 0 -527px;
 }
 		
-		
-		
+.hr-sm {
+	botder-bottom: 0;
+	border-top: 1px solid #eeeeee;
+	margin: 10px 0;
+}

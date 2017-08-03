@@ -78,7 +78,8 @@ class RatingDataController extends AdminController
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
+		$this->loadModelTree($model->id_tree); // check access user
+		
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
@@ -103,8 +104,11 @@ class RatingDataController extends AdminController
 	{
 		if(Yii::app()->request->isPostRequest)
 		{
+		    $model = $this->loadModel($id);
+		    $this->loadModelTree($model->id_tree); // check access user
+		    
 			// we only allow deletion via POST request
-			$this->loadModel($id)->delete();
+			$model->delete();
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
@@ -138,6 +142,7 @@ class RatingDataController extends AdminController
 	public function actionAdminRating($id)
 	{
 		$modelRatingMain = $this->loadModelRatingMain($id);
+		$this->loadModelTree($modelRatingMain->id_tree); // check access user
 		$model=new RatingData('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->id_rating_main = $id;
@@ -158,6 +163,7 @@ class RatingDataController extends AdminController
 	{		
 		$model=new RatingData;
 		$modelRatingMain = $this->loadModelRatingMain($id);
+		$this->loadModelTree($modelRatingMain->id_tree); // check access user
 		$model->rating_year = date('Y');
 		$model->rating_period = date('m') . '_1_mes';
 		
@@ -176,10 +182,20 @@ class RatingDataController extends AdminController
 			}
 		}
 		
-		$this->render('createRating',array(
-			'model'=>$model,
-			'modelRatingMain'=>$modelRatingMain,
-		));
+		if (Yii::app()->request->isAjaxRequest)
+		{
+		    $this->renderPartial('createRating',array(
+		        'model'=>$model,
+		        'modelRatingMain'=>$modelRatingMain,
+		    ),false,true);
+		}
+		else
+		{
+		    $this->render('createRating',array(
+		        'model'=>$model,
+		        'modelRatingMain'=>$modelRatingMain,
+		    ));
+		}
 	}
 	
 	
@@ -187,6 +203,7 @@ class RatingDataController extends AdminController
 	public function actionUpdateRating($id)
 	{
 		$model=$this->loadModelRatingData($id);
+		$this->loadModelTree($model->ratingMain->id_tree);  // check access user
 	
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -223,8 +240,10 @@ class RatingDataController extends AdminController
 	
 	public function actionViewRating($id)
 	{
+	    $model = $this->loadModelRatingData($id);
+	    $this->loadModelTree($model->ratingMain->id_tree); // check access user
 		$this->render('viewRating',array(
-			'model'=>$this->loadModelRatingData($id),
+			'model'=>$model,
 		));
 	}
 	
@@ -235,6 +254,7 @@ class RatingDataController extends AdminController
 		if(Yii::app()->request->isPostRequest)
 		{
 			$model = $this->loadModelRatingData($id);
+			$this->loadModelTree($model->ratingMain->id_tree); // check access user
 			$id = $model->id_rating_main;
 			// we only allow deletion via POST request
 			$model->delete();
@@ -253,6 +273,7 @@ class RatingDataController extends AdminController
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @return RatingMain
 	 */
 	public function loadModel($id)
 	{
@@ -267,20 +288,22 @@ class RatingDataController extends AdminController
 	 * Load model for Tree
 	 * @param int $id
 	 * @throws CHttpException
-	 * @return NULL|unknown|unknown[]|NULL[]|mixed
+	 * @return NULL|Tree
 	 */
 	public function loadModelTree($id)
 	{
 		$model=Tree::model()->findByPk($id, 'id_organization=:org', [':org'=>Yii::app()->session['organization']]);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
+		if (!$model->allowAccess)
+		    throw new CHttpException(403,'У вас недостаточно прав для выполнения указанного действия.');
 		return $model;
 	}
 	
 	
 	/**
 	 * Load model for RatingData
-	 * @param unknown $id
+	 * @param int $id
 	 */
 	public function loadModelRatingMain($id)
 	{

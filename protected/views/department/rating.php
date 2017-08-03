@@ -64,23 +64,4 @@ $this->breadcrumbs=array(
 	));
 	
 ?>
-
-<?php 
-		/*
-	$tabs = array();	
-	foreach ($modelYear as $year)
-	{
-		$tabs[] = [
-			'label'=>$year['rating_year'],			
-			'content'=>$this->renderPartial('_ratingData', ['model'=>RatingData::dataRating($model->id, $year['rating_year'], $model->order_asc)], true),
-			'active'=>($year['rating_year']==date('Y')),
-		];
-	}	
-?>
-
-<?php $this->widget('bootstrap.widgets.TbTabs', array(	
-	'placement'=>'left',
-	'htmlOptions'=>['class'=>'bold'],
-	'tabs'=>$tabs,
-));*/ ?>
 </div>

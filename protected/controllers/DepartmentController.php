@@ -110,10 +110,12 @@ class DepartmentController extends Controller
 	public function actionRatingData($id)
 	{
 		$model = $this->loadModelRatingMain($id);
+		$modelTree = $this->loadModelTree($model->id_tree);
 				
 		$this->renderPartial('ratingMain', [
 			'model'=>$model,
 			'modelYear'=>$this->loadModelRatingDataYears($model->id),
+		    'modelTree'=>$modelTree,
 		]);
 	}
 	
