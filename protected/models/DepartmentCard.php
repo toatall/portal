@@ -85,7 +85,7 @@ class DepartmentCard extends CActiveRecord
 			'id_department' => '# отдела',
 			'id_user' => '# пользователя',
 			'user_fio' => 'ФИО',
-			'user_rank' => 'Звание',
+			'user_rank' => 'Чин',
 			'user_position' => 'Должность',
 			'user_telephone' => 'Телефон',
 			'user_photo' => 'Фотография',

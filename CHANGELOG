@@ -1,5 +1,10 @@
-# Change Log Portal UFNS
+# Change Log Portal UFNS <trusov@r86.nalog.ru>
 
 
-## [1.0.0] - 2017-07-24 <trusov@r86.nalog.ru>
+## [2017-08-02]
+#### Added
+- Added update of comments and changed the creation comments using modal dialog
+- Add page title in frontend
 
+## [2017-08-03]
+#### Added

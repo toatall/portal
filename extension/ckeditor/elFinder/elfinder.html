@@ -26,13 +26,18 @@
 		        return (match && match.length > 1) ? match[1] : '' ;
 		    }
 		
-		    $().ready(function() {
-		        var funcNum = getUrlParam('CKEditorFuncNum');
+		    $(document).ready(function() {
+		        
+		    	var funcNum = getUrlParam('CKEditorFuncNum');
 				
-		        var img = (window.location.search.indexOf('image')) ? '?image' : '';
-				
+		    	var img = '';
+		        if (window.location.search.indexOf('image') >= 0)
+		        {
+					img = '?image';
+		        }
+		        
 		        var elf = $('#elfinder').elfinder({
-		            url : 'php/connector.php' + img,
+		            url : 'php/connector.php',// + img,
 		            lang: 'ru',
 		            getFileCallback : function(file) {
 		                window.opener.CKEDITOR.tools.callFunction(funcNum, file.url);
@@ -41,6 +46,7 @@
 		            },
 		            resizable: false
 		        }).elfinder('instance');
+		        
 		    });
 		</script>
 
