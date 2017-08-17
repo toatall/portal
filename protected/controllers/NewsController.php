@@ -35,7 +35,7 @@ class NewsController extends Controller
 		
 		$dirFile = str_replace('{code_no}', Yii::app()->session['organization'],
 				Yii::app()->params['pathDocumets']);
-		$dirFile = str_replace('{module}', 'news', $dirFile);
+		$dirFile = str_replace('{module}', $modelTree->module, $dirFile);
 		$dirFile = str_replace('{id}', $id, $dirFile);
 				
 				
