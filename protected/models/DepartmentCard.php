@@ -155,7 +155,7 @@ class DepartmentCard extends CActiveRecord
 		return (isset($this->user->id) ? $this->user->profile->name : $this->user_fio);
 	}
 	
-	public function beforeSave()
+	protected function beforeSave()
 	{
 		$this->date_create = new CDbExpression('getdate()');
 		return parent::beforeSave();

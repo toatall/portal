@@ -59,6 +59,7 @@ class DepartmentCardController extends AdminController
 
 		if(isset($_POST['DepartmentCard']))
 		{
+		    
 			$model->attributes=$_POST['DepartmentCard'];
 			if($model->save())
 			{				
@@ -66,12 +67,11 @@ class DepartmentCardController extends AdminController
 				$this->redirect(array('department/updateStructure','id'=>$model->id_department));
 			}			
 		}
-		else
-		{
-			$this->render('create',array(
-				'model'=>$model,
-			));
-		}
+		
+		$this->render('create',array(
+			'model'=>$model,
+		));
+		
 	}
 
 	/**
