@@ -19,10 +19,15 @@
 	
 ?>
 
+<?php if (!empty($model->note)): ?>
+<div class="well">
+	<?= $model->note ?>
+</div>
+<?php endif; ?>
+
 <?php $this->widget('bootstrap.widgets.TbTabs', array(	
 	'placement'=>'left',
 	'htmlOptions'=>['class'=>'bold', 'id'=>'tabs_' . $model->id],
 	'tabs'=>$tabs,
 ));
 ?>
-</div>

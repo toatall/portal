@@ -41,7 +41,7 @@ class DepartmentController extends Controller
 		$this->model = $this->loadModel($id);
 		$this->loadMenu($this->model);
 		
-		if ($idTree!=null)
+		if ($idTree!=null && is_numeric($idTree))
 		{
 			$this->modelTree = $this->loadModelTree($idTree);
 			$methodName = 'render_' . $this->modelTree->module;
@@ -84,6 +84,7 @@ class DepartmentController extends Controller
 				$render['vars'] = array(
 					'model'=>$this->model,
 					'modelNews'=>$modelNews,
+				    'modelTree'=>$this->modelTree,
 					'dirImage'=>$dirs['dirImage'],
 					'dirFile'=>$dirs['dirFile'],
 				);
@@ -94,6 +95,7 @@ class DepartmentController extends Controller
 				$render['vars'] = array(
 					'model'=>$this->model,
 					'modelNews'=>$modelNewsSearch,
+				    'modelTree'=>$this->modelTree,
 				);
 			}			
 		}		
@@ -206,7 +208,7 @@ class DepartmentController extends Controller
 	
 	/**
 	 * Render for module ratings
-	 * @param unknown $idDepartment
+	 * @param int $idDepartment
 	 */
 	private function render_ratingData($idDepartment, $idTree)
 	{

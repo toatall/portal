@@ -94,12 +94,12 @@
     <div class="content-fluid">
     	<div class="row-fluid">
     		<div class="span2">
-    			<ul class="dropdown-menu dropdown-menu-main">
+    			<ul class="dropdown-menu dropdown-menu-main dropdown-menu-wrap">
 		        <?php
 		            echo Menu::model()->getLeftMenuArray();                                    
 		        ?>         
 		        </ul>
-		        <?php echo Menu::model()->getLeftMenuAdd(Menu::$leftMenuAdd); ?> 
+		        <?php echo Menu::model()->getLeftMenuAdd(Menu::$leftMenuAdd); ?>
 		        <div id="container-conference-today"></div>   		
     		</div>
     		<div class="span10">

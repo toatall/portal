@@ -354,7 +354,7 @@ class Menu extends CActiveRecord
     
     	$resultMenu = '';
     	
-    	if (count($arr)>0) $resultMenu .= '<ul class="dropdown-menu' . ($main ? ' dropdown-menu-main' : '') . '">';
+    	if (count($arr)>0) $resultMenu .= '<ul class="dropdown-menu' . ($main ? ' dropdown-menu-main dropdown-menu-wrap' : '') . '">';
     	
     	foreach ($arr as $a)
     	{

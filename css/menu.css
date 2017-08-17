@@ -71,3 +71,10 @@
 	margin-bottom: 5px; 
 	width: 250px;
 }
+
+
+
+.dropdown-menu-wrap > li > a
+{
+	white-space: normal;
+}

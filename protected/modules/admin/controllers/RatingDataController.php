@@ -61,7 +61,10 @@ class RatingDataController extends AdminController
 			$model->id_tree = $modelTree->id;
 			
 			if($model->save())
+			{
+			    FileHelper::filesUpload('files', null, ['name'=>'ratingMain', $model->id]);
 				$this->redirect(array('view','id'=>$model->id));
+			}
 		}
 
 		$this->render('create',array(
@@ -87,7 +90,11 @@ class RatingDataController extends AdminController
 		{
 			$model->attributes=$_POST['RatingMain'];
 			if($model->save())
+			{
+			    FileHelper::postDeleteFiles(['modelName'=>'ratingMain', 'modelId'=>$model->id]);
+			    FileHelper::filesUpload('files', null, ['name'=>'ratingMain', 'id'=>$model->id]);			    
 				$this->redirect(array('view','id'=>$model->id));
+			}
 		}
 
 		$this->render('update',array(
@@ -107,8 +114,14 @@ class RatingDataController extends AdminController
 		    $model = $this->loadModel($id);
 		    $this->loadModelTree($model->id_tree); // check access user
 		    
-			// we only allow deletion via POST request
+		    // we only allow deletion via POST request
 			$model->delete();
+			
+			FileHelper::postDeleteFiles(['all' => [
+			    'allow'=>true,
+			    'modelName'=>'ratingMain',
+			    'modelId'=>$id,
+			]]);
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))

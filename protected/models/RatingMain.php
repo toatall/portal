@@ -56,6 +56,8 @@ class RatingMain extends CActiveRecord
 		return array(
 			'idDepartment' => array(self::BELONGS_TO, 'Department', 'id_tree'),
 			'ratingDatas' => array(self::HAS_MANY, 'RatingData', 'id_tree'),
+		    'files' => array(self::HAS_MANY, 'File', 'id_model',
+		        'condition'=>"[files].[model]='ratingMain'"),
 		);
 	}
 
@@ -128,9 +130,20 @@ class RatingMain extends CActiveRecord
 		{
 			$this->date_create = new CDbExpression('getdate()');
 		}
-		$this->author = UserInfo::inst()->userLogin;
+		$this->author = UserInfo::inst()->userLogin;		
 		
 		return parent::beforeSave();
+	}
+
+	
+	/**
+	 * {@inheritDoc}
+	 * @see CActiveRecord::afterSave()
+	 */
+	protected function afterSave()
+	{
+	    FileHelper::filesUpload('files', null, ['name'=>'ratingMain', 'id'=>$this->id]);
+	    return parent::afterSave();
 	}
 	
 	

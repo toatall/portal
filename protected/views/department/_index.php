@@ -25,7 +25,7 @@
         array(
             'header'=>'',            
             'filter'=>'',           
-            'value'=>'Yii::app()->getController()->renderPartial("_indexRow",array("data"=>$data), true)',
+            'value'=>'Yii::app()->getController()->renderPartial("/news/_indexRow",array("data"=>$data), true)',
             'type'=>'html',           
         ),		            
         

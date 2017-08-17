@@ -70,8 +70,9 @@ class PageController extends AdminController
 
 		if(isset($_POST['News']))
 		{
+		    $model->log_change = LogChange::setLog($model->log_change, 'создание');
 			$model->attributes=$_POST['News'];
-                                    
+			
 			if($model->save()) {
 			    
                 // сохраняем файлы                
@@ -109,6 +110,7 @@ class PageController extends AdminController
 		if(isset($_POST['News']))
 		{
 			$model->attributes=$_POST['News'];
+			$model->log_change = LogChange::setLog($model->log_change, 'изменение');
 			if($model->save())
                 
                 // файлы для удаления
@@ -151,6 +153,7 @@ class PageController extends AdminController
             {
                 $model = $this->loadModel($id, $idTree);                
                 $model->date_delete = new CDbExpression('getdate()');
+                $model->log_change = LogChange::setLog($model->log_change,'удаление');
                 $model->save();                
             }
             else		  

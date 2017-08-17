@@ -6,8 +6,7 @@
 	}
 	
 	 $url = Yii::app()->getController()->createUrl('news/view',array( 
-		'id'=>$data->id, 'organization'=>$data->id_organization));
-	
+		'id'=>$data->id, 'organization'=>$data->id_organization));	
 ?>
 
 <div class="row">

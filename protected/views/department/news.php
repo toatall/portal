@@ -7,7 +7,7 @@ $this->breadcrumbs=array(
 ?>
 
 
-<h1>title</h1>
+<h1><?= isset($modelTree->name) ? $modelTree->name : $model->concatened; ?></h1>
 <hr />
 
 
