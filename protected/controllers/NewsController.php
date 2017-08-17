@@ -24,10 +24,13 @@ class NewsController extends Controller
 	 */
 	public function actionView($id)
 	{
-
+    
+	    $model = $this->loadModel($id);
+	    $modelTree = $this->loadModelTree($model->id_tree);
+	    
 		$dirImage = str_replace('{code_no}', Yii::app()->session['organization'],
 				Yii::app()->params['pathImages']);
-		$dirImage = str_replace('{module}', 'news', $dirImage);
+		$dirImage = str_replace('{module}', $modelTree->module, $dirImage);
 		$dirImage = str_replace('{id}', $id, $dirImage);
 		
 		$dirFile = str_replace('{code_no}', Yii::app()->session['organization'],
@@ -35,8 +38,7 @@ class NewsController extends Controller
 		$dirFile = str_replace('{module}', 'news', $dirFile);
 		$dirFile = str_replace('{id}', $id, $dirFile);
 				
-		$model = $this->loadModel($id);
-		
+				
 		$this->pageTitle = $model->title;
 		
 		VisitNews::saveVisit($id);		
@@ -200,6 +202,21 @@ class NewsController extends Controller
 		if($model===null)
 			throw new CHttpException(404,'Страница не найдена.');
 		return $model;
+	}
+	
+	
+	/**
+	 * Retutn model Tree
+	 * @param int $id
+	 * @throws CHttpException
+	 * @return Tree
+	 */
+	public function loadModelTree($id)
+	{	    
+	    $model = Tree::model()->findByPk($id, 'date_delete is null');
+	    if($model===null)
+	        throw new CHttpException(404,'Страница не найдена.');
+        return $model;
 	}
     
 
