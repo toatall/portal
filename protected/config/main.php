@@ -150,7 +150,7 @@ return array(
         'pathImages'=>'/files/{code_no}/{module}/{id}/image_galery/',
         'miniatureImage'=>'/files/{code_no}/{module}/{id}/miniature_image/',
         'pathTelephones'=>'/files/telephones',
-        'noImage'=>'/images/News-Icon.jpg',
+        'noImage'=>'/images/no-photo.gif',
 		'pathCardImage' =>'/files/{code_no}/department_card_image/',		
 			
 		// Profiles
