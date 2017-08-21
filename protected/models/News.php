@@ -437,7 +437,7 @@ class News extends CActiveRecord
    
     /**
      * Сохранение миниатюры изображения для новости
-     * @param unknown $model
+     * @param News $model
      * @param string $oldImageName
      */
     public function saveThumbailForNews($model,$oldImageName='')
@@ -464,16 +464,16 @@ class News extends CActiveRecord
                 mkdir($_SERVER['DOCUMENT_ROOT'].$baseDir, 0777, true);
             }
             
+            $fileName = iconv('UTF-8', 'windows-1251', $file->name);
+            
             $imageHelper = new ImageHelper;
             $thumbNameImage = '';
             if ($imageHelper->load($file->tempName))
             {
                 if ($imageHelper->getHeight() > $this->_miniatureImageHeight)
                     $imageHelper->resizeToHeight($this->_miniatureImageHeight);
-                                
-                //$file->name = iconv('UTF-8', 'windows-1251', $file->name);
-                
-                $imageHelper->save($_SERVER['DOCUMENT_ROOT'].$baseDir.$file->name);
+
+                $imageHelper->save($_SERVER['DOCUMENT_ROOT'] .$baseDir. $fileName);
                                                 
                 Yii::app()->db->createCommand()
                     ->update('{{news}}', array(
