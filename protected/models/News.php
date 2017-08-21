@@ -20,6 +20,7 @@
  * @property integer $count_like
  * @property integer $count_comment
  * @property integer $count_visit
+ * @property string 
  *
  * The followings are the available model relations:
  * @property Organization $idOrganization
@@ -32,7 +33,7 @@ class News extends CActiveRecord
 	const DEFAULT_MODULE = 'news';
 	
     
-    private $_thumpImageHeight = 200;  // размер миниатюр для галереи (ширина - пикселей)
+    private $_thumbImageHeight = 200;  // размер миниатюр для галереи (ширина - пикселей)
     private $_miniatureImageHeight = 100; // размер миниатюры для главной страницы
     public $useOptionalAccess = false; // флаг отвечающий за дополнительные настройки прав
     public $_thumbail_image; // миниатюра
@@ -98,7 +99,7 @@ class News extends CActiveRecord
 			'id_tree' => 'Раздел',
 			'id_organization' => 'Налоговый орган',
 			'title' => 'Заголовок',
-			'message1' => 'Краткий текст',
+			'message1' => 'Кратко',
 			'message2' => 'Основной текст',
 			'author' => 'Автор',
 			'date_start_pub' => 'Начало публикации',
@@ -107,8 +108,8 @@ class News extends CActiveRecord
 			'date_delete' => 'Удален',
 			'flag_enable' => 'Опубликовано',
             'thumbail_image' => 'Миниатюра',
-            'thumbail_title' => 'Заголовок для миниатюры',
-            'thumbail_text' => 'Текст для миниатюры',
+            //'thumbail_title' => 'Заголовок для миниатюры',
+            //'thumbail_text' => 'Текст для миниатюры',
             'general_page' => 'Главная страница',
             'log_change' => 'История изменений',
 			'files' => 'Файлы',
@@ -405,9 +406,9 @@ class News extends CActiveRecord
                     $thumbNameImage = '';
                     if ($imageHelper->load($_SERVER['DOCUMENT_ROOT'] . $baseDir . $fileName))
                     {
-                        if ($imageHelper->getHeight() > $this->_thumpImageHeight)
+                        if ($imageHelper->getHeight() > $this->_thumbImageHeight)
                         {
-                            $imageHelper->resizeToHeight($this->_thumpImageHeight);
+                            $imageHelper->resizeToHeight($this->_thumbImageHeight);
                             $imageHelper->save($_SERVER['DOCUMENT_ROOT'] . $baseDir . 'thumb_' . $fileName);
                             $thumbNameImage = 'thumb_'.$file->name;
                         }

@@ -63,7 +63,7 @@ class SiteController extends Controller
 	{
 		$model = new NewsSearch();
 		$this->render('index', [
-			'modelUFNS'=>$model->feedUFNS,
+		    'modelUFNS'=>$model->feedNewsDay,
 			'modelIFNS'=>$model->feedIFNS,
 			'modelPressClub'=>$model->feedDopNews('PressClub'),
 			'modelDosug'=>$model->feedDopNews('Dosug'),			
@@ -145,6 +145,7 @@ class SiteController extends Controller
    			throw new CHttpException(404,'Страница не найдена.');
    	}
    
+   	
     
 	
 }

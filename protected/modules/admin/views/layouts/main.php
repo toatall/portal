@@ -59,7 +59,7 @@
                 	array('label'=>'Отделы', 'url'=>array('/admin/department/admin')),
                                        
                 ), 'visible'=>!Yii::app()->user->isGuest),
-                    array('label'=>'Настройки', 'url'=>array('/admin/config/index'), 'visible'=>(!Yii::app()->user->isGuest && Yii::app()->user->admin)),             
+                array('label'=>'Справка', 'url'=>array('/admin/default/help')),             
                 array('label'=>'Вход', 'url'=>array('/admin/default/login'), 'visible'=>Yii::app()->user->isGuest),
                 array('label'=>'Выход ('.Yii::app()->user->name.')', 'url'=>array('/admin/default/logout'), 'visible'=>!Yii::app()->user->isGuest),
                                                 

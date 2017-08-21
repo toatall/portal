@@ -18,7 +18,7 @@ class DefaultController extends AdminController
                 'users'=>array('@'),
             ),
             array('allow',
-                'actions'=>array('login', 'error'),
+                'actions'=>array('login', 'error', 'help'),
                 'users'=>array('*'),
             ),
 			array('deny',  // deny all users
@@ -198,6 +198,13 @@ class DefaultController extends AdminController
         if (trim($_POST['org']) == '') {
             echo 'Параметр org пустой!';
         }
+    }
+    
+    
+    
+    public function actionHelp()
+    {
+        $this->render('help');
     }
     
 }

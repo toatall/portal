@@ -10,7 +10,7 @@
         }',
         'columns'=>array(
             'id',
-            'username',      
+            'username',
             'username_windows',                        
             array(
             	'name'=>'profile.name',

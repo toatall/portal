@@ -80,9 +80,9 @@
     <br />
     <?php if (in_array($modelTree->module, array('news'))): ?>
     <div class="panel panel-default">
-        <div class="panel-heading"><h3>Миниатюра</h3></div>
+        <!-- div class="panel-heading"><h3>Миниатюра</h3></div-->
         <div class="panel-body">
-            Изображение:
+            Миниатюра (изображение):
             <?php   if (!$model->isNewRecord && ($model->thumbail_image!=='')): ?>
                 <a href="<?php echo $model->thumbail_image; ?>" class="fancybox">
                     <?php echo basename($model->thumbail_image); ?>
@@ -101,7 +101,7 @@
             <?php echo $form->fileField($model, '_thumbail_image'); ?>
             </div>
             <br />
-            <?php echo $form->textFieldRow($model,'thumbail_title',array('class'=>'span5','maxlength'=>250)); ?>
+            <?php /*echo $form->textFieldRow($model,'thumbail_title',array('class'=>'span5','maxlength'=>250)); ?>
             <?php $this->widget('bootstrap.widgets.TbButton', array(
     			'label'=>'Скопировать заголовок',
                 'buttonType'=>'button',	
@@ -120,7 +120,7 @@
 	     	       ]
 	             });
             </script>
-            <br /><br />
+            <br /><br />*/?>
         </div>
     </div>
     <?php endif; ?>

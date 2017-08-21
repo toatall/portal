@@ -29,8 +29,6 @@ class NewsSearch extends News
 	 */
 	public function search($idTree=null)
 	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-	
 		$criteria=new CDbCriteria;
 	
 		$criteria->compare('id',$this->id);
@@ -57,8 +55,7 @@ class NewsSearch extends News
 			$criteria->addCondition('date_delete IS NULL');
 		
 		$criteria->compare('id_organization', Yii::app()->session['organization']);
-		
-	
+			
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
@@ -93,17 +90,6 @@ class NewsSearch extends News
 		$criteria->addCondition('t.flag_enable=1 AND t.date_delete is null
             AND t.date_start_pub < getdate() AND t.date_end_pub > getdate()');
 		
-		
-		
-		// @todo думаю это дурацкая идея
-		/*if ($this->id_organization === null)
-		{
-			$criteria->addNotInCondition('t.id_organization', ['8600']);
-		}
-		else
-		{
-			$criteria->compare('t.id_organization',$this->id_organization);
-		}*/
 		
 		$criteria->compare('t.id_organization',$this->id_organization);
 		
@@ -164,22 +150,37 @@ class NewsSearch extends News
 	}
 	
 	
+	public function getFeedNewsDay()
+	{
+	    $criteria = $this->queryBaseTabsNews();
+	    $criteria->compare('tree.module', 'news');
+	    
+	    $criteria->addCondition('t.on_general_page=:general_page');	    
+	    $criteria->params[':general_page'] = 1;
+	    $criteria->limit = self::LIMIT_TOP_NEWS;
+	    
+	    return new CActiveDataProvider($this, [
+	        'criteria' => $criteria,
+	        'pagination'=>false,
+	    ]);
+	}
+	
+	
 	/**
 	 * Новости Управления
 	 * @return CDbCommand
 	 */
 	public function getFeedUFNS()
 	{	
-		$criteria = $this->queryBaseTabsNews();
-		$criteria->compare('tree.module', 'news');
-		$criteria->compare('t.id_organization', '8600');
-		$criteria->compare('t.on_general_page', 1);
-		$criteria->limit = self::LIMIT_TOP_NEWS;
-		
-		return new CActiveDataProvider($this, [
-			'criteria' => $criteria,			
-			'pagination'=>false,
-		]);
+	    $criteria = $this->queryBaseTabsNews();
+	    $criteria->compare('tree.module', 'news');
+	    $criteria->compare('t.id_organization', '8600');
+	    $criteria->limit = self::LIMIT_TOP_NEWS;
+	    
+	    return new CActiveDataProvider($this, [
+	        'criteria' => $criteria,
+	        'pagination'=>false,
+	    ]);
 	}
 	
 	

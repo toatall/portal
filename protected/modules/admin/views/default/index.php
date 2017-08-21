@@ -11,7 +11,9 @@ $this->breadcrumbs=array(
 
 <h3>Выберите, пожалуйуста, раздел сайта</h3>
 
-
+<div class="alert alert-info">
+	Если вы впервые, посетите раздел <b><?= CHtml::link('Справка', ['/admin/default/help']) ?></b>
+</div>
 
 
 <div class="well" id="containerSection" style="background-color:white; margin-top:3px;">
