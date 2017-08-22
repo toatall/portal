@@ -28,12 +28,12 @@ class NewsController extends Controller
 	    $model = $this->loadModel($id);
 	    $modelTree = $this->loadModelTree($model->id_tree);
 	    
-		$dirImage = str_replace('{code_no}', Yii::app()->session['organization'],
+	    $dirImage = str_replace('{code_no}', $model->id_organization,
 				Yii::app()->params['pathImages']);
 		$dirImage = str_replace('{module}', $modelTree->module, $dirImage);
 		$dirImage = str_replace('{id}', $id, $dirImage);
 		
-		$dirFile = str_replace('{code_no}', Yii::app()->session['organization'],
+		$dirFile = str_replace('{code_no}', $model->id_organization,
 				Yii::app()->params['pathDocumets']);
 		$dirFile = str_replace('{module}', $modelTree->module, $dirFile);
 		$dirFile = str_replace('{id}', $id, $dirFile);
