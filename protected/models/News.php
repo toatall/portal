@@ -34,7 +34,7 @@ class News extends CActiveRecord
 	
     
     private $_thumbImageHeight = 200;  // размер миниатюр для галереи (ширина - пикселей)
-    private $_miniatureImageHeight = 100; // размер миниатюры для главной страницы
+    private $_miniatureImageHeight = 150; // размер миниатюры для главной страницы
     public $useOptionalAccess = false; // флаг отвечающий за дополнительные настройки прав
     public $_thumbail_image; // миниатюра
     

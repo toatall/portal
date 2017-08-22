@@ -202,6 +202,9 @@
 		 */
 		public static function checkAccessUserForTree($id_tree)
 		{		
+		    if (!is_numeric($id_tree))
+		        return  false;
+		    
 			return Yii::app()->db->createCommand()
 				->from('{{view_access_tree}}')
 				->where('id=:id and id_user=:id_user', array(
