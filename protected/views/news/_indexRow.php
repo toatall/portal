@@ -13,7 +13,7 @@
     <div class="span12 thumbnail">
     	<div class="span2">
     		<a href="<?= $url ?>">
-    			<img src="<?= $imageUrl ?>" class="thumbnails" style="float: left; margin-right: 20px; width: 200px;" />
+    			<img src="<?= $imageUrl ?>" class="thumbnails" style="float: left; margin-right: 20px; max-width: 200px; max-height:150px;" />
     		</a>
     	</div>
     	<div class="span10 text-left" style="padding-right:20px;">
