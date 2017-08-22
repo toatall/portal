@@ -477,7 +477,7 @@ class News extends CActiveRecord
                                                 
                 Yii::app()->db->createCommand()
                     ->update('{{news}}', array(
-                        'thumbail_image'=>$file->name,
+                        'thumbail_image'=> $baseDir .  $file->name,
                     ), 'id=:id', array(':id'=>$model->id));
             }                                                           
         }
