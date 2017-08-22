@@ -1,11 +1,17 @@
 <?php 	
+    // для проверки существавания файла нужно использовать iconv
     $imageUrl = iconv('UTF-8', 'windows-1251', $data['thumbail_image']);
     if ($imageUrl == null || !file_exists(Yii::app()->params['siteRoot'] . $imageUrl) 
         || !is_file(Yii::app()->params['siteRoot'] . $imageUrl))
 	{
 		$imageUrl = Yii::app()->params['noImage'];
 	}
-	echo '<i v="' . (Yii::app()->params['siteRoot'] . $imageUrl) . '"></i>';
+	else
+	{
+	   // ... но для отображения не нужно!!
+	    $imageUrl = $data['thumbail_image'];
+	}
+	
 	$url = Yii::app()->getController()->createUrl('news/view',array( 
 		'id'=>$data->id, 'organization'=>$data->id_organization));	
 ?>
