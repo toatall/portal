@@ -124,10 +124,17 @@
 			'links' => $this->breadcrumbs,
 		)); ?><!-- breadcrumbs -->
 	<?php endif?>
-    
-    
+	    
     <?php if ($this->module->errorLogin === false): ?>
-    <?php echo $content; ?>
+    	<?php if (Yii::app()->browser->getBrowser() == "Internet Explorer" || Yii::app()->browser->getBrowser() == "unknown"): ?>
+    		<div class="alert alert-danger">
+		    	<strong>Для корректной работы не рекомендуется использовать Internet Explorer!</strong>
+		    	<br />Рекомендуется использовать Google Chrome.
+		    	<br /><?= CHtml::link('Список браузеров', array('/site/browsers')) ?>
+		    </div>
+		<?php else: ?>
+    		<?php echo $content; ?>
+    	<?php endif; ?>
     <?php else: ?> 
     <div class="error">
     	<h1>Ошибка!</h1>
