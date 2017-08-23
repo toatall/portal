@@ -138,11 +138,14 @@ class Telephone extends CActiveRecord
 	}
     
     
+	// @todo Нужно ли проверять организации?
     public function listOrganizations($idTree)
     {
-        if (Yii::app()->user->admin)
+        return Organization::model()->findAll();
+        
+        /*if (Yii::app()->user->admin)
         {
-            return Organization::model()->findAll();
+            
         }
         else
         {
@@ -152,7 +155,7 @@ class Telephone extends CActiveRecord
                         WHERE id_tree=$idTree AND ((id_identity=".Yii::app()->user->id." AND is_group=0)
                             OR (id_identity IN (SELECT id_group FROM {{group_user}} 
                                 WHERE id_user=".Yii::app()->user->id.") AND is_group=1)))")->queryAll();
-        }
+        }*/
     }
     
     
