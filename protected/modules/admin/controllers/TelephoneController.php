@@ -56,7 +56,7 @@ class TelephoneController extends AdminController
         if (!Tree::model()->exists('id=:id AND module=:module', array(':id'=>$idTree,'module'=>'telephone')))
             throw new CHttpException(404,'Страница не найдена.');
 		
-        if (!(Yii::app()->user->admin || Access::model()->checkAccessUserForTree($idTree)))
+        if (!(Yii::app()->user->admin || Access::checkAccessUserForTree($idTree)))
             throw new CHttpException(403,'Доступ запрещен.');
             
     	$model=new Telephone;
@@ -186,7 +186,7 @@ class TelephoneController extends AdminController
 	 */
 	public function loadModel($id, $idTree)
 	{
-	    if (!(Yii::app()->user->admin || Access::model()->checkAccessUserForTree($idTree))
+	    if (!(Yii::app()->user->admin || Access::checkAccessUserForTree($idTree))
             || !Tree::model()->checkParentRight($idTree))
             throw new CHttpException(403,'Доступ запрещен.');
         
