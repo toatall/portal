@@ -108,7 +108,7 @@ class TelephoneController extends AdminController
 		if(isset($_POST['Telephone']))
 		{
             $model->attributes=$_POST['Telephone'];
-            //$model->log_change = LogChange::setLog($model->log_change, 'изменение');
+            $model->log_change = LogChange::setLog($model->log_change, 'изменение');
             
             $tempFile=CUploadedFile::getInstance($model, 'tel_file');
             if ($tempFile!=null)
@@ -150,7 +150,7 @@ class TelephoneController extends AdminController
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
-			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin', 'idTree'=>$idTree));
 	}
 
 

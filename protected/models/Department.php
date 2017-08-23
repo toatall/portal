@@ -13,6 +13,9 @@
  * @property string $date_edit
  * @property string $author
  * @property string $log_change
+ * @property bool $use_card
+ * @property integer $general_page_type
+ * @property integer $general_page_tree_id
  *
  * The followings are the available model relations:
  * @property Tree $idTree
@@ -20,6 +23,13 @@
  */
 class Department extends CActiveRecord
 {
+    // что показывать по умолчанию, при переходе в отдел
+    private $_typeGeneralPage = array(
+        0 => 'Отображать первую новость',
+        1 => 'Показать новость из списка',
+        2 => 'Показать структуру отдела',
+    );
+    
 	
 	public $useOptionalAccess = false; // флаг отвечающий за дополнительные настройки прав
 	
@@ -43,7 +53,7 @@ class Department extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('id_tree, id_organization, department_index, department_name', 'required'),
-			array('id_tree, use_card', 'numerical', 'integerOnly'=>true),
+			array('id_tree, use_card, general_page_type, general_page_tree_id', 'numerical', 'integerOnly'=>true),
 			array('id_organization', 'length', 'max'=>5),
 			array('department_index', 'length', 'max'=>2),
 			array('department_name, author', 'length', 'max'=>250),
@@ -90,6 +100,8 @@ class Department extends CActiveRecord
 			'log_change' => 'Журнал изменений',
 			'concatened' => 'Отдел',
 			'use_card' => 'Показывать структуру отдела',
+		    'general_page_type' => 'Страница по умолчанию',
+		    'general_page_tree_id' => 'Выбрать новость',
 		);
 	}
 
@@ -262,6 +274,26 @@ class Department extends CActiveRecord
 		
 		return $resultMenu;
 		
+	}
+	
+	/**
+	 * Разновидность страницы для установки по умолчанию
+	 * @return string[]
+	 */
+	public function getTypeGeneralPage()
+	{
+	    return $this->_typeGeneralPage;
+	}
+	
+	/**
+	 * Список новостей для dropDownList, в качестве установки стрницы по умолчанию
+	 * @return string[]
+	 */
+	public function getTreeList()
+	{
+	    return CHtml::listData(News::model()->findAll('id_tree=:id_tree and date_delete is null and flag_enable=1', 
+	        [':id_tree'=>$this->id_tree]), 'id', 'title');
+	    
 	}
 	
 }

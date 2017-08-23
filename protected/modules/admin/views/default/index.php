@@ -22,7 +22,9 @@ $this->breadcrumbs=array(
     $tree = Tree::model()->getTreeForMain();    
     if (count($tree)) {
         $this->widget('CTreeView', array(
-            'data'=>$tree,            
+            'data'=>$tree, 
+            'animated'=>300,
+            'collapsed'=>true,
         ));
     } else {
 ?>

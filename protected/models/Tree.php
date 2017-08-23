@@ -313,7 +313,7 @@ class Tree extends CActiveRecord
             {                                
                 $data[] = array(
                     'id'=>$value->id,
-                    'text'=>'<div style="margin-top:-2px;"><i class="icon-folder-open"></i>&nbsp;'
+                    'text'=>'<div style="margin-top:-4px; margin-left:4px;"><i class="icon-folder-open"></i>&nbsp;'
                         .($value->module!='' ? 
                             CHtml::link($value->name, array($value->module.'/admin', 'idTree'=>$value->id))
                             	: $value->name).'</div>',

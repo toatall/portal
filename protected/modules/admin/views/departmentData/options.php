@@ -24,7 +24,7 @@ endif;
 
 
 <?php 
-	$this->widget('bootstrap.widgets.TbAlert', array('block'=>true)); 	
+	$this->widget('bootstrap.widgets.TbAlert', array('block'=>true));
 ?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
@@ -33,7 +33,35 @@ endif;
 
 	<div class="well">
 		<?php echo $form->checkBoxRow($model,'use_card'); ?>
+		<hr />
+		<?php echo $form->dropDownListRow($model,'general_page_type',$model->typeGeneralPage, array('id'=>'general_page_type')); ?>
+		
+		<div class="thumbnail" id="container-general-page-tree-id">
+			<?php echo $form->dropDownListRow($model,'general_page_tree_id',$model->treeList, array('id'=>'general_page_type')); ?>
+		</div>
 	</div>
+	
+<script type="text/javascript">
+	$(document).ready(function() {
+		function checkTypePage()
+		{
+			if ($('#general_page_type').val()==1)
+			{
+				$('#container-general-page-tree-id').show();
+			}
+			else
+			{
+				$('#container-general-page-tree-id').hide();
+			}
+		}
+
+		checkTypePage();
+
+		$('#general_page_type').on('change',function() {
+			checkTypePage();
+		});
+	});
+</script>	
 	
 	<div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.TbButton', array(

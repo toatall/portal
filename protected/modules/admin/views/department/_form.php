@@ -1,6 +1,10 @@
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 	'id'=>'department-form',
 	'enableAjaxValidation'=>false,
+    'enableClientValidation'=>true,
+    'clientOptions'=>array(
+        'validateOnSubmit'=>true,
+    ),
 	'htmlOptions'=>array(
 		'onsubmit'=>'selectGroupUser();',
 	),
@@ -18,18 +22,23 @@
 
 	<script type="text/javascript">
 
+    	function listGroups()
+    	{
+    		var ls = [];
+            $('#<?php echo CHtml::activeId($model, 'permissionGroup'); ?>').children('option').each(function() {
+                ls.push($(this).val());
+            });
+            return ls;
+    	}
+		
         // ГРУППЫ
         function getListGroups()
         {
-            $('#user_group_body').html('<img src="/images/loading.gif" /> Загрузка...');  
-            var ls = [];
-            $('#<?php echo CHtml::activeId($model, 'permissionGroup'); ?>').children('option').each(function() {
-                ls.push($(this).val());                                      
-            });
+            $('#user_group_body').html('<img src="/images/loading.gif" /> Загрузка...');             
             $.ajax({
                 url: '<?php echo $this->createUrl('/admin/tree/getListGroup/'); ?>',
                 type: 'POST',
-                data: { groups: ls }
+                data: { groups: listGroups().toString() }
             })  
             .done(function(data) {
                 $('#user_group_body').html(data);
@@ -42,17 +51,22 @@
         }
                             
         // ПОЛЬЗОВАТЕЛИ
-        function getListUsers()
-        {
-            $('#user_group_body').html('<img src="/images/loading.gif" /> Загрузка...');  
-            var ls = [];
+        function listUsers()
+		{
+        	var ls = [];
             $('#<?php echo CHtml::activeId($model, 'permissionUser'); ?>').children('option').each(function() {
                 ls.push($(this).val());                                      
             });
+            return ls;
+		}
+		
+        function getListUsers()
+        {
+            $('#user_group_body').html('<img src="/images/loading.gif" /> Загрузка...');             
             $.ajax({
                 url: '<?php echo $this->createUrl('/admin/tree/getListUser/'); ?>',
                 type: 'POST',
-                data: { users: ls }
+                data: { users: listUsers().toString() }
             })  
             .done(function(data) {
                 $('#user_group_body').html(data);

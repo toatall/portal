@@ -24,13 +24,12 @@ class DepartmentController extends AdminController
 	public function accessRules()
 	{
 		return array(
-				array('allow',					
-					'expression'=>function() { return Yii::app()->user->inRole(['admin']); },
-				),
-			
-            array('deny',  // deny all users
-				'users'=>array('*'),
-			),			            
+		    array('allow',
+		        'users'=>array('@'),
+		    ),
+		    array('deny',  // deny all users
+		        'users'=>array('*'),
+		    ),	
 		);
 	}
 

@@ -80,10 +80,10 @@ class DepartmentDataController extends AdminController
 		$model->date_end_pub = '01.01.2032';
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['News']))
+        
+		if(isset($_POST['NewsSearch']))
 		{
-			$model->attributes=$_POST['News'];
+			$model->attributes=$_POST['NewsSearch'];
 			$model->log_change = LogChange::setLog($model->log_change, 'создание');
 			$model->id_tree = $idTree;
 			if($model->save())
