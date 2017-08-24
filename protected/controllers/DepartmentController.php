@@ -107,7 +107,7 @@ class DepartmentController extends Controller
 			
 			if (count($modelNews) == 1 && isset($modelNews[0]) && $modelNews[0] instanceof News)
 			{
-				$dirs = FileHelper::fileImageDirByNewsId($modelNews[0]->id);
+				$dirs = FileHelper::fileImageDirByNewsId($modelNews[0]->id, $modelNews[0]->id_organization);
 				$render['name'] = 'view';
 				$render['vars'] = array(
 					'model'=>$this->model,

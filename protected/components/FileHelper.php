@@ -15,7 +15,7 @@ class FileHelper extends CComponent
 	 * @return array
 	 * @version 05.07.2017
 	 */
-	public static function fileImageDirByNewsId($idNews)
+	public static function fileImageDirByNewsId($idNews, $orgCode=null)
 	{		
 	    $module = 'news';
 	    $model = News::model()->findByPk($idNews);
@@ -26,12 +26,15 @@ class FileHelper extends CComponent
     	        $module = $modelTree->module;
 	    }
 	    
-		$dirImage = str_replace('{code_no}', Yii::app()->session['organization'],
+	    if ($orgCode==null)
+	        $orgCode = Yii::app()->session['organization'];
+	    
+		$dirImage = str_replace('{code_no}', $orgCode,
 			Yii::app()->params['pathImages']);
 		$dirImage = str_replace('{module}', $module, $dirImage);
 		$dirImage = str_replace('{id}', $idNews, $dirImage);
 		
-		$dirFile = str_replace('{code_no}', Yii::app()->session['organization'],
+		$dirFile = str_replace('{code_no}', $orgCode,
 				Yii::app()->params['pathDocumets']);
 		$dirFile = str_replace('{module}', $module, $dirFile);
 		$dirFile = str_replace('{id}', $idNews, $dirFile);
