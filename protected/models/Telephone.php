@@ -216,7 +216,7 @@ class Telephone extends CActiveRecord
     	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
     	header("Content-Type: " . mime_content_type($file));
     	header('Content-Length: '.filesize($file));
-    	header("Content-Disposition: inline; filename=\"{basename($file)}\"");
+    	header("Content-Disposition: inline; filename=\"" . basename($file) . "\"");
     	header('Content-Transfer-Encoding: binary');
     	ob_clean();
     	flush();
