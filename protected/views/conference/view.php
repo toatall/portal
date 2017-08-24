@@ -33,6 +33,13 @@
 	<?php echo CHtml::encode($model->members_people); ?>
 	<br />
 	
+	<?php if ($model->type_conference == Conference::TYPE_VKS_UFNS): ?>
+	<b><?php echo CHtml::encode($model->getAttributeLabel('members_organization')); ?>:</b>
+	<?php echo CHtml::encode($model->members_organization); ?>
+	<br />
+	<?php endif; ?>
+	
+	
 	<b><?php echo CHtml::encode($model->getAttributeLabel('note')); ?>:</b>
 	<?php echo CHtml::encode($model->note); ?>
 	<br />
