@@ -255,5 +255,14 @@ class DepartmentCard extends CActiveRecord
 	}
 	
 	
+	public function getUser_photo_check()
+	{
+	    if (is_file(Yii::app()->params['siteRoot'] . $this->user_photo) && file_exists(Yii::app()->params['siteRoot'] . $this->user_photo))
+	    {
+	       return $this->user_photo;
+	    }
+	    return '/images/default-user.png';
+	}
+	
 	
 }

@@ -193,7 +193,7 @@ class DepartmentController extends Controller
 		foreach ($modelCard as $card)
 		{
 			$arrayCard[$card->user_level][] = [
-				'user_photo' => $card->user_photo,
+				'user_photo' => $card->user_photo_check,
 				'user_fio' => $card->user_fio,
 				'user_rank' => $card->user_rank,
 				'user_position' => $card->user_position,

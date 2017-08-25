@@ -21,7 +21,7 @@ $this->breadcrumbs=array(
 				<div style="height: 300px;">
 					<img src="<?= $struct['user_photo'] ?>" class="thumbnail" style="max-height:300px; margin: 0 auto;" />
 				</div>
-				<div class="caption text-centered" style="height: 300px; overflow: auto;">
+				<div class="caption text-centered" style="height: 300px; margin-top:10px; overflow: auto;">
 					<h4><?= $struct['user_fio'] ?></h4>
 					<p><?= $struct['user_position'] ?></p>
 					<p><?= $struct['user_rank'] ?></p>
