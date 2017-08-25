@@ -15,6 +15,14 @@
 	$url = Yii::app()->getController()->createUrl('news/view',array( 
 		'id'=>$data->id, 'organization'=>$data->id_organization));	
 ?>
+<style type="text/css">
+<!--
+blockquote p {
+    font-size: inherit;
+}
+-->
+</style>
+
 
 <div class="row">
     <div class="span12 thumbnail">
