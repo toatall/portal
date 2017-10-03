@@ -12,6 +12,7 @@
  * @property string $date_create
  * @property int $count_download
  * @property string $id_organization
+ * @property string $full_filename
  * 
  * @property string urlFile
  */
@@ -38,7 +39,8 @@ class File extends CActiveRecord
 			array('file_name', 'length', 'max'=>250),
 			array('model', 'length', 'max'=>50),
 		    array('id_organization', 'length', 'max'=>5),
-			array('id, count_download, id_organization', 'unsafe'),
+		    array('full_filename', 'length', 'max'=>500),
+			array('id, count_download, id_organization, full_filename', 'unsafe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, id_model, file_name, file_size, model, date_create', 'safe', 'on'=>'search'),
@@ -70,6 +72,7 @@ class File extends CActiveRecord
 			'date_create' => 'Date Create',
 			'count_download' => 'Count Download',
 		    'id_organization' => 'Organization code',
+		    'full_filename' => 'Full filename path',
 		);
 	}
 

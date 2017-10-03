@@ -102,6 +102,7 @@ class FileHelper extends CComponent
 	                           'file_name'=>$file->name,
 	                           'file_size'=>$file->size,
 	                           'date_create'=>new CDbExpression('getdate()'),
+	                           'id_organization'=>Yii::app()->session['organization'],
 	                       )))
 	                    {
 	                        $resultArray[] = 'Ошибка записи файла "' . $file->name . '" в БД!';	                            

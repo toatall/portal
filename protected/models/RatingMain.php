@@ -37,7 +37,7 @@ class RatingMain extends CActiveRecord
 		return array(
 			array('id_tree, name', 'required'),
 			array('id_tree', 'numerical', 'integerOnly'=>true),
-			array('name', 'length', 'max'=>200),			
+			array('name', 'length', 'max'=>200),
 			array('order_asc, note', 'safe'),
 			array('id_tree, date_create, log_change, author', 'unsafe'),
 			// The following rule is used by search().			
