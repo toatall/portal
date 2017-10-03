@@ -56,7 +56,7 @@ class Telephone extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-            'org' => array(self::BELONGS_TO, 'Organization', 'id_organization'),
+            'org' => array(self::BELONGS_TO, 'Organization', 'id_organization'),		    
 		);
 	}
 
@@ -224,6 +224,20 @@ class Telephone extends CActiveRecord
     		return false;
     	readfile($file);
     	Yii::app()->end();
+    }
+    
+    
+    
+    public function getAccessOrganization()
+    {
+        if (Yii::app()->user->admin)
+        {
+            
+        }
+        else
+        {
+            
+        }
     }
     
     

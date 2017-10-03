@@ -2,7 +2,7 @@
 $this->breadcrumbs=array(
 	'Структура сайта'=>array('admin'),
 	$model->name=>array('view','id'=>$model->id),
-	'Доступ',
+	'Права доступа на организации',
 );
 
 $this->menu=array(	
@@ -12,8 +12,12 @@ $this->menu=array(
 ?>
 
 
-<h1>Дополнительные права</h1>
+<h1>Права доступа на организации</h1>
 <div class="well" style="background-color: white;">
+
+
+
+
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 	'id'=>'user-form',
 	'enableAjaxValidation'=>false,
@@ -25,22 +29,22 @@ $this->menu=array(
 
 <?php 
     $this->widget('bootstrap.widgets.TbTabs', array(
-    'type'=>'tabs',
-    'placement'=>'top',
-    'tabs'=>array(
-        array(
-            'label'=>Yii::t('main', 'Группы'), 
-            'content'=>$this->renderPartial(
-                '../telephone/_accessGroup', 
-                array('model'=>$model), true), 
-        'active'=>true
-        ),
-        array(
-            'label'=>Yii::t('main', 'Пользователи'),
-            'content'=>$this->renderPartial(
-                '../telephone/_accessUser', 
-                array('model'=>$model), true),
-        ))
+        'type'=>'tabs',
+        'placement'=>'top',
+        'tabs'=>array(
+            array(
+                'label'=>'Группы', 
+                'content'=>$this->renderPartial(
+                    '../telephone/_accessGroup', 
+                    array('model'=>$model), true), 
+            'active'=>true
+            ),
+            array(
+                'label'=>'Пользователи',
+                'content'=>$this->renderPartial(
+                    '../telephone/_accessUser', 
+                    array('model'=>$model), true),
+            ))
     ));
 ?>
     

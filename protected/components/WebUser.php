@@ -80,7 +80,7 @@ class WebUser extends CWebUser
 	
 	/**
 	 * Сохранение информации об аутентификации пользователя (вход и выход)
-	 * @param unknown $operation
+	 * @param string $operation
 	 */
 	private function saveLogOpertaion($operation)
 	{
@@ -98,6 +98,18 @@ class WebUser extends CWebUser
 				'date_create'=>new CDbExpression('getdate()'),
 			));
 		$this->setState('lastLoginId', Yii::app()->db->getLastInsertID());
+	}
+	
+	
+	/**
+	 * Получить список доступных текущему пользователю групп
+	 * @return number|array
+	 */
+	public function getUserGroupsId()
+	{
+	    if (Yii::app()->user->isGuest)
+	        return 0;
+	    return CHtml::listData(Group::model()->with('groupUsers')->findAll('groupUsers.id=:id_user', [':id_user'=>Yii::app()->user->id]), 'id', 'id');
 	}
 		
 	

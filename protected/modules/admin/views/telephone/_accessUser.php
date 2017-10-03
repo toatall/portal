@@ -1,8 +1,8 @@
 <?php
     
     echo CHtml::dropDownList('Tree[AccessUser]', '', 
-        CHtml::listData(Access::model()->with('user')->findAll(array(            
-            'condition'=>'t.id_tree=:id_tree AND t.is_group=0',
+        CHtml::listData(AccessUser::model()->with('user')->findAll(array(            
+            'condition'=>'t.id_tree=:id_tree',
             'params'=>array(':id_tree'=>$model->id),
             'order'=>'[user].username_windows',
         )),'user.id','user.concatened'),

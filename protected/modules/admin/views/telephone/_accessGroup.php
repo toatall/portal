@@ -1,8 +1,13 @@
 <?php
     
+    /**
+     * Список групп для предоставления доступа к организациям
+     * 
+     */
+
     echo CHtml::dropDownList('Tree[AccessGroup]', '', 
-        CHtml::listData(Access::model()->with('group')->findAll(array(            
-            'condition'=>'t.id_tree=:id_tree AND t.is_group=1',
+        CHtml::listData(AccessGroup::model()->with('group')->findAll(array(
+            'condition'=>'t.id_tree=:id_tree',
             'params'=>array(':id_tree'=>$model->id),
             'order'=>'[group].[name]',
         )),'group.id','group.name'),
