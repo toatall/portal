@@ -31,22 +31,73 @@ class AccessController extends AdminController
 			),			            
 		);
 	}
+	
+	
+	/**
+	 * Список групп для указанного объекта доступа
+	 * @param string $model_name
+	 * @param int $model_id
+	 * @param string $id_organization
+	 * 
+	 * @version 03.10.2017
+	 */
+	public function actionAccessObjectGroup($model_name, $model_id, $id_organization)
+	{
+	    if (!$this->checkAccessCurrentUser($model_name, $model_id, $id_organization))
+	        throw new CHttpException(403,'Доступ запрещен.');
+	    
+	    $model = Access::model()->with('groups')->findAll('t.access_mode=:access_mode and t.model_name=:model_name 
+            and t.model_id=:model_id and t.id_organization=:id_organization',
+	        array(
+	            ':access_mode'=>'group',
+    	        ':model_name'=>$model_name,
+    	        ':model_id'=>$model_id,
+    	        ':id_organization'=>$id_organization,
+	    ));
+	    
+	    $this->renderPartial('groups', array(
+	        'model'=>$model,	        
+	    ));
+	    
+	}
 
 	
 	
 	public function actionGetAccessGroupOrganization($group_id, $model_name, $model_id)
 	{
-	    // 1 имеет ли доступ текущий пользователь к этому разделу?
+	    if (!$this->checkAccessCurrentUser($model_name, $model_id, $id_organization))
+	        throw new CHttpException(403,'Доступ запрещен.');
 	    
 	    // 2 вернуть список организаций 
+	    $this->renderPartial('listOrganization');
 	}
          
     
 	public function actionSetAccessGroupOrganization($group_id, $model_name, $model_id, $id_organization, $check)
 	{
-	    // 1 имеет ли доступ текущи..
+	    if (!$this->checkAccessCurrentUser($model_name, $model_id, $id_organization))
+	        throw new CHttpException(403,'Доступ запрещен.');
 	    
 	    // изменить данные о 
+	}
+	
+	
+	/**
+	 * Проверка доступа пользователю для доступа к данным о доступе! :)
+	 * @param string $model_name
+	 * @param int $model_id
+	 * @param string $id_organization
+	 * @return boolean
+	 */
+	private function checkAccessCurrentUser($model_name, $model_id, $id_organization)
+	{
+	    if (Yii::app()->user->isGuest)
+	        return false;
+	    
+	    if (Yii::app()->user->admin)
+	        return true;
+	    
+	    return Access::model()->findAccessObjectCurrentUserGroup($model_name, $model_id, $id_organization);
 	}
     
 }

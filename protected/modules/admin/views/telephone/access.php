@@ -53,9 +53,16 @@ $this->menu=array(
     <div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.TbButton', array(
 			'buttonType'=>'link',
-            'url'=>array('admin'),
+            'url'=>array('update', 'id'=>$model->id),
 			'type'=>'primary',
 			'label'=>'Назад',
+		)); ?>
+		
+		<?php $this->widget('bootstrap.widgets.TbButton', array(
+			'buttonType'=>'link',
+            'url'=>array('view', 'id'=>$model->id),
+			'type'=>'primary',
+			'label'=>'Готово',
 		)); ?>
 	</div>
     

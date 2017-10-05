@@ -55,6 +55,7 @@ class Access extends CActiveRecord
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
+            'groups'=>array(self::BELONGS_TO, 'Group', 'access_identity', 'condition'=>'access_mode=\'group\''),
         );
     }
     
@@ -249,15 +250,83 @@ class Access extends CActiveRecord
 		 **/
 		public static function saveRelationsPermissions($tree_id, $model, $groups, $users)
 		{
-						
-			$command = Yii::app()->db->createCommand();
 			
-			$command->delete('{{access_user}}', 'id_tree=:id and id_organization=:id_organization', 
-					array(':id'=>$tree_id, ':id_organization'=>Yii::app()->session['organization']));
-			$command->delete('{{access_group}}', 'id_tree=:id and id_organization=:id_organization', 
-					array(':id'=>$tree_id, ':id_organization'=>Yii::app()->session['organization']));
-		
-		
+		    $command = Yii::app()->db->createCommand();
+		    
+			// 1 выбрать тех пользователей и группы, которые уже есть		
+			$idsExistsGroup = $idExistsUser = array();
+			
+			$resultGroup = $command
+                ->from('{{access_group}}')
+                ->where('id_tree=:id_tree', [':id_tree'=>$tree_id])
+                ->andWhere('id_organization=:id_organization', [':id_organization'=>Yii::app()->session['organization']])
+                ->andWhere(['in', 'id_group', $groups])
+                ->queryAll();
+			
+			foreach ($resultGroup as $group)
+			{
+			    $idsExistsGroup[$group['id_group']] = $group['id_group'];
+			}
+			
+			$command->reset();
+			
+			$resultUser = $command    			
+    			->from('{{access_user}}')
+    			->where('id_tree=:id_tree', [':id_tree'=>$tree_id])
+    			->andWhere('id_organization=:id_organization', [':id_organization'=>Yii::app()->session['organization']])
+			    ->andWhere(['in', 'id_user', $users])
+			    ->queryAll();
+			    
+		    foreach ($resultUser as $u)
+		    {
+		        $idsExistsUser[$u['id_user']] = $u['id_user'];
+		    }				
+			
+		    		    
+			// 2 удалить тех пользователей и группы, которые отсутсвуют в списке модели п.1
+			
+			
+			$command->reset();
+			if (count($users))
+			{
+			    $command->text = "delete from {{access_user}} where id_tree=:id_tree1 and id_organization=:id_organization1 and 
+                    id not in (select id from {{access_user}} where id_tree=:id_tree2 and id_organization=:id_organization2 and id_user in (" .
+                    implode(',', $users) . "))";
+                $command->bindValue(':id_tree1', $tree_id);
+                $command->bindValue(':id_organization1', Yii::app()->session['organization']);
+                $command->bindValue(':id_tree2', $tree_id);
+                $command->bindValue(':id_organization2', Yii::app()->session['organization']);
+			}
+			else
+			{
+			    $command->text = "delete from {{access_user}} where id_tree=:id_tree and id_organization=:id_organization";
+			    $command->bindValue(':id_tree', $tree_id);
+			    $command->bindValue(':id_organization', Yii::app()->session['organization']);
+			}					
+			$command->execute();
+			
+			$command->reset();
+			if (count($groups))
+			{
+			    $command->text = "delete from {{access_group}} where id_tree=:id_tree1 and id_organization=:id_organization1 and
+                    id not in (select id from {{access_group}} where id_tree=:id_tree2 and id_organization=:id_organization2 and id_group in (" .
+                    implode(',', $groups) . "))";
+                    $command->bindValue(':id_tree1', $tree_id);
+                    $command->bindValue(':id_organization1', Yii::app()->session['organization']);
+                    $command->bindValue(':id_tree2', $tree_id);
+                    $command->bindValue(':id_organization2', Yii::app()->session['organization']);
+			}
+			else
+			{
+			    $command->text = "delete from {{access_group}} where id_tree=:id_tree and id_organization=:id_organization";
+			    $command->bindValue(':id_tree', $tree_id);
+			    $command->bindValue(':id_organization', Yii::app()->session['organization']);
+			}
+			$command->execute();
+			
+			// 3 добавить тех пользователей, которые отсутсвуют в списке модели п.1
+			
+			
 			// если установлена галочка "Добавить разрешения, наследуемые от родительских групп и пользователей"
 			if ($model->useParentRight)
 			{
@@ -265,16 +334,18 @@ class Access extends CActiveRecord
 		
 				// сохраняем пользователей
 				$command->reset();							
-				$command->text = "INSERT INTO {{access_user}} (id_user,id_tree,id_organization,date_create)
-							SELECT id_user,$tree_id,id_organization,getdate() FROM {{access_user}}
-								WHERE id_tree=$model->id_parent";
+				$command->text = "insert into {{access_user}} (id_user,id_tree,id_organization,date_create)
+							select id_user,$tree_id,id_organization,getdate() from {{access_user}}
+								where id_tree=$model->id_parent" . (count($idExistsUser)>0 ? ' and id not in (' 
+								    . impode(',', $idExistsUser) . ')' : '');
 				$command->execute();
 		
 				// сохраняем группы
 				$command->reset();
-				$command->text = "INSERT INTO {{access_group}} (id_group,id_tree,id_organization,date_create)
-							SELECT id_group,$tree_id,id_organization,getdate() FROM {{access_group}}
-								WHERE id_tree=$model->id_parent";
+				$command->text = "insert into {{access_group}} (id_group,id_tree,id_organization,date_create)
+							select id_group,$tree_id,id_organization,getdate() from {{access_group}}
+								where id_tree=$model->id_parent" . ((count($idsExistsGroup)>0 ? ' and id not in (' 
+								    . impode(',', $idExistsGroup) . ')' : ''));
 				$command->execute();
 		
 			}
@@ -285,9 +356,12 @@ class Access extends CActiveRecord
 				{
 					foreach ($groups as $value)
 					{
+					    if (isset($idsExistsGroup[$value]))
+					        continue;
+					    
 						if (is_numeric($tree_id) && is_numeric($value))
 						{
-							$command->reset();
+							$command->reset();							
 							$command->insert('{{access_group}}', array(
 								'id_group'=>$value,
 								'id_tree'=>$tree_id,
@@ -303,6 +377,9 @@ class Access extends CActiveRecord
 				{
 					foreach ($users as $value)
 					{
+					    if (isset($idExistsUser[$value]))
+					        continue;
+					    
 						if (is_numeric($tree_id) && is_numeric($value))
 						{
 							$command->reset();
