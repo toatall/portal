@@ -158,7 +158,11 @@ class TreeController extends AdminController
                     if (@class_exists($model->module))
                     {
                         $dopAccessModel = new $model->module;
-                        if ($dopAccessModel->hasProperty('useOptionalAccess') && $dopAccessModel->useOptionalAccess) $flagDopAccessModel=true;
+                        if ($dopAccessModel->hasProperty('useOptionalAccess') && $dopAccessModel->useOptionalAccess) 
+                            $flagDopAccessModel = true;
+                        if (property_exists($model->module, 'useOptionalAccess'))
+                            $flagDopAccessModel = true;
+                        
                     }                    
                 }
                 
@@ -180,6 +184,13 @@ class TreeController extends AdminController
 	}
     
     
+	/**
+	 * Действие для дополнительных настроек прав доступа,
+	 * например, для определенного списка инспекций
+	 * @param int $id
+	 * @throws CHttpException
+	 * @author oleg
+	 */
     public function actionAccess($id)
     {
         if (!Yii::app()->user->admin)
@@ -201,10 +212,10 @@ class TreeController extends AdminController
         
         if ($flagAccess)
         {
-            $this->render('../'.$model->module.'/access',
-            	array(
-            		'model'=>$model,            			
-            	));
+            $this->render('../'.$model->module.'/access', array(
+        		'model'=>$model,
+                'module'=>$moduleClass,
+            ));
         }
        	}
         else

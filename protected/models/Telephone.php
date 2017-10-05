@@ -5,7 +5,8 @@
  *
  * The followings are the available columns in table '{{telephone}}':
  * @property integer $id
- * @property string $ifns_code
+ * @property integer $id_tree
+ * @property string $id_organization
  * @property string $telephone_file
  * @property string $author
  * @property string $dop_text
@@ -56,7 +57,7 @@ class Telephone extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-            'org' => array(self::BELONGS_TO, 'Organization', 'id_organization'),
+            'org' => array(self::BELONGS_TO, 'Organization', 'id_organization'),		    
 		);
 	}
 
@@ -123,8 +124,123 @@ class Telephone extends CActiveRecord
 			),
 		));
 	}
+	
+	
+	/**
+	 * Поиск для адмнистративной зоны
+	 * @param int $idTree
+	 * @return CActiveDataProvider
+	 */
+	public function searchAdmin()
+	{
+	    $criteria=new CDbCriteria;
+	    $criteria->with = array('org');
+	    $criteria->compare('t.id',$this->id);
+        $criteria->compare('t.id_tree',$this->id_tree);
+		$criteria->compare('t.telephone_file',$this->telephone_file,true);
+		$criteria->compare('t.author',$this->author,true);
+		$criteria->compare('t.dop_text',$this->dop_text,true);
+		$criteria->compare('t.date_create',$this->date_create,true);
+		$criteria->compare('t.log_change',$this->log_change,true);
+		if (!Yii::app()->user->admin)
+		{
+		    $criteria->addInCondition('id_organization', 
+		        CHtml::listData($this->accessOrganization($this->id_tree), 'code', 'code'));   
+		}
+        
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+			'sort'=>array('defaultOrder'=>'org.code asc'),
+			'pagination' => array(
+				'pageSize' => 20,
+			),
+		));
+	}
     
-       
+    
+	/**
+	 * Получение списка организаций согласно правам текущего пользователя
+	 * Для размещения телефонных справочников
+	 * 
+	 * @return array
+	 * @author oleg
+	 * @version 05.10.2017
+	 */
+	private function accessOrganization($idTree)
+	{
+	    if (Yii::app()->user->admin)
+	        return;
+	    
+	    $query = Yii::app()->db->createCommand();
+	    $query->text = "
+            select distinct p.code, p.name from
+            (
+            	select t.id_organization from p_access_organization_group t
+            		join p_access_group access_group on t.id_access_group=access_group.id
+            		join p_group_user group_user on group_user.id_group=access_group.id_group
+            	where access_group.id_tree=:id_tree1 and access_group.id_organization=:id_organization1
+            		and group_user.id_user=:id_user1
+            	union 
+                select t.id_organization from p_access_organization_user t
+            		join p_access_user access_user on t.id_access_user=access_user.id	
+            	where access_user.id_tree=:id_tree2 and access_user.id_organization=:id_organization2
+            		and access_user.id_user=:id_user2
+            ) as x
+            join p_organization p on x.id_organization=p.code";
+	    
+	    $query->bindValue(':id_tree1', $idTree);
+	    $query->bindValue(':id_tree2', $idTree);
+	    $query->bindValue(':id_organization1', Yii::app()->session['organization']);
+	    $query->bindValue(':id_organization2', Yii::app()->session['organization']);
+	    $query->bindValue(':id_user1', Yii::app()->user->id);
+	    $query->bindValue(':id_user2', Yii::app()->user->id);	   
+	    
+	    return $query->queryAll();
+	}
+	
+	
+	/**
+	 * Проверка наличия прав у пользователя на доступ к указанной орагнизации
+	 * @param string $organization
+	 * @return boolean
+	 */
+	public function checkAccessOrganization()
+	{
+	    if (Yii::app()->user->admin)
+	        return true;
+	    
+	    $query = Yii::app()->db->createCommand();
+	    $query->text = "
+            select distinct x.id_organization from
+            (
+            	select t.id_organization from p_access_organization_group t
+            		join p_access_group access_group on t.id_access_group=access_group.id
+            		join p_group_user group_user on group_user.id_group=access_group.id_group
+            	where access_group.id_tree=:id_tree1 and access_group.id_organization=:id_organization1
+            		and group_user.id_user=:id_user1 and t.id_organization=:id_organization_find1
+            	union select t.id_organization from p_access_organization_user t
+            		join p_access_user access_user on t.id_access_user=access_user.id
+            	where access_user.id_tree=:id_tree2 and access_user.id_organization=:id_organization2
+            		and access_user.id_user=:id_user2 and t.id_organization=:id_organization_find2
+            ) as x
+            ";
+	    $query->bindValue(':id_tree1', $this->id_tree);
+	    $query->bindValue(':id_tree2', $this->id_tree);
+	    $query->bindValue(':id_organization1', Yii::app()->session['organization']);
+	    $query->bindValue(':id_organization2', Yii::app()->session['organization']);
+	    $query->bindValue(':id_user1', Yii::app()->user->id);
+	    $query->bindValue(':id_user2', Yii::app()->user->id);
+	    $query->bindValue(':id_organization_find1', $this->id_organization);
+	    $query->bindValue(':id_organization_find2', $this->id_organization);
+	    
+	    $result = $query->queryScalar();
+	    
+	    if ($result>0)
+	        return true;
+	           else return false;
+	    
+	}
+	
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -141,7 +257,12 @@ class Telephone extends CActiveRecord
 	// @todo Нужно ли проверять организации?
     public function listOrganizations($idTree)
     {
-        return Organization::model()->findAll();
+        if (Yii::app()->user->admin)
+        {
+            return Organization::model()->findAll();
+        }
+        
+        return $this->accessOrganization($idTree);
         
         /*if (Yii::app()->user->admin)
         {
@@ -224,6 +345,20 @@ class Telephone extends CActiveRecord
     		return false;
     	readfile($file);
     	Yii::app()->end();
+    }
+    
+    
+    
+    public function getAccessOrganization()
+    {
+        if (Yii::app()->user->admin)
+        {
+            
+        }
+        else
+        {
+            
+        }
     }
     
     
