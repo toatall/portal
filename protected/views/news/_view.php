@@ -20,8 +20,8 @@
     if (count($model->files)): 
 ?>
 <div class="spoiler-wrap">
-    <div class="spoiler-head folded clickable"><i class="icon-file"></i> Файлы</div>
-    <div class="spoiler-body">
+    <div class="spoiler-head folded clickable unfolded"><i class="icon-file"></i> Файлы</div>
+    <div class="spoiler-body" style="display: block;">
     <?php 
         foreach ($model->files as $file):
     ?>
@@ -65,8 +65,8 @@
             
 ?>
 <div class="spoiler-wrap">
-    <div class="spoiler-head folded clickable"><i class="icon-picture"></i> Изображения</div>
-    <div class="spoiler-body">
+    <div class="spoiler-head folded clickable unfolded"><i class="icon-picture"></i> Изображения</div>
+    <div class="spoiler-body" style="display: block;">
     <?php 
         foreach ($model->images as $image):
     ?>

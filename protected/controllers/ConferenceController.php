@@ -38,6 +38,7 @@ class ConferenceController extends Controller
 		if(isset($_GET['Conference']))
 			$model->attributes=$_GET['Conference'];
 		$model->type_conference = $typeConference;
+		$model->backendSide = false;
 		return $model;
 	}
 	

@@ -52,6 +52,8 @@ class Conference extends CActiveRecord
 	public $_tempTimeStart;
 	
 	
+	public $backendSide = true;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -175,12 +177,19 @@ class Conference extends CActiveRecord
 		$criteria->compare('duration',$this->duration,true);
 		$criteria->compare('is_confidential',$this->is_confidential);
 		$criteria->compare('date_create',$this->date_create,true);
-		$criteria->compare('date_edit',$this->date_edit,true);
-		$criteria->compare('date_delete',$this->date_delete,true);
+		$criteria->compare('date_edit',$this->date_edit,true);		
 		$criteria->compare('time_start_msk',$this->time_start_msk);
 		$criteria->compare('place',$this->place,true);
 		$criteria->compare('note',$this->place,true);
 		
+		if ($this->backendSide)
+		{
+		    $criteria->compare('date_delete',$this->date_delete,true);
+		}
+		else
+		{
+		    $criteria->addCondition('date_delete is null');
+		}
 		//$criteria->order = 'convert(varchar,date_start,112) desc, convert(varchar,date_start,108) asc';
 		
 		return new CActiveDataProvider($this, array(

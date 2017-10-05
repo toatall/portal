@@ -1,9 +1,12 @@
 <?php
     
     echo CHtml::dropDownList('Tree[AccessUser]', '', 
-        CHtml::listData(Access::model()->with('user')->findAll(array(            
-            'condition'=>'t.id_tree=:id_tree AND t.is_group=0',
-            'params'=>array(':id_tree'=>$model->id),
+        CHtml::listData(AccessUser::model()->with('user')->findAll(array(            
+            'condition'=>'t.id_tree=:id_tree and t.id_organization=:id_organization',
+            'params'=>array(
+                ':id_tree'=>$model->id,
+                ':id_organization'=>Yii::app()->session['organization'],                
+            ),
             'order'=>'[user].username_windows',
         )),'user.id','user.concatened'),
         array(

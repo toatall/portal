@@ -11,6 +11,8 @@
  * @property integer $file_size
  * @property string $date_create
  * @property int $count_download
+ * @property string $id_organization
+ * @property string $full_filename
  * 
  * @property string urlFile
  */
@@ -36,7 +38,9 @@ class File extends CActiveRecord
 			array('id_model, file_size, count_download', 'numerical', 'integerOnly'=>true),
 			array('file_name', 'length', 'max'=>250),
 			array('model', 'length', 'max'=>50),
-			array('id, count_download', 'unsafe'),
+		    array('id_organization', 'length', 'max'=>5),
+		    array('full_filename', 'length', 'max'=>500),
+			array('id, count_download, id_organization, full_filename', 'unsafe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, id_model, file_name, file_size, model, date_create', 'safe', 'on'=>'search'),
@@ -67,6 +71,8 @@ class File extends CActiveRecord
 			'file_size' => 'File Size',			
 			'date_create' => 'Date Create',
 			'count_download' => 'Count Download',
+		    'id_organization' => 'Organization code',
+		    'full_filename' => 'Full filename path',
 		);
 	}
 
@@ -129,7 +135,7 @@ class File extends CActiveRecord
 	public function deleteFile()
 	{
 		$path = Yii::app()->params['pathDocumets'];
-		$path = str_replace('{code_no}', Yii::app()->session['organization'], $path);
+		$path = str_replace('{code_no}', $this->id_organization, $path);
 		$path = str_replace('{module}', $this->model, $path);
 		$path = str_replace('{id}', $this->id_model, $path);
 		$filePath = $_SERVER['DOCUMENT_ROOT'] . $path . iconv('UTF-8', 'windows-1251', $this->file_name);
@@ -157,7 +163,7 @@ class File extends CActiveRecord
 	public function getUrlFile()
 	{
 		$url = Yii::app()->params['pathDocumets'];
-		$url = str_replace('{code_no}', Yii::app()->session['organization'], $url);
+		$url = str_replace('{code_no}', $this->id_organization, $url);
 		$url = str_replace('{module}', $this->model, $url);
 		$url = str_replace('{id}', $this->id_model, $url);
 		return $url . $this->file_name;

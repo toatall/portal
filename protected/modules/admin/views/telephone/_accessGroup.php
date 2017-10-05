@@ -1,9 +1,17 @@
 <?php
     
+    /**
+     * Список групп для предоставления доступа к организациям
+     * 
+     */
+
     echo CHtml::dropDownList('Tree[AccessGroup]', '', 
-        CHtml::listData(Access::model()->with('group')->findAll(array(            
-            'condition'=>'t.id_tree=:id_tree AND t.is_group=1',
-            'params'=>array(':id_tree'=>$model->id),
+        CHtml::listData(AccessGroup::model()->with('group')->findAll(array(
+            'condition'=>'t.id_tree=:id_tree and t.id_organization=:id_organization',
+            'params'=>array(
+                ':id_tree'=>$model->id,
+                ':id_organization'=>Yii::app()->session['organization'],
+            ),
             'order'=>'[group].[name]',
         )),'group.id','group.name'),
         array(

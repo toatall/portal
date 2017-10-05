@@ -170,6 +170,7 @@ class TelephoneController extends AdminController
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Telephone']))
 			$model->attributes=$_GET['Telephone'];
+		$model->id_tree = $idTree;
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -198,14 +199,24 @@ class TelephoneController extends AdminController
         
 		if($model===null)
 			throw new CHttpException(404,'Страница не найдена.');
+		
+        if(!$model->checkAccessOrganization())
+            throw new CHttpException(403,'Доступ запрещен.');
+        
 		return $model;
 	}
     
-    
+    /**
+     * Получение checkBoxList со списком групп или пользователей 
+     * (которые подключены к текущей ветке Tree)
+     * @param int $id
+     * @param int $identity
+     * @param bool $is_group
+     */
     public function actionAjaxTreeAccess($id, $identity, $is_group)
     {
-        if (!Yii::app()->request->isAjaxRequest
-            || !isset($id) || !isset($identity) || !isset($is_group) || !Yii::app()->user->admin) return;            
+        if (/*!Yii::app()->request->isAjaxRequest
+            || */!isset($id) || !isset($identity) || !isset($is_group) || !Yii::app()->user->admin) return;            
                 
         
         $record = ($is_group) ? Group::model()->findByPk($identity)
@@ -214,19 +225,40 @@ class TelephoneController extends AdminController
         
         $postfix = ($is_group) ? 'Group' : 'User';
         
-        echo CHtml::checkBoxList('Tree[OptionalAccess]['.$postfix.'][]', 
-            CHtml::listData(Yii::app()->db->createCommand()
-                ->select('*')
-                ->from('{{access_telephone}}')
-                ->where('id_identity=:id_identity AND id_tree=:id_tree AND is_group=:is_group',
-                    array(':id_identity'=>$identity, ':is_group'=>$is_group, ':id_tree'=>$id))
-                ->queryAll()
-            ,'id','id_organization'),
-            CHtml::listData(Organization::model()->findAll(),'code','name'),
-        array(
-            'separator'=>'',
-            'template'=>'<label class="checkbox">{input} {label}</label>',            
-        ));
+        if ($is_group)
+        {
+            echo CHtml::checkBoxList('Tree[OptionalAccess]['.$postfix.'][]', 
+                CHtml::listData(Yii::app()->db->createCommand()
+                    ->select('t.*')
+                    ->from('{{access_organization_group}} t')
+                    ->join('{{access_group}} a', 'a.id = t.id_access_group')
+                    ->where('a.id_group=:id_group AND a.id_tree=:id_tree',
+                        array(':id_group'=>$identity, ':id_tree'=>$id))
+                    ->queryAll()
+                ,'id','id_organization'),
+                CHtml::listData(Organization::model()->findAll(),'code','name'),
+            array(
+                'separator'=>'',
+                'template'=>'<label class="checkbox">{input} {label}</label>',            
+            ));
+        }
+        else
+        {
+            echo CHtml::checkBoxList('Tree[OptionalAccess]['.$postfix.'][]', 
+                CHtml::listData(Yii::app()->db->createCommand()
+                    ->select('t.*')
+                    ->from('{{access_organization_user}} t')
+                    ->join('{{access_user}} a', 'a.id = t.id_access_user')
+                    ->where('a.id_user=:id_identity AND a.id_tree=:id_tree',
+                        array(':id_identity'=>$identity, ':id_tree'=>$id))
+                    ->queryAll()
+                ,'id','id_organization'),
+                CHtml::listData(Organization::model()->findAll(),'code','name'),
+            array(
+                'separator'=>'',
+                'template'=>'<label class="checkbox">{input} {label}</label>',            
+            ));
+        }
         
         echo '<script type="text/javascript">
                 $(function() {
@@ -244,6 +276,9 @@ class TelephoneController extends AdminController
         
     }
     
+    
+    
+    // разделить на 2 части приватные и отсюда управлять
     public function actionAjaxUpdateTreeAccess()
     {
         
@@ -252,7 +287,7 @@ class TelephoneController extends AdminController
             || !isset($_POST['is_group']) || !isset($_POST['identity']) 
             || !is_numeric($_POST['id']) || !is_numeric($_POST['org']) 
             || !is_numeric($_POST['check']) || !is_numeric($_POST['is_group'])
-            || !is_numeric($_POST['identity']) || !Yii::app()->user->admin) return;
+            || !is_numeric($_POST['identity']) || !Yii::app()->user->admin) return 'not isset';
         
         $identity = $_POST['is_group'] ? Group::model()->findByPk($_POST['identity'])
             : User::model()->findByPk($_POST['identity']);
@@ -260,30 +295,78 @@ class TelephoneController extends AdminController
         if (Organization::model()->exists('code=:code', array(':code'=>$_POST['org'])) && 
             Tree::model()->exists('id=:id', array(':id'=>$_POST['id'])) && $identity!==null) 
         {
-            if ($_POST['check'])
+            
+            if ($_POST['is_group'])
             {
-                Yii::app()->db->createCommand()->insert('{{access_telephone}}', array(
-                    'id_tree'=>$_POST['id'],
-                    'id_identity'=>$_POST['identity'],
-                    'id_organization'=>$_POST['org'],
-                    'is_group'=>$_POST['is_group'],  
-                	'date_create' => new CDbExpression('getdate()'),
+                $modelAccess = AccessGroup::model()->find('id_tree=:id_tree and id_group=:id_group and id_organization=:id_organization', array(
+                    ':id_tree'=>$_POST['id'],
+                    ':id_group'=>$_POST['identity'],
+                    ':id_organization'=>Yii::app()->session['organization'],
                 ));
             }
+            else 
+            {
+                $modelAccess = AccessUser::model()->find('id_tree=:id_tree and id_user=:id_user and id_organization=:id_organization', array(
+                    ':id_tree'=>$_POST['id'],
+                    ':id_user'=>$_POST['identity'],
+                    ':id_organization'=>Yii::app()->session['organization'],
+                ));
+            }
+            
+            if ($modelAccess===null)
+                echo 'modelAccess is null';
+            
+            // если установили галочку...
+            if ($_POST['check'])
+            {
+                if ($_POST['is_group'])
+                {
+                    Yii::app()->db->createCommand()->insert('{{access_organization_group}}', array(                    
+                        'id_access_group'=>$modelAccess->id,                        
+                        'id_organization'=>$_POST['org'],
+                        'author' => Yii::app()->user->name,
+                        'date_create' => new CDbExpression('getdate()'),
+                    ));
+                }
+                else
+                {
+                    Yii::app()->db->createCommand()->insert('{{access_organization_user}}', array(                    
+                        'id_access_user'=>$modelAccess->id,                        
+                        'id_organization'=>$_POST['org'],                        
+                        'author' => Yii::app()->user->name,
+                        'date_create' => new CDbExpression('getdate()'),
+                    ));
+                }
+            }
+            // ...или убрали галочку
             else
             {
-                Yii::app()->db->createCommand()->delete('{{access_telephone}}', 
-                    'id_tree=:id_tree AND id_identity=:id_identity 
-                        AND id_organization=:id_organization AND is_group=:is_group',
-                    array(
-                        'id_tree'=>$_POST['id'],
-                        'id_identity'=>$_POST['identity'],
-                        'id_organization'=>$_POST['org'],
-                        'is_group'=>$_POST['is_group'],
-                    )
-                );
+                if ($_POST['is_group'])
+                {
+                    Yii::app()->db->createCommand()->delete('{{access_organization_group}}', 
+                        'id_access_group=:id_access_group AND id_organization=:id_organization',
+                        array(
+                            'id_access_group'=>$modelAccess->id,                            
+                            'id_organization'=>$_POST['org'],                            
+                        )
+                    );
+                }
+                else
+                {
+                    Yii::app()->db->createCommand()->delete('{{access_organization_user}}',
+                        'id_access_user=:id_access_user AND id_organization=:id_organization',
+                        array(
+                            'id_access_user'=>$modelAccess->id,                            
+                            'id_organization'=>$_POST['org'],                            
+                        )
+                        );
+                }
             }
-        }       
+        }
+        else
+        {
+            echo 'Not found organization or id tree';
+        }
     }
     
     

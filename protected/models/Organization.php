@@ -113,8 +113,8 @@ class Organization extends CActiveRecord
     protected function beforeSave()
     {        
         if ($this->isNewRecord)                   
-            $this->date_create = new CDbExpression('NOW()');                    
-        $this->date_edit = new CDbExpression('NOW()');
+            $this->date_create = new CDbExpression('getdate()');                    
+        $this->date_edit = new CDbExpression('getdate()');
         return parent::beforeSave();
     }
     

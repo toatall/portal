@@ -136,6 +136,11 @@ class SiteController extends Controller
     }          
        
    
+    /**
+     * Скачивание телефонного справочника 
+     * @param int $id
+     * @throws CHttpException
+     */
 	public function actionTelephoneDownload($id)
    	{
    		$model = Telephone::model()->findByPk($id);

@@ -50,7 +50,10 @@
         
     </div>
         
-    <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'groupUsersModal')); ?>
+    <?php $this->beginWidget('bootstrap.widgets.TbModal', array(
+        'id'=>'groupUsersModal',
+        'htmlOptions'=>array('style'=>'width:800px; margin-left:-400px;'),
+    )); ?>
     
     <div class="modal-header">
         <a class="close" data-dismiss="modal">&times;</a>
@@ -83,18 +86,25 @@
                 $('#<?php echo CHtml::activeId($model, 'groupUsers'); ?>').append('<option value="'+$val2+'">'+$val1+'</option>');
             });
         }
-        
-        function getListUsers()
-        {
-            $('#users_body').html('<img src="/images/loading.gif" /> Загрузка...');  
-            var ls = [];
+
+
+        function listUsers()
+		{
+        	var ls = [];
             $('#<?php echo CHtml::activeId($model, 'groupUsers'); ?>').children('option').each(function() {
                 ls.push($(this).val());                                      
             });
+            return ls;
+		}
+		
+        function getListUsers()
+        {
+            $('#users_body').html('<img src="/images/loading.gif" /> Загрузка...');  
+            
             $.ajax({
-                url: '<?php echo $this->createUrl('/admin/group/getListUsers/'); ?>',
+                url: '<?php echo $this->createUrl('/admin/tree/getListUser/'); ?>',
                 type: 'POST',
-                data: { users: ls }
+                data: { users: listUsers().toString() }
             })  
             .done(function(data) {
                 $('#users_body').html(data);

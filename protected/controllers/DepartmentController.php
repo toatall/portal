@@ -107,7 +107,7 @@ class DepartmentController extends Controller
 			
 			if (count($modelNews) == 1 && isset($modelNews[0]) && $modelNews[0] instanceof News)
 			{
-				$dirs = FileHelper::fileImageDirByNewsId($modelNews[0]->id);
+				$dirs = FileHelper::fileImageDirByNewsId($modelNews[0]->id, $modelNews[0]->id_organization);
 				$render['name'] = 'view';
 				$render['vars'] = array(
 					'model'=>$this->model,
@@ -193,7 +193,7 @@ class DepartmentController extends Controller
 		foreach ($modelCard as $card)
 		{
 			$arrayCard[$card->user_level][] = [
-				'user_photo' => $card->user_photo,
+				'user_photo' => $card->user_photo_check,
 				'user_fio' => $card->user_fio,
 				'user_rank' => $card->user_rank,
 				'user_position' => $card->user_position,

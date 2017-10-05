@@ -17,7 +17,7 @@ $this->breadcrumbs=array(
     	margin-left: 40px;
 	}
 	.thumb-rating {
-		height: 50px;
+		height: 100px;
 		overflow: auto;
 	}
 	.bold ul li a {

@@ -30,7 +30,7 @@ $('.search-form form').submit(function(){
 
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'telephone-grid',
-	'dataProvider'=>$model->search($idTree),
+	'dataProvider'=>$model->searchAdmin($idTree),
 	'filter'=>$model,
 	'columns'=>array(
 		'id',
