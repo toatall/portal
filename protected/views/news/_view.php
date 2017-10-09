@@ -1,4 +1,30 @@
 
+<?php 
+
+    // скрипты для просмотра изображений //
+    Yii::app()->clientScript->registerScriptFile(
+    Yii::app()->baseUrl.'/extension/fancybox/lib/jquery.mousewheel-3.0.6.pack.js');
+    Yii::app()->clientScript->registerScriptFile(
+        Yii::app()->baseUrl.'/extension/fancybox/jquery.fancybox.js?v=2.1.5');
+    Yii::app()->clientScript->registerScriptFile(
+        Yii::app()->baseUrl.'/extension/fancybox/helpers/jquery.fancybox-buttons.js?v=1.0.5');
+    Yii::app()->clientScript->registerScriptFile(
+        Yii::app()->baseUrl.'/extension/fancybox/helpers/jquery.fancybox-thumbs.js?v=1.0.7');
+    Yii::app()->clientScript->registerScriptFile(
+        Yii::app()->baseUrl.'/extension/fancybox/helpers/jquery.fancybox-media.js?v=1.0.6');
+    Yii::app()->getClientScript()->registerCssFile(
+        Yii::app()->baseUrl.'/extension/fancybox/jquery.fancybox.css?v=2.1.5');
+    Yii::app()->getClientScript()->registerScript("fancybox", "
+        $(document).ready(function() {
+            if ($('.fancybox').length)
+            {
+                $('.fancybox').fancybox();
+            }
+        });
+    ");
+
+?>
+
 <div class="bs-callout">
 
 <h2><?php echo $model->title; ?></h2>
@@ -41,27 +67,6 @@
     // изображения
     if (count($model->images)): 
     
-        // скрипты для просмотра изображений //    
-        Yii::app()->clientScript->registerScriptFile(
-            Yii::app()->baseUrl.'/extension/fancybox/lib/jquery.mousewheel-3.0.6.pack.js');
-        Yii::app()->clientScript->registerScriptFile(
-            Yii::app()->baseUrl.'/extension/fancybox/jquery.fancybox.js?v=2.1.5');            
-        Yii::app()->clientScript->registerScriptFile(
-            Yii::app()->baseUrl.'/extension/fancybox/helpers/jquery.fancybox-buttons.js?v=1.0.5');            
-        Yii::app()->clientScript->registerScriptFile(
-            Yii::app()->baseUrl.'/extension/fancybox/helpers/jquery.fancybox-thumbs.js?v=1.0.7');
-        Yii::app()->clientScript->registerScriptFile(
-            Yii::app()->baseUrl.'/extension/fancybox/helpers/jquery.fancybox-media.js?v=1.0.6');
-        Yii::app()->getClientScript()->registerCssFile(
-            Yii::app()->baseUrl.'/extension/fancybox/jquery.fancybox.css?v=2.1.5');
-        Yii::app()->getClientScript()->registerScript("fancybox", "
-            $(document).ready(function() {
-            if ($('.fancybox').length)
-            {
-                $('.fancybox').fancybox();
-            } 
-            });
-        ");
             
 ?>
 <div class="spoiler-wrap">
