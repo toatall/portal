@@ -133,8 +133,10 @@ class Interview extends CActiveRecord
 	 * @return boolean
 	 */
 	public function getIsExpiried()
-	{
-	   return (time() < $this->date_end);
+	{      
+	    $d1 = new DateTime("now");
+	    $d2 = new DateTime($this->date_end);
+	    return ($d1 >= $d2);
 	}
 	
 }
