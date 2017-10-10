@@ -104,6 +104,7 @@
     		</div>
     		<div class="span10">
     			<?php 
+    			/*
 					if (Yii::app()->browser->getBrowser() == "Internet Explorer" && Yii::app()->browser->getVersion() < 9):
 					?>
 						<div class="alert alert-danger">
@@ -112,7 +113,7 @@
 					    	<br /><?= CHtml::link('Список браузеров', array('site/browsers')) ?>
 					    </div>
 				<?php 
-					endif;
+					endif;*/
 				?>
     			<?php echo $content; ?>
     		</div>
