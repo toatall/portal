@@ -105,16 +105,19 @@
     		</div>
     		<div class="span10">
     			<?php 
-					if (Yii::app()->browser->getBrowser() == "Internet Explorer" && Yii::app()->browser->getVersion() < 9):
+					//if (Yii::app()->browser->getBrowser() == "Internet Explorer" && Yii::app()->browser->getVersion() < 9):
 					?>
+					<!--[if lt IE 9]>
 						<div class="alert alert-danger">
 					    	<strong>Для корректной работы портала необходимо использовать браузер Internet Explorer версии 9 и выше!</strong>
 					    	<br />Рекомендуется использовать Google Chrome.
 					    	<br /><?= CHtml::link('Список браузеров', array('site/browsers')) ?>
 					    </div>
+					<![endif]-->
 				<?php 
-					endif;
+					//endif;
 				?>
+				
     			<?php echo $content; ?>
     		</div>
     	</div>
