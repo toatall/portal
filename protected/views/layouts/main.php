@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="Edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 	<meta name="language" content="en" />
     <?php Yii::app()->bootstrap->register(); ?>
 	<!-- blueprint CSS framework -->
