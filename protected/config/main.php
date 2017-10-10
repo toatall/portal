@@ -72,7 +72,7 @@ return array(
 		),	
 		
 	    'cache'=>array(
-	        'class'=>'system.caching.CApcCache',
+	        'class'=>'CFileCache',
 	    ),
 		
 		/*'authManager'=>array(

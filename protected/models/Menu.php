@@ -244,15 +244,15 @@ class Menu extends CActiveRecord
     
     
     
-    /** ***************************************
-     *     
-     *              FRONT END
-     * 
-     * ****************************************/
-        
-    
+    /**
+     * Верхнее меню в шаблоне сайта
+     * @param int $id_parent
+     * @return array
+     * @desc 10.10.2017: зааменен AR поиск на DAO
+     */
     public static function getTopMenuArray($id_parent=0)
     {
+        /*
         $result_array = array();
         $model = Menu::model()->findAll(array(
             'condition'=>'blocked=0 AND type_menu=1 AND id_parent='.$id_parent,
@@ -260,8 +260,7 @@ class Menu extends CActiveRecord
         ));
         
         foreach ($model as $value)
-        {   
-            
+        {               
             if ($value->name=='---') continue;
                      
             $result_array[] = array(
@@ -270,16 +269,37 @@ class Menu extends CActiveRecord
                     eval('return '.$value->link) : $value->link),  
                 'linkOptions'=>array('target'=>$value->target), 
                 'items'=>($value->submenu_code!='') ? eval('return '.$value->submenu_code) 
-            		: self::getTopMenuArray($value->id),             
-            );
-            
+            		: self::getTopMenuArray($value->id),
+            );            
         }
         
         return $result_array;
+        */
         
+        $resultArray = array();
+        $model = Yii::app()->db->cache('300')->createCommand()
+            ->from('{{menu}}')
+            ->where('blocked=0 and type_menu=1 and id_parent=:id_parent', [':id_parent'=>$id_parent])
+            ->order('sort_index desc')
+            ->queryAll();
+        foreach ($model as $value)
+        {            
+            if ($value['name'] == '---') continue;
+            
+            $resultArray[] = array(
+                'label'=>$value['name'],
+                'url'=>(strpos($value['link'],'array')!==false ?
+                    eval('return '.$value['link']) : $value['link']),
+                'linkOptions'=>array('target'=>$value['target']),
+                'items'=>($value['submenu_code'] != '') ? eval('return '.$value['submenu_code'])
+                : self::getTopMenuArray($value['id']),
+            );            
+        }
+        return $resultArray;
     } 
          
     
+
     private function convertSubMenuFromArray($arrayMenu)
     {
         $res = '';
@@ -301,8 +321,14 @@ class Menu extends CActiveRecord
         return $res;
     }
     
+    
+    /**
+     * Левое меню
+     * @param int $id_parent
+     */
     public function getLeftMenuArray($id_parent=0)
     {
+        /*
         $result_menu = '';
         $model = Menu::model()->findAll(array(
             'condition'=>'blocked=0 AND type_menu=2 AND id_parent='.$id_parent,
@@ -345,8 +371,57 @@ class Menu extends CActiveRecord
         }
         
         return $result_menu;
+        */
+        $resultMenu = '';
+        $model = Yii::app()->db->cache(300)->createCommand()
+            ->from('{{menu}}')
+            ->where('blocked=0 AND type_menu=2 AND id_parent=:id_parent', [':id_parent'=>$id_parent])
+            ->order('sort_index asc')
+            ->queryAll();
         
+        foreach ($model as $value)
+        {
+            if ($value['name'] == '---') 
+            { 
+                $resultMenu .= '<li class="divider"></li>'; 
+                continue; 
+            }
+            
+            $subMenu = ($value['submenu_code'] != '') ? eval('return ' . $value['submenu_code']) : null;
+            
+            $existsStaticSubMenu = Yii::app()->db->cache(300)->createCommand()
+                ->from('{{menu}}')
+                ->select('count(id)')
+                ->where('id_parent=:id_parent', [':id_parent'=>$value['id']])
+                ->queryScalar();
+            
+            $resultMenu .= '<li'.(($subMenu != null || $existsStaticSubMenu > 0)
+                ? ' class="dropdown-submenu"' : '').'>';
+                $resultMenu .= CHtml::link($value['name'], (
+                    (strpos($value['link'],'array') !== false) ? eval('return ' . $value['link']) : $value['link']
+                    ), array('target' => ($value['target'] != '') ? $value['target'] : null));
+                
+                
+                // сначала статичное меню, если есть
+                if ($existsStaticSubMenu > 0)
+                {
+                    $resultMenu .= '<ul class="dropdown-menu">' . $this->getLeftMenuArray($value['id']);
+                    if ($subMenu==null) { $resultMenu .= '</ul>'; }
+                }
+                
+                
+                if ($subMenu!=null)
+                {
+                    $resultMenu .= ($existsStaticSubMenu > 0)
+                        ? '<li class="divider"></li>' : '<ul class="dropdown-menu">';
+                    $resultMenu .= $this->convertSubMenuFromArray($subMenu).'</ul>';
+                }
+                $resultMenu .= '</li>';               
+        }
+        
+        return $resultMenu;
     }
+    
     
     
     public function getLeftMenuAdd($arr, $main=true)

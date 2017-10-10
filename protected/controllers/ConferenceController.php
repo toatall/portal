@@ -105,15 +105,15 @@ class ConferenceController extends Controller
 	 */
 	public function actionToday()
 	{
-		$modelConference = Conference::model()->findAll('type_conference=:type and convert(varchar,date_start,104)=:date', [
+		$modelConference = Conference::model()->cache(300)->findAll('type_conference=:type and convert(varchar,date_start,104)=:date and date_delete is null', [
 			':type'=>Conference::TYPE_CONFERENCE,
 			':date'=>date('d.m.Y'),			
 		]);
-		$modelVksFns = Conference::model()->findAll('type_conference=:type and convert(varchar,date_start,104)=:date', [
+		$modelVksFns = Conference::model()->cache(300)->findAll('type_conference=:type and convert(varchar,date_start,104)=:date and date_delete is null', [
 			':type'=>Conference::TYPE_VKS_FNS,
 			':date'=>date('d.m.Y'),			
 		]);
-		$modelVksUfns = Conference::model()->findAll('type_conference=:type and convert(varchar,date_start,104)=:date', [
+		$modelVksUfns = Conference::model()->cache(300)->findAll('type_conference=:type and convert(varchar,date_start,104)=:date and date_delete is null', [
 				':type'=>Conference::TYPE_VKS_UFNS,
 				':date'=>date('d.m.Y'),
 		]);
