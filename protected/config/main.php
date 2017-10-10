@@ -70,7 +70,11 @@ return array(
 		'browser'=>array(
 			'class' => 'ext.browser.CBrowserComponent',
 		),	
-			
+		
+	    'cache'=>array(
+	        'class'=>'system.caching.CApcCache',
+	    ),
+		
 		/*'authManager'=>array(
 			'class'=>'PAuthManager',
 			'defaultRoles'=>array('guest'),
@@ -127,11 +131,11 @@ return array(
 				),
 				// uncomment the following to show log messages on web pages
 
-                /*
+                
 				array(
 					'class'=>'CWebLogRoute',
 				),
-				*/ 
+				/**/ 
 
 			),
 		),
