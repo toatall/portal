@@ -68,7 +68,7 @@
 
 
 <?php      
-    
+   
     $this->widget('bootstrap.widgets.TbNavbar',array(   
         'brand'=>'',
         //'fixed'=>'inverse',
@@ -79,7 +79,7 @@
                 'items'=>Menu::getTopMenuArray(),
             )),
     ));
-
+      
 ?>
     
 <div id="page">
@@ -128,7 +128,7 @@
                 по Ханты-Мансийскому автономному округу - Югре, <?php echo date('Y'); ?></h3>                                                                   
         <?php echo CHtml::link('Рекомендуемые браузеры', array('site/browsers')); ?>
         <br /><br />
-        <?= Statistic::StatisticOnlineAndDay(); ?>
+        <?php echo Statistic::StatisticOnlineAndDay(); ?>
         <br />
         <?= CHtml::link('Направить обращение', array('site/contact')) ?>
         <br /><br />        
