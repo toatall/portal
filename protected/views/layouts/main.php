@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="Edge" />
 	<meta name="language" content="en" />
     <?php Yii::app()->bootstrap->register(); ?>
 	<!-- blueprint CSS framework -->
@@ -104,7 +105,6 @@
     		</div>
     		<div class="span10">
     			<?php 
-    			/*
 					if (Yii::app()->browser->getBrowser() == "Internet Explorer" && Yii::app()->browser->getVersion() < 9):
 					?>
 						<div class="alert alert-danger">
@@ -113,7 +113,7 @@
 					    	<br /><?= CHtml::link('Список браузеров', array('site/browsers')) ?>
 					    </div>
 				<?php 
-					endif;*/
+					endif;
 				?>
     			<?php echo $content; ?>
     		</div>
