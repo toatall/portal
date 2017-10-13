@@ -145,7 +145,11 @@ class DepartmentCard extends CActiveRecord
 	 */
 	public static function model($className=__CLASS__)
 	{
-		return parent::model($className);
+	    $dependency = new CDbCacheDependency('select MAX(t.dt)
+            from (select max(date_create) dt from p_department_card
+            union select MAX(date_edit) dt from p_department_card) as t
+        ');	  
+		return parent::model($className)->cache(1000, $dependency);
 	}
 	
 	

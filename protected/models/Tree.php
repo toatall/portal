@@ -163,9 +163,18 @@ class Tree extends CActiveRecord
 	 */
 	public static function model($className=__CLASS__)
 	{
-		return parent::model($className);
+	    $dependency = new CDbCacheDependency('select MAX(t.dt)
+            from (select max(date_create) dt from p_tree
+            union select MAX(date_edit) dt from p_tree) as t
+        ');	 
+	    return parent::model($className)->cache(1000, $dependency);
 	}
     
+	
+	/**
+	 * {@inheritDoc}
+	 * @see CActiveRecord::beforeSave()
+	 */
     protected function beforeSave()
     {
         if ($this->isNewRecord)
@@ -184,6 +193,11 @@ class Tree extends CActiveRecord
         return parent::beforeSave();        
     }
     
+    
+    /**
+     * {@inheritDoc}
+     * @see CActiveRecord::afterFind()
+     */
     protected function afterFind()
     {
         /*$this->date_create = date('d.m.Y H:i:s', strtotime($this->date_create));
