@@ -133,17 +133,23 @@ class Organization extends CActiveRecord
     
     public static function getSubMenu()
     {
+        /*
         $model = Organization::model()->findAll(array(
             'condition'=>"code<>'8600'",
             'order'=>'sort asc',
-        ));
+        ));*/
+        $model = Yii::app()->db->createCommand()
+            ->from('{{organization}}')
+            ->where('code<>:code', [':code'=>'8600'])
+            ->order('sort asc')
+            ->queryAll();
         
         $resultArray = array();
         foreach ($model as $value)
         {
             $resultArray[] = array(
-                'label'=>$value->name,
-                'url'=>array('news/index', 'organization'=>$value->code),
+                'label'=>$value['name'],
+                'url'=>array('news/index', 'organization'=>$value['code']),
             );
         }
         return $resultArray;

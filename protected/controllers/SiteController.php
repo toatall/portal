@@ -61,13 +61,13 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$model = new NewsSearch();
+		//$model = new NewsSearch();
 		$this->render('index', [
-		    'modelUFNS'=>$model->feedNewsDay,
-			'modelIFNS'=>$model->feedIFNS,
-			'modelPressClub'=>$model->feedDopNews('PressClub'),
-			'modelDosug'=>$model->feedDopNews('Dosug'),			
-			'modelHumor'=>$model->feedDopNews('Humor'),
+		    'modelUFNS'=>NewsSearch::getFeedNewsDay(),
+		    'modelIFNS'=>NewsSearch::getFeedIfns(),
+		    'modelPressClub'=>NewsSearch::feedDopNews('PressClub'),
+		    'modelDosug'=>NewsSearch::feedDopNews('Dosug'),			
+		    'modelHumor'=>NewsSearch::feedDopNews('Humor'),
 		]);
 	}
 

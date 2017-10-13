@@ -19,9 +19,10 @@
 
 <div style="padding-left: 30px;">
 <?php 
-	foreach ($model->data as $data)
+    
+	foreach ($model as $data)
 	{
-		echo $this->renderPartial("/news/_indexRow",array("data"=>$data), true);
+		echo $this->renderPartial("/news/_indexRow", array("data"=>$data), true);	    
 	}
 ?>
 </div>
