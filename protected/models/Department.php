@@ -209,16 +209,32 @@ class Department extends CActiveRecord
 	
 	
 	public static function departmentForMenu()
-	{
-		$model = self::model()->findAll(['order'=>'department_index']);
-		$resArray = array();
+	{	    
+	    $resArray = array();
+	    
+	    /*
+		$model = self::model()->findAll(['order'=>'department_index']);	   
+		
 		foreach ($model as $m)
 		{
 			$resArray[] = array(
 				'label' => $m->concatened,
 				'url' => ['/department/view', 'id'=>$m->id],
 			);
-		}
+		}*/
+	    
+	    $model = Yii::app()->db->createCommand()
+	       ->from('{{department}}')
+	       ->order('department_index asc')
+	       ->queryAll();
+	    foreach ($model as $m)
+	    {
+	        $resArray[] = [
+	            'label' => $m['department_index'] . ' ' . $m['department_name'],
+	            'url' => ['/department/view', 'id'=>$m['id']],
+	        ];
+	    }
+	    
 		return $resArray;
 	}
 	

@@ -91,8 +91,7 @@ class NewsSearch extends News
             AND t.date_start_pub < getdate() AND t.date_end_pub > getdate()');
 		
 		
-		$criteria->compare('t.id_organization',$this->id_organization);
-		
+		$criteria->compare('t.id_organization',$this->id_organization);		
 		$criteria->compare('tree.param1', $this->param1);
 		
 		
@@ -136,6 +135,7 @@ class NewsSearch extends News
 	 * Базовый запрос для выборки новостей 
 	 * @return CDbCommand
 	 */
+	/*
 	private function queryBaseTabsNews()
 	{
 		$criteria = new CDbCriteria();
@@ -147,11 +147,12 @@ class NewsSearch extends News
 		$criteria->order = 't.date_create desc, t.id desc';
 		
 		return $criteria;	
-	}
+	}*/
 	
 	
-	public function getFeedNewsDay()
+	public static function getFeedNewsDay()
 	{
+	    /*
 	    $criteria = $this->queryBaseTabsNews();
 	    $criteria->compare('tree.module', 'news');
 	    
@@ -163,6 +164,11 @@ class NewsSearch extends News
 	        'criteria' => $criteria,
 	        'pagination'=>false,
 	    ]);
+	    */
+	    return Yii::app()->db->createCommand()
+	       ->from('{{view_feed_news_day}}')
+	       ->queryAll();
+	    
 	}
 	
 	
@@ -170,8 +176,9 @@ class NewsSearch extends News
 	 * Новости Управления
 	 * @return CDbCommand
 	 */
-	public function getFeedUFNS()
+	public static function getFeedUFNS()
 	{	
+	    /*
 	    $criteria = $this->queryBaseTabsNews();
 	    $criteria->compare('tree.module', 'news');
 	    $criteria->compare('t.id_organization', '8600');
@@ -180,7 +187,10 @@ class NewsSearch extends News
 	    return new CActiveDataProvider(self::model()->cache(300), [
 	        'criteria' => $criteria,
 	        'pagination'=>false,
-	    ]);
+	    ]);*/
+	    return Yii::app()->db->createCommand()
+    	    ->from('{{view_feed_news_ufns}}')
+    	    ->queryAll();
 	}
 	
 	
@@ -188,8 +198,9 @@ class NewsSearch extends News
 	 * Новости Инспекций
 	 * @return CDbCommand
 	 */
-	public function getFeedIfns()
-	{		
+	public static function getFeedIfns()
+	{	
+	    /*
 		$criteria = $this->queryBaseTabsNews();
 		$criteria->compare('tree.module', 'news');
 		$criteria->compare('t.id_organization', '<>8600');		
@@ -198,7 +209,10 @@ class NewsSearch extends News
 		return new CActiveDataProvider(self::model()->cache(300), [
 			'criteria' => $criteria,
 			'pagination'=>false,
-		]);
+		]);*/
+	    return Yii::app()->db->createCommand()
+    	    ->from('{{view_feed_news_ifns}}')
+    	    ->queryAll();
 	}
 	
 	
@@ -209,7 +223,7 @@ class NewsSearch extends News
 	 * Дополнительные разделы
 	 * @return CDbCommand
 	 */
-	public function feedDopNews($module)
+	public static function feedDopNews($module)
 	{
 		/*
 		$query = $this->queryBaseTabsNews();
@@ -218,6 +232,7 @@ class NewsSearch extends News
 		$query->limit = self::LIMIT_TOP_NEWS;
 		return $query->queryAll();
 		*/
+	    /*
 		$criteria = $this->queryBaseTabsNews();
 		$criteria->compare('tree.module', 'news');
 		$criteria->compare('tree.param1', $module);		
@@ -226,8 +241,17 @@ class NewsSearch extends News
 		return new CActiveDataProvider(self::model()->cache(300), [
 			'criteria' => $criteria,
 			'pagination'=>false,
-		]);
+		]);*/
+	    return Yii::app()->db->createCommand()
+    	    ->from('{{view_feed_news}}')
+    	    ->limit(5)
+    	    ->where('param1=:param1', [':param1'=>$module])
+    	    ->order('date_create desc, id desc')
+    	    ->queryAll();
 	}
+	
+	
+	
 	
 	
 }

@@ -653,6 +653,12 @@ class News extends CActiveRecord
     	return $dir . $this->thumbail_image;    	
     }
     
+    
+    public function getOrganization_name()
+    {
+        return $this->id_organization . ' (' . $this->organization->name . ')';
+    }
+    
         
 
 	/**

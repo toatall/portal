@@ -110,10 +110,10 @@ class NewsController extends Controller
 	/**
 	 * Список новостей (материалов)
 	 * Условия:
-	 *  - если не указан код организации и имя раздела, то вывести новости всех инспекций
-	 *  - если указан код организации, но не указан раздел, то вывести список всех новостей организации
-	 *  - если указан раздел, но не указан код организации, то вывести список материалов раздела по всем организациям
-	 *  - если указан раздел и код организации, то вывести список материалов данной организации
+	 *  1 если не указан код организации, не имя раздела, то вывести новости всех инспекций
+	 *  2 если указан код организации, но не указан раздел, то вывести список всех новостей организации
+	 *  3 если указан раздел, но не указан код организации, то вывести список материалов раздела по всем организациям
+	 *  4 если указан раздел и код организации, то вывести список материалов данной организации
 	 * @author tvog17
 	 */
 	public function actionIndex($organization=null, $section=null)
@@ -121,7 +121,7 @@ class NewsController extends Controller
 		
 		$organizationModel = null;		
 	    // проверка организации
-		if ($organization!==null && !$organizationModel = Organization::model()->find('code=:code', [':code'=>$organization]))
+		if ($organization!==null && !$organizationModel = Yii::app()->db->createCommand()->from('{{organization}}')->where('code=:code', [':code'=>$organization])->query()->read())
 		{
 			throw new CHttpException(404,'Страница не найдена.');
 		}
@@ -129,7 +129,7 @@ class NewsController extends Controller
 				
 		$treeModel = null;
 		// проверка раздела
-		if ($section!==null && ($treeModel=Tree::model()->find('module=:module and param1=:param1',[':module'=>'news', ':param1'=>$section])) === null)
+		if ($section!==null && ($treeModel=Yii::app()->db->createCommand()->from('{{tree}}')->where('module=:module and param1=:param1',[':module'=>'news', ':param1'=>$section])->query()->read()) === null)
 		{
 			throw new CHttpException(404,'Страница не найдена.');
 		}
@@ -139,18 +139,18 @@ class NewsController extends Controller
 		if ($treeModel !== null)
 		{			
 			$breadcrumbs = [
-				$treeModel->name => ['news/index', 'section'=>$section],
-				(($organizationModel===null) ? 'Все налоговые органы' : $organizationModel->fullName),
+				$treeModel['name'] => ['news/index', 'section'=>$section],
+				(($organizationModel===null) ? 'Все налоговые органы' : $organizationModel['code'] . ' (' . $organizationModel['name'] . ')'),
 			];
-			$this->pageTitle = ($organizationModel === null ? '' : $organizationModel->name . ': ') . $treeModel->name;
+			$this->pageTitle = ($organizationModel === null ? '' : $organizationModel['name'] . ': ') . $treeModel['name'];
 		}
 		else
 		{
 			$breadcrumbs = [
 				'Новости' => ['news/index'],
-				(($organizationModel===null) ? 'Все налоговые органы' : $organizationModel->fullName),
+			    (($organizationModel===null) ? 'Все налоговые органы' : $organizationModel['code'] . ' (' . $organizationModel['name'] . ')'),
 			];
-			$this->pageTitle = ($organizationModel === null ? '' : $organizationModel->name . ': ') . 'Новости';
+			$this->pageTitle = ($organizationModel === null ? '' : $organizationModel['name'] . ': ') . 'Новости';
 		}
 		
 		
@@ -163,7 +163,7 @@ class NewsController extends Controller
 			
 		if(isset($_GET['News']))
 			$model->attributes=$_GET['News'];
-
+        
 
 		// левое меню (дополнительное)		
 		$menu = [
@@ -179,6 +179,9 @@ class NewsController extends Controller
 			['name'=>'Юмор налоговиков', 'link'=>['news/index', 'section'=>'Humor']],
 		];
 		Menu::$leftMenuAdd = array_merge(Menu::$leftMenuAdd, $menu);
+		
+		
+		
 		
 		
 		$this->render('index',array(

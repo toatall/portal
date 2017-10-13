@@ -251,31 +251,7 @@ class Menu extends CActiveRecord
      * @desc 10.10.2017: зааменен AR поиск на DAO
      */
     public static function getTopMenuArray($id_parent=0)
-    {
-        /*
-        $result_array = array();
-        $model = Menu::model()->findAll(array(
-            'condition'=>'blocked=0 AND type_menu=1 AND id_parent='.$id_parent,
-            'order'=>'sort_index desc',
-        ));
-        
-        foreach ($model as $value)
-        {               
-            if ($value->name=='---') continue;
-                     
-            $result_array[] = array(
-                'label'=>$value->name,
-                'url'=>(strpos($value->link,'array')!==false ? 
-                    eval('return '.$value->link) : $value->link),  
-                'linkOptions'=>array('target'=>$value->target), 
-                'items'=>($value->submenu_code!='') ? eval('return '.$value->submenu_code) 
-            		: self::getTopMenuArray($value->id),
-            );            
-        }
-        
-        return $result_array;
-        */
-        
+    {            
         $resultArray = array();
         $model = Yii::app()->db->cache('300')->createCommand()
             ->from('{{menu}}')
@@ -327,51 +303,7 @@ class Menu extends CActiveRecord
      * @param int $id_parent
      */
     public function getLeftMenuArray($id_parent=0)
-    {
-        /*
-        $result_menu = '';
-        $model = Menu::model()->findAll(array(
-            'condition'=>'blocked=0 AND type_menu=2 AND id_parent='.$id_parent,
-            'order'=>'sort_index asc',
-        ));
-        
-        foreach ($model as $value)
-        {               
-            if ($value->name=='---') { $result_menu .= '<li class="divider"></li>'; continue; }
-            
-            $subMenu = ($value->submenu_code!='') ? eval('return '.$value->submenu_code) : null;
-            $existsStaticSubMenu = Menu::model()->exists(array('condition'=>'id_parent='.$value->id));
-            
-            $result_menu .= '<li'.(($subMenu!=null || $existsStaticSubMenu) 
-            	? ' class="dropdown-submenu"' : '').'>';
-            $result_menu .= CHtml::link($value->name, (
-                (strpos($value->link,'array')!==false) ? eval('return '.$value->link) : $value->link
-            ), array('target'=>($value->target!='') ? $value->target : null));
-            
-            
-            // сначала статичное меню, если есть
-            if ($existsStaticSubMenu)
-            {
-                $result_menu .= '<ul class="dropdown-menu">'.$this->getLeftMenuArray($value->id);
-                if ($subMenu==null) { $result_menu .= '</ul>'; }
-            }
-                        
-                
-            if ($subMenu!=null)
-            {
-                $result_menu .= ($existsStaticSubMenu) 
-                    ? '<li class="divider"></li>' : '<ul class="dropdown-menu">';                                
-                $result_menu .= $this->convertSubMenuFromArray($subMenu).'</ul>';                
-            }
-            
-            
-            $result_menu .= '</li>';   
-            
-            
-        }
-        
-        return $result_menu;
-        */
+    {        
         $resultMenu = '';
         $model = Yii::app()->db->cache(300)->createCommand()
             ->from('{{menu}}')

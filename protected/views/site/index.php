@@ -23,18 +23,7 @@ $this->pageTitle=Yii::app()->name;
                 	'model'=>$modelIFNS,
                 	'urlAllNews'=>CHtml::link('Все новости', ['news/index'], ['class'=>'btn btn-primary']),
                 ], true, false)),                
-            /*array('label'=>'Пресс-клуб', 
-            	'content'=>$this->renderPartial('index/_news', [
-	            	'model'=>$modelPressClub,
-	            	'urlAllNews'=>CHtml::link('Все материалы', ['news/index', 'section'=>'PressClub'], ['class'=>'btn btn-primary']),            			
-            	], true, false)),
-            array('label'=>'Досуг', 
-            	'content'=>$this->renderPartial('index/_news', [
-           			'model'=>$modelDosug,
-           			'urlAllNews'=>CHtml::link('Все материалы', ['news/index', 'section'=>'Dosug'], ['class'=>'btn btn-primary']),            			
-            	], true, false)),
-            array('label'=>'Обзор СМИ', 
-            	'content'=>$this->renderPartial('index/_smi', [], true, false)), */         
+            
             array('label'=>'Юмор налоговиков', 
             	'content'=>$this->renderPartial('index/_news', [
             		'model'=>$modelHumor,
