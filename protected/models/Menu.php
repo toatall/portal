@@ -253,7 +253,7 @@ class Menu extends CActiveRecord
     public static function getTopMenuArray($id_parent=0)
     {            
         $resultArray = array();
-        $model = Yii::app()->db->cache('300')->createCommand()
+        $model = Yii::app()->db->createCommand()
             ->from('{{menu}}')
             ->where('blocked=0 and type_menu=1 and id_parent=:id_parent', [':id_parent'=>$id_parent])
             ->order('sort_index desc')
@@ -305,7 +305,7 @@ class Menu extends CActiveRecord
     public function getLeftMenuArray($id_parent=0)
     {        
         $resultMenu = '';
-        $model = Yii::app()->db->cache(300)->createCommand()
+        $model = Yii::app()->db->createCommand()
             ->from('{{menu}}')
             ->where('blocked=0 AND type_menu=2 AND id_parent=:id_parent', [':id_parent'=>$id_parent])
             ->order('sort_index asc')
@@ -321,7 +321,7 @@ class Menu extends CActiveRecord
             
             $subMenu = ($value['submenu_code'] != '') ? eval('return ' . $value['submenu_code']) : null;
             
-            $existsStaticSubMenu = Yii::app()->db->cache(300)->createCommand()
+            $existsStaticSubMenu = Yii::app()->db->createCommand()
                 ->from('{{menu}}')
                 ->select('count(id)')
                 ->where('id_parent=:id_parent', [':id_parent'=>$value['id']])

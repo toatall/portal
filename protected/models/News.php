@@ -668,12 +668,8 @@ class News extends CActiveRecord
 	 * @return News the static model class
 	 */
 	public static function model($className=__CLASS__)
-	{
-	    $dependency = new CDbCacheDependency('select MAX(t.dt)
-            from (select max(date_create) dt from p_news
-            union select MAX(date_edit) dt from p_news) as t
-        ');	 
-		return parent::model($className)->cache(1000, $dependency);
+	{	    
+		return parent::model($className);
 	}
 	
 }
