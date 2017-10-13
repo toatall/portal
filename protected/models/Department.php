@@ -23,11 +23,16 @@
  */
 class Department extends CActiveRecord
 {
+    
+    const GP_SHOW_FIRST_NEWS = 0;
+    const GP_SHOW_NEWS_FROM_LIST = 1;
+    const GP_SHOW_STRUCT = 2;
+    
     // что показывать по умолчанию, при переходе в отдел
     private $_typeGeneralPage = array(
-        0 => 'Отображать первую новость',
-        1 => 'Показать новость из списка',
-        2 => 'Показать структуру отдела',
+        self::GP_SHOW_FIRST_NEWS => 'Отображать первую новость',
+        self::GP_SHOW_NEWS_FROM_LIST => 'Показать новость из списка',
+        self::GP_SHOW_STRUCT => 'Показать структуру отдела',
     );
     
 	
@@ -156,7 +161,11 @@ class Department extends CActiveRecord
 	 */
 	public static function model($className=__CLASS__)
 	{
-		return parent::model($className);
+	    $dependency = new CDbCacheDependency('select MAX(t.dt) 
+            from (select max(date_create) dt from p_department
+            union select MAX(date_edit) dt from p_department) as t
+        ');	    
+		return parent::model($className)->cache(1000, $dependency);
 	}
 	
 	
@@ -175,8 +184,7 @@ class Department extends CActiveRecord
 		else
 		{
 			$this->date_edit = new CDbExpression('getdate()');
-		}
-		
+		}		
 		return parent::beforeSave();
 	}
 	
@@ -188,8 +196,7 @@ class Department extends CActiveRecord
 	 */
 	public function afterFind()
 	{
-		$this->date_create = ConvertDate::find($this->date_create);
-		
+		$this->date_create = ConvertDate::find($this->date_create);		
 		return parent::afterFind();
 	}
 	
@@ -222,9 +229,10 @@ class Department extends CActiveRecord
 	 * @param int $id
 	 * @return array
 	 * 	
-	 * @author tvog17
+	 * @author oleg
 	 * @version 06.03.2017 - create
 	 * 			31.07.2017 - update: add rating 
+	 *          12.10.2017 - refactor: change AR on DAO
 	 */
 	public function getMenu($id=null)
 	{
@@ -234,46 +242,22 @@ class Department extends CActiveRecord
 		{			
 			$id = $this->id_tree;
 		}
-		
-			
-		$model = Tree::model()->findAll('id_parent=:id /*and use_material<>1*/', array(':id'=>$id));
+						
+		$model = Yii::app()->db->createCommand()
+		  ->from('{{tree}}')
+		  ->where('id_parent=:id_parent', [':id_parent'=>$id])
+		  ->select('id, name')
+		  ->queryAll();
 		
 		foreach ($model as $m)
 		{
-			/**
-			// rating
-			if ($m->module == 'ratingData')
-			{
-				$modelRating = Yii::app()->db->createCommand()					
-					->from('{{rating_main}}')
-					->where('id_tree=:id_tree', [':id_tree'=>$m->id])
-					->queryAll();
-				if (count($modelRating) > 1)
-				{
-					// ratingID
-				}
-				else 
-				{
-					$resultMenu[] = array(
-						'name'=>$m->name, 
-						'link'=>['department/view', 'id'=>$this->id, 'idTree'=>$m->id],
-						'items'=>$this->getMenu($m->id),
-					);
-				}
-				
-				continue;
-			}
-			**/
-			
 			$resultMenu[] = array(
-				'name'=>$m->name, 
-				'link'=>['department/view', 'id'=>$this->id, 'idTree'=>$m->id],
-				'items'=>$this->getMenu($m->id),
+				'name'=>$m['name'], 
+				'link'=>['department/view', 'id'=>$this->id, 'idTree'=>$m['id']],
+				'items'=>$this->getMenu($m['id']),
 			);
-		}
-		
-		return $resultMenu;
-		
+		}		
+		return $resultMenu;		
 	}
 	
 	/**
