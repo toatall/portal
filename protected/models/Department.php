@@ -160,12 +160,8 @@ class Department extends CActiveRecord
 	 * @return Department the static model class
 	 */
 	public static function model($className=__CLASS__)
-	{
-	    $dependency = new CDbCacheDependency('select MAX(t.dt) 
-            from (select max(date_create) dt from p_department
-            union select MAX(date_edit) dt from p_department) as t
-        ');	    
-		return parent::model($className)->cache(1000, $dependency);
+	{	     
+		return parent::model($className);
 	}
 	
 	

@@ -20,7 +20,8 @@ $(function() {
 
 function loadAjaxConferenceToday()
 {
-	$.get('/conference/today')
+	$('#container-conference-today').html('<img src="../images/loading.gif" />');
+	$.get('/conference/today.html')
 		.done(function(data){
 			$('#container-conference-today').html(data);
 		});

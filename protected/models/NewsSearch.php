@@ -95,7 +95,7 @@ class NewsSearch extends News
 		$criteria->compare('tree.param1', $this->param1);
 		
 		
-		return new CActiveDataProvider(self::model()->cache(300), array(
+		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array('defaultOrder'=>'t.date_create desc, t.id desc'),
 		));
@@ -124,7 +124,7 @@ class NewsSearch extends News
 		$criteria->addCondition('t.flag_enable=1 AND t.date_delete is null
             AND t.date_start_pub < getdate() AND t.date_end_pub > getdate()');
 		 
-		return new CActiveDataProvider(self::model()->cache(300), array(
+		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array('defaultOrder'=>'t.date_create desc'),
 		));
