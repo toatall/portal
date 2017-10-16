@@ -23,7 +23,7 @@ class SiteController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'happyBirthday', 'imageHappyBirthday', 'contact', 'captcha', 'error'),
+				'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'hallFame', 'contact', 'captcha', 'error'),
 				'users' => array('@'),
 			),
 			array(
@@ -154,45 +154,17 @@ class SiteController extends Controller
    	/**
    	 * Доска почета (+ дни рождения)
    	 */
-   	public function actionHappyBirthday($year=null)
+   	public function actionHallFame($year=null)
    	{
    	    $model = new HallFame($year);
    	    $photoFiles = $model->showPhoto();
    	    
-   	    $this->render('happyBirthday', [
+   	    $this->render('hallFame', [
    	        'photoFiles'=>$photoFiles,	   
    	        'year'=>$model->getYear(),
    	        'yearList'=>$model->getYears(),
    	    ]);   	    
-   	}
-   	
-   	
-   	/**
-   	 * Фотография для доски почета
-   	 * @param string $date
-   	 * @return void|string|mixed
-   	 */
-   	public function actionImageHappyBirthday($date=null)
-   	{
-   	   //if (!Yii::app()->request->isAjaxRequest)
-   	   //     return;   	    
-   	   
-   	    /*
-   	    if ($date!=null)
-   	    {   	        
-   	        $dateParse = date_parse($date);
-   	        if ($dateParse['error_count']==0)
-   	        {
-   	            $model = new HallFrame($dateParse);
-   	            return $model->showPhoto($date);
-   	        }
-   	    }*/
-   	    
-   	    
-   	    $model = new HallFame();
-   	    return $model->showPhoto();
-   	    
-   	}
+   	}   	   
    
    	
     

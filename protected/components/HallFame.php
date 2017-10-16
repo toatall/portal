@@ -7,10 +7,10 @@ class HallFame
     // интервал смены картинок
     const INTERVAL_CHANGE = 10; 
     // периоды
-    const YEARS = [
+    /*const YEARS = [
         '2015'=>'2015',
         '2016'=>'2016',
-    ];
+    ];*/
     // расширения
     const FIND_EXTENSIONS = [
         'JPG',
@@ -23,6 +23,7 @@ class HallFame
     private $year;
     private $files; 
     
+    private $years = [];
     
     
     /**
@@ -30,7 +31,8 @@ class HallFame
      */ 
     public function __construct($year=null)
     {
-        $yearsConst = self::YEARS;
+        if (!$this->scanDirYears())
+            return false;
         
         $this->year = $year;
         
@@ -39,7 +41,7 @@ class HallFame
         {
             $this->year = date('Y')-1;
         }
-        elseif (!isset($yearsConst[$year]))
+        elseif (!isset($this->years[$this->year]))
         {            
             return false;
         }
@@ -48,6 +50,28 @@ class HallFame
         $this->loadFiles($this->year);
     }
     
+    
+    private function scanDirYears()
+    {
+        $path = self::PATH_IMAGES;
+        
+        if (file_exists($path))
+        {
+            $dh  = opendir($path);
+            while (false !== ($filename = readdir($dh))) 
+            {
+                if ($filename === '.' || $filename === '..')
+                    continue;
+                
+                if (is_dir($path . $filename))
+                {
+                    $this->years[$filename] = $filename;
+                }
+            }
+        }
+        
+        return (count($this->years) > 0);
+    }
     
     public function showPhoto()
     {    
@@ -89,7 +113,7 @@ class HallFame
     
     public function getYears()
     {
-        return self::YEARS;
+        return $this->years;
     }
     
     

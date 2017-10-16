@@ -34,7 +34,8 @@
 
     $this->pageTitle=Yii::app()->name . ' - Доска почета';
     $this->breadcrumbs=array(
-    	'Доска почета',
+    	'Доска почета' => ['/site/hallFame'],
+        $year,
     );
 ?>
 
