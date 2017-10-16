@@ -3,14 +3,11 @@
 class HallFame
 {
     // каталог с файлами
-    const PATH_IMAGES = 'repository/board_fame/';
+    const URL_IMAGES = '/repository/board_fame/';
+    const PATH_IMAGES = 'E:/www/portal' . self::URL_IMAGES;
     // интервал смены картинок
     const INTERVAL_CHANGE = 10; 
-    // периоды
-    /*const YEARS = [
-        '2015'=>'2015',
-        '2016'=>'2016',
-    ];*/
+   
     // расширения
     const FIND_EXTENSIONS = [
         'JPG',
@@ -103,7 +100,7 @@ class HallFame
                 if (in_array(strtoupper($ext), self::FIND_EXTENSIONS))
                 {
                     $this->files[] = [
-                        'image' => '/' . $path . iconv('windows-1251', 'utf-8', $filename),
+                        'image' => self::URL_IMAGES . iconv('windows-1251', 'utf-8', $filename),
                         'label' => 'Доска почета  ' . $year,
                     ];
                 }
