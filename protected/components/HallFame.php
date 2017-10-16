@@ -100,7 +100,7 @@ class HallFame
                 if (in_array(strtoupper($ext), self::FIND_EXTENSIONS))
                 {
                     $this->files[] = [
-                        'image' => self::URL_IMAGES . iconv('windows-1251', 'utf-8', $filename),
+                        'image' => self::URL_IMAGES . $year . '/' . iconv('windows-1251', 'utf-8', $filename),
                         'label' => 'Доска почета  ' . $year,
                     ];
                 }
