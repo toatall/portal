@@ -23,7 +23,7 @@ class SiteController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'contact', 'captcha', 'error'),
+				'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'hallFame', 'contact', 'captcha', 'error'),
 				'users' => array('@'),
 			),
 			array(
@@ -149,6 +149,22 @@ class SiteController extends Controller
    		if (!$model->downloadFile())
    			throw new CHttpException(404,'Страница не найдена.');
    	}
+   	
+   	
+   	/**
+   	 * Доска почета (+ дни рождения)
+   	 */
+   	public function actionHallFame($year=null)
+   	{
+   	    $model = new HallFame($year);
+   	    $photoFiles = $model->showPhoto();
+   	    
+   	    $this->render('hallFame', [
+   	        'photoFiles'=>$photoFiles,	   
+   	        'year'=>$model->getYear(),
+   	        'yearList'=>$model->getYears(),
+   	    ]);   	    
+   	}   	   
    
    	
     
