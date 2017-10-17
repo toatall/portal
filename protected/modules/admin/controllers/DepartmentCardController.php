@@ -22,12 +22,10 @@ class DepartmentCardController extends AdminController
 	 */
 	public function accessRules()
 	{
-		return array(
-            
-			array('allow',                
-                'expression'=>function() { return Yii::app()->user->inRole(['admin']); },
-            ),
-			
+		return array(            
+		    array('allow',
+		        'users'=>array('@'),
+		    ),			
             array('deny',  // deny all users
 				'users'=>array('*'),
 			),			            
@@ -51,6 +49,9 @@ class DepartmentCardController extends AdminController
 	 */
 	public function actionCreate($idDepartment)
 	{
+	    
+	    $this->loadModelByUser($idDepartment);
+	    
 		$model=new DepartmentCard;
 		$model->id_department = $idDepartment;		
 
@@ -81,8 +82,11 @@ class DepartmentCardController extends AdminController
 	 */
 	public function actionUpdate($id)
 	{
+	    
 		$model=$this->loadModel($id);
-
+        
+		$this->loadModelByUser($model->id_department);
+		
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
@@ -108,10 +112,14 @@ class DepartmentCardController extends AdminController
 	 */
 	public function actionDelete($id)
 	{
+	    if (Yii::app()->user->inRole('admin'))
+	        throw new CHttpException(403,'У вас недостаточно прав для выполнения указанного действия.');
+	    
 		if(Yii::app()->request->isPostRequest)
 		{
+		    $model = $this->loadModel($id);		    
 			// we only allow deletion via POST request
-			$this->loadModel($id)->delete();
+			$model->delete();
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
@@ -173,4 +181,14 @@ class DepartmentCardController extends AdminController
 			Yii::app()->end();
 		}
 	}
+	
+	
+	private function loadModelByUser($id)
+	{
+	    if (!Department::checkAccessUser($id))
+	        throw new CHttpException(403,'У вас недостаточно прав для выполнения указанного действия.');	        
+	}
+	
+	
+	
 }
