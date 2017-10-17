@@ -292,4 +292,25 @@ class Department extends CActiveRecord
 	    
 	}
 	
+	
+	
+	public static function checkAccessUser($idDepartment)
+	{
+	    if (Yii::app()->user->admin) return true;
+	    
+	    return Yii::app()->db->createCommand()    	   
+    	    ->from('{{department}} d')
+    	    ->leftJoin('{{access_department_user}} access_user', 'd.id = access_user.id_department')
+    	    ->leftJoin('{{access_department_group}} access_group', 'd.id = access_group.id_department')
+    	    ->leftJoin('{{group_user}} group_user', 'access_group.id_group = group_user.id_group')
+    	    ->where('group_user.id_user=:user1 or access_user.id_user=:user2 and d.id=:id_department',
+    	        [
+    	            ':user1'=>Yii::app()->user->id,
+    	            ':user2'=>Yii::app()->user->id, 
+    	            ':id_department'=>$idDepartment,    	            
+    	        ])
+	        ->queryRow();
+	}
+	
+	
 }
