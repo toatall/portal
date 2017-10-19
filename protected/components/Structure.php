@@ -1,20 +1,11 @@
 <?php
 
 
-class DepartmentController extends Controller
+class Structure extends Controller
 {
-	
-	/**
-	 * Use modules
-	 * @var array
-	 */
-	private $useModules = array(
-		'ratingData',
-	);
-	
-	private $model = null;
-	private $modelTree = null;
-	
+    
+    
+    protected $alias;    
 	
 	/**
 	 * {@inheritDoc}
@@ -32,37 +23,126 @@ class DepartmentController extends Controller
 	
 	
 	/**
-	 * 
-	 * 1. Если присутсвует (и существует) $idTree и в текущем классе имеется
-	 * функция с именем "render_$module$", где $module$ - имя модуля (Tree->module)
-	 * то вызываем эту функцию и передаем ей управление (изначально было задумано так
-	 * для рейтингов, но может пригодится где-то еще)$this
-	 * 
-	 * 2. Если не указан $idTree, то смотрим в настройки отдела.
-	 * 2.1. Если Department->general_page_type == 0 (отображать первую новость), то
-	 * нужно попытаться найти первую новость и показать ее (отсортировав по id),
-	 * если не удалось найти то установить флаг того, что ничего не найдено
-	 * 2.2. Если Department->general_page_type == 1 (показывать новость из списка), то
-	 * нужно найти новость в модели News с id_tree = Department->general_page_tree_id
-	 * (+ условия не удалена и не заблокирована), если нашлась то показать ее, иначе 
-	 * установить флаг того, что ничего не найдено
-	 * 2.3. Если Department->general_page_type == 2 (показывать структуру отдела), то 
-	 * проверить включена ли опция Department->use_card и если да, то вывести структуру,
-	 * иначе установить флаг того, что ничего не найдено
-	 * 2.4. Если имеется флаг, что ничего не найдено, то проверить есть ли дочерние объекты
-	 * в модели Tree и если есть, то вывести эту структуру, иначе вывести, что нет данных
-	 * 
-	 * 3. Если присутсвует (и существует) $idTree, но не проходит условия п.1, то: 
-	 * 3.1. Проверяем если есть только 1 новость, то выводим ее, причем сразу в представлении view
-	 * 3.2. Если новостей больше, то вывести просто их список (представление index)
-	 * 
-	 * Где Department - это модель текущего отдела (скорее всего так - $this->model = $this->loadModel($id))
-	 * 
+	 * Новости (структура)
+	 * @param $idTree integer (идентификатор Tree)
+	 * @desc
+	 * 1. Поиск записи Tree.id=$idTree, если запись не найдена, то return http 404
+	 * 2. Произвести поиск новостей с данным idTree
+	 * 2.1. Если новость только 1, то показать ее сразу в представлении view
+	 * 2.2. Если более 1 новости, то вывести их как миниатюры
+	 * 2.3. Если новостей не найдено, то вывести структуру дерева Tree (дочерние объекты)
 	 * @author oleg
-	 * @version 22.08.2017
-	 * 
+	 * @version 18.10.2017
 	 */	
-	public function actionView($id, $idTree=null)
+	protected function indexByIdTree($idTree)
+	{
+	    if ($idTree==null || !is_numeric($idTree))
+	        throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
+	    
+	    // 1. Поиск записи в Tree
+	    $modelTree = Yii::app()->db->createCommand()
+	       ->from('{{tree}}')
+	       ->where('id=:id', [':id'=>$idTree])
+	       ->queryRow();
+	    if ($modelTree==null)
+	        throw new CHttpException(404,'The requested page does not exist.');
+	    
+	    // 2. Поиск новостей с id_tree = $idTree
+        $modelNews = News::model()->findAll('id_tree=:id_tree and date_delete is null and date_start_pub <= getdate() and date_end_pub >= getdate() and flag_enable = 1',
+            [':id_tree'=>$idTree]);
+      
+	   // 2.1. Если только 1 новость
+	   if (count($modelNews)==1)
+	   {
+	       $dirs = FileHelper::fileImageDirByNewsId($modelNews[0]->id, $modelNews[0]->id_organization);
+	       return $this->render('view', [
+	           'modelTree'=>$modelTree,
+	           'modelNews'=>$modelNews,
+	           'dirImage'=>$dirs['dirImage'],
+	           'dirFile'=>$dirs['dirFile'],
+	       ]);
+	   }	   
+	   // 2.2. Если более 1 новости
+	   elseif (count($modelNews)>1)
+	   {
+	       $modelNewsSearch = new NewsSearch('search');
+	       $modelNewsSearch->unsetAttributes();
+	       $modelNewsSearch->id_tree = $idTree;
+	       
+	       return $this->render('index', [
+	           'modelTree'=>$modelTree,
+	           'modelNews'=>$modelNewsSearch,	           
+	       ]);
+	   }	   
+	   // 2.3. Если вообще нет новостей
+	   else 
+	   {
+	       $structure = $this->structureTree($idTree);
+	       return $this->render('tree', [
+	           'modelTree'=>$modelTree,
+	           'structure'=>$structure,
+	       ]);
+	   }	    
+	}
+	
+	
+	
+	private function structureTree($idTree)
+	{
+	    $resultString = '';
+	    
+	    $modelTree = Yii::app()->db->createCommand()
+    	    ->from('{{tree}}')
+    	    ->where('id_parent=:id_parent', [':id_parent'=>$idTree])
+    	    ->queryAll();
+	    
+	    if (count($modelTree)==0)
+	        return  '';
+	    
+        $resultString .= "<ul class=\"\">\n";
+        	        
+        if ($modelTree !== null)
+        {	            
+            foreach ($modelTree as $tree)
+            {
+                $resultString .= "<li>" . CHtml::link($tree['name'], [$this->alias . '/index', 'id'=>$tree['id']]) . "</li>\n";
+                $resultString .= $this->structureTree($tree['id']);
+            }
+        }
+        $resultString .= "</ul>\n";
+        
+        return $resultString;
+	}
+	
+	
+	
+	public function getMenu($idTree)
+	{
+	    $resultMenu = array();
+	
+	    $model = Yii::app()->db->createCommand()
+    	    ->from('{{tree}}')
+    	    ->where('id_parent=:id_parent', [':id_parent'=>$idTree])
+    	    ->select('id, name')
+    	    ->queryAll();
+	    
+	    foreach ($model as $m)
+	    {
+	        $resultMenu[] = array(
+	            'name'=>$m['name'],
+	            'link'=>[$this->alias . '/index', 'id'=>$m['id']],
+	            'items'=>$this->getMenu($m['id']),
+	        );
+	    }
+	    return $resultMenu;
+	}
+	
+	
+	
+	
+	
+	
+	public function actionView($id)
 	{	    
 	    // 1. model Department
 	    $this->model = $this->loadModel($id);

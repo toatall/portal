@@ -290,7 +290,8 @@
 		});
     </script>
     <div id="params" class="well" style="display: none; padding: 10px;">
-    	<?php echo $form->textFieldRow($model,'param1',array('class'=>'span5','maxlength'=>250)); ?> 
+    	<?php echo $form->textFieldRow($model,'param1',array('class'=>'span5','maxlength'=>250)); ?>
+    	<?php echo $form->textFieldRow($model,'alias',array('class'=>'span5','maxlength'=>50)); ?>
     </div>
         
     <?php endif; ?>

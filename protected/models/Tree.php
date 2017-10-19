@@ -14,8 +14,8 @@
  * @property string $date_create
  * @property string $date_modification
  * @property bool $disable_child
- * 
- * @property bool allowAccess
+ * @property bool $allowAccess
+ * @property string $alias
  *
  * The followings are the available model relations:
  * @property TreeOrganization[] $TreeOrganizations
@@ -48,7 +48,7 @@ class Tree extends CActiveRecord
 			array('id_parent, name', 'required'),
 			array('id_parent, sort, id_organization', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>250),
-			array('module, author', 'length', 'max'=>50),
+			array('module, author, alias', 'length', 'max'=>50),
 			array('param1', 'length', 'max'=>100),
 			array('allOrganization, disable_child', 'boolean'),
             array('module', 'checkModule'),
@@ -57,7 +57,8 @@ class Tree extends CActiveRecord
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, id_parent, id_organization, name, sort, module, use_organization, 
-                use_tape, use_material, date_create, log_change, organization, disable_child', 'safe', 'on'=>'search'),
+                use_tape, use_material, date_create, log_change, organization, disable_child, 
+                alias', 'safe', 'on'=>'search'),
 		);
 	}
     
@@ -112,6 +113,7 @@ class Tree extends CActiveRecord
 			'allOrganization'   => 'Для всех налоговых орнанов',	
 			'param1'			=> 'ИД ссылки (для модуля page)', 
 			'disable_child'		=> 'Запретить создание подразделов',
+		    'alias'             => 'Алиас',
 		);
 	}
 
