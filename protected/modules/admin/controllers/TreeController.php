@@ -210,19 +210,15 @@ class TreeController extends AdminController
         		$flagAccess = true;
         	}
         
-        if ($flagAccess)
-        {
-            $this->render('../'.$model->module.'/access', array(
-        		'model'=>$model,
-                'module'=>$moduleClass,
-            ));
-        }
-       	}
-        else
-        {
-            $this->redirect(array('view','id'=>$id));
-        }
-        
+            if ($flagAccess)
+            {
+                return $this->render('../'.$model->module.'/access', array(
+            		'model'=>$model,
+                    'module'=>$moduleClass,
+                ));
+            }
+       	}        
+       	return $this->redirect(array('view','id'=>$id));                
     }
     
     

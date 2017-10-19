@@ -656,7 +656,7 @@ class News extends CActiveRecord
     
     public function getOrganization_name()
     {
-        return $this->id_organization . ' (' . $this->organization->name . ')';
+        return $this->organization->name;
     }
     
         
