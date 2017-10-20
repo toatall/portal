@@ -216,6 +216,7 @@ class RatingData extends CActiveRecord
 						'file_size'=>$file->size,
 						'date_create'=>new CDbExpression('getdate()'),
 						'author'=>UserInfo::inst()->userLogin,
+					    'id_organization'=>Yii::app()->session['organization'],
 					]);					
 				}
 			}

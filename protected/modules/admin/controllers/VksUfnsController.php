@@ -63,7 +63,10 @@ class VksUfnsController extends AdminController
 		{
 			$model->attributes=$_POST['Conference'];
 			if($model->save())
+			{
+			    $model->notifyEmail();
 				$this->redirect(array('view', 'id'=>$model->id));
+			}
 		}
 	
 		$this->render('/conference/create',array(
@@ -89,7 +92,10 @@ class VksUfnsController extends AdminController
 			$model->attributes=$_POST['Conference'];
 			//$model->action_log = $model->writeLog($model->action_log, 'изменение');
 			if($model->save())
+			{
+			    $model->notifyEmail();
 				$this->redirect(array('view','id'=>$model->id));
+			}
 		}
 	
 		$this->render('/conference/update',array(
