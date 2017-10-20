@@ -28,7 +28,7 @@ class Conference extends CActiveRecord
 	const TYPE_VKS_FNS = 2;
 	const TYPE_CONFERENCE = 3;
 	
-	
+	private $notifyMailAddress = '8600_notifyVksUfns';
 	
 	private $_typeConference = array(
 		1 => [
@@ -357,6 +357,30 @@ class Conference extends CActiveRecord
 		return "<h3>".date('H:i',strtotime($this->date_start))."</h3>";
 	}
 	
+	
+	/**
+	 * Уведомление о создании/изменении мероприятия
+	 * @param string $to адрес получателя
+	 */
+	public function notifyEmail($to=null)
+	{
+	    if (empty($to))
+	        $to = $this->notifyMailAddress;
+        
+        $conferenceName = $this->_typeConference[$this->type_conference]['name'];
+        
+	    $subject = 'Уведомление о ' . ($this->isNewRecord ? 'создании ' : 'изменении ') . $conferenceName . ', назначенное на ' . $this->date_start;
+	    $message = '<h1>' . date('d.m.Y', strtotime($this->date_start)) . ' в ' .  date('H:i:s', strtotime($this->date_start)) . ' будет проводиться ' . $conferenceName . '</h1>';
+	    $message .= '<br />Тема: ' . $this->theme;	    
+	    $message .= '<br /><br /><a href="' . Yii::app()->controller->createAbsoluteUrl('/conference/view', ['id'=>$this->id]) . '" target="_blank">Подробнее...</a>';
+	        
+	    $headers = 'From: =?utf-8?b?' . base64_encode($conferenceName . ' <portal86@regions.tax.nalog.ru>') . '?=' . "\r\n";	   
+	    $headers .= 'Content-Type: text/html; charset=utf-8' . "\r\n";
+	    
+	    mb_language('ru');
+	    mb_send_mail($to, $subject, $message, $headers);
+	    
+	}
 		
 	
 	
