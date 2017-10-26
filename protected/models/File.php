@@ -180,4 +180,23 @@ class File extends CActiveRecord
 	}
 	
 	
+	/**
+	 * Получение списка файлов для скачивания
+	 * @param int $model_id - идентификатор модели
+	 * @param string $model_name - наименование модели
+	 * @return array
+	 * @author oleg
+	 */
+	public static function filesForDownload($model_id, $model_name)
+	{
+	    return Yii::app()->db->createCommand()
+	       ->from('{{file}}')
+	       ->where('id_model=:id_model and model=:model', [
+	           ':id_model'=>$model_id,
+	           ':model'=>$model_name,
+	       ])
+	       ->queryAll();	    
+	}
+	
+	
 }

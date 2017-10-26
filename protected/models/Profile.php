@@ -191,6 +191,24 @@ class Profile extends CActiveRecord
 	}
 	
 	
+	/**
+	 * Получение ФИО пользователя по его логину
+	 * Если ФИО не найдено, то возвращается логин
+	 * @param string $login логин пользователя
+	 * @return string
+	 * @author oleg
+	 */
+	public static function nameByLogin($login)
+	{
+	    $profile = Yii::app()->db->createCommand()
+	       ->from('{{profile}} profile')
+	       ->join('{{user}} user', 'profile.id=[user].id')
+	       ->where('[user].username_windows=:username_windows', [':username_windows'=>$login])
+	       ->queryRow();
+	    return ($profile!==null && isset($profile['name'])) ? $profile['name'] : $login;
+	}
+	
+	
 	/*
 	
 	public static function autoSave(User $modelUser)

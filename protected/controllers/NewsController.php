@@ -24,29 +24,40 @@ class NewsController extends Controller
 	 */
 	public function actionView($id)
 	{
-    
+        
 	    $model = $this->loadModel($id);
-	    $modelTree = $this->loadModelTree($model->id_tree);
+	    //$modelTree = $this->loadModelTree($model['id_tree']);
 	    
-	    $dirImage = str_replace('{code_no}', $model->id_organization,
+	    $dirImage = str_replace('{code_no}', $model['id_organization'],
 				Yii::app()->params['pathImages']);
-		$dirImage = str_replace('{module}', $modelTree->module, $dirImage);
+		$dirImage = str_replace('{module}', $model['module'], $dirImage);
 		$dirImage = str_replace('{id}', $id, $dirImage);
 		
-		$dirFile = str_replace('{code_no}', $model->id_organization,
+		$dirFile = str_replace('{code_no}', $model['id_organization'],
 				Yii::app()->params['pathDocumets']);
-		$dirFile = str_replace('{module}', $modelTree->module, $dirFile);
+		$dirFile = str_replace('{module}', $model['module'], $dirFile);
 		$dirFile = str_replace('{id}', $id, $dirFile);
 				
 				
-		$this->pageTitle = $model->title;
+		$this->pageTitle = $model['title'];
 		
 		VisitNews::saveVisit($id);		
 		
-		$this->render('view',array(
-			'model'=>$model,           
-			'dirImage'=>$dirImage,
-			'dirFile'=>$dirFile,
+		if (Yii::app()->request->isAjaxRequest)
+    		return $this->renderPartial('_viewAjax',array(
+    			'model'=>$model,           
+    			'dirImage'=>$dirImage,
+    			'dirFile'=>$dirFile,
+    		    'files'=>File::filesForDownload($id, 'news'),
+    		    'images'=>Image::imagesForDownload($id, 'news'),
+    		), false, true);
+    		
+		return $this->render('view',array(
+		    'model'=>$model,
+		    'dirImage'=>$dirImage,
+		    'dirFile'=>$dirFile,
+		    'files'=>File::filesForDownload($id, 'news'),
+		    'images'=>Image::imagesForDownload($id, 'news'),
 		));
 	}
 
@@ -192,6 +203,47 @@ class NewsController extends Controller
 		));
 		
 	}
+	
+	
+	/**
+	 * Новость дня
+	 * @return string
+	 */
+	public function actionNewsDay($id=0)
+	{	    
+	    $model = NewsSearch::getFeedNewsDay($id);
+	    return $this->renderPartial('/site/index/_news', [
+	        'model'=> $model,
+	        'btnUrl' => [
+	            'url'=>$this->createUrl('news/index', array('organization'=>'8600')),
+	            'name'=>'Все новости',
+	        ],
+	    ]);
+	}
+	
+	public function actionNewsIfns()
+	{
+	    $model = NewsSearch::getFeedIfns();
+	    return $this->renderPartial('/site/index/_news', [
+	        'model'=> $model,
+	        'btnUrl' => [
+	            'url'=>$this->createUrl('news/index'),
+	            'name'=>'Все новости',
+	        ],
+	    ]);
+	}
+	
+	public function actionHumor()
+	{
+	    $model = NewsSearch::feedDopNews('Humor');
+	    return $this->renderPartial('/site/index/_news', [
+	        'model'=> $model,
+	        'btnUrl' => [
+	            'url'=>$this->createUrl('news/index', array('section'=>'Humor')),
+	            'name'=>'Все материалы',
+	        ],
+	    ]);
+	}
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
@@ -200,7 +252,14 @@ class NewsController extends Controller
 	 */
 	public function loadModel($id)
 	{	   
-		$model = News::model()->findByPk($id, 'date_delete is null and flag_enable=1'); 
+		//$model = News::model()->findByPk($id, 'date_delete is null and flag_enable=1');
+		$model = Yii::app()->db->createCommand()
+		  ->select('news.*,tree.module,organization.name as organization_name')
+		  ->from('{{news}} news')
+		  ->join('{{tree}} tree', 'tree.id=news.id_tree')
+		  ->leftJoin('{{organization}} organization', 'organization.code=news.id_organization')
+		  ->where('news.id=:id and news.date_delete is null and news.flag_enable=1', [':id'=>$id])
+		  ->queryRow();
 		       
 		if($model===null)
 			throw new CHttpException(404,'Страница не найдена.');

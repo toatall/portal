@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 	<meta name="language" content="en" />
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
 
@@ -125,17 +126,9 @@
 		)); ?><!-- breadcrumbs -->
 	<?php endif?>
 	    
-    <?php if ($this->module->errorLogin === false): ?>
-    	<?php if (Yii::app()->browser->getBrowser() == "Internet Explorer" || Yii::app()->browser->getBrowser() == "unknown"): ?>
-    		<div class="alert alert-danger">
-		    	<strong>Для корректной работы не рекомендуется использовать Internet Explorer!</strong>
-		    	<br />Рекомендуется использовать Google Chrome.
-		    	<br /><?= CHtml::link('Список браузеров', array('/site/browsers')) ?>
-		    </div>
-		<?php else: ?>
-    		<?php echo $content; ?>
-    	<?php endif; ?>
-    <?php else: ?> 
+    <?php if ($this->module->errorLogin === false): ?>    	
+		<?php echo $content; ?>    	
+    <?php else: ?>
     <div class="error">
     	<h1>Ошибка!</h1>
         <?= $this->module->errorLogin; ?>

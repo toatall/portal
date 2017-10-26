@@ -37,6 +37,7 @@
 <!-- header -->
 
 <?php
+    
     Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/extension/spoiler/spoiler.js');
     Yii::app()->clientScript->registerCssFile(Yii::app()->request->baseUrl.'/extension/spoiler/spoiler.css');    
     Yii::app()->clientScript->registerScript('fixed-menu', "
@@ -73,7 +74,7 @@
     $this->widget('bootstrap.widgets.TbNavbar',array(   
         'brand'=>'',
         //'fixed'=>'inverse',
-        'htmlOptions'=>array('style'=>'top: 200px;', 'id'=>'top_nav'),
+        'htmlOptions'=>array('style'=>'top: 200px;', 'id'=>'top_nav', 'class'=>'navbar-static-top'),
         'items'=>array(
             array(
                 'class'=>'bootstrap.widgets.TbMenu',

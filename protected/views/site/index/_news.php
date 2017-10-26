@@ -33,6 +33,17 @@
 	<?php if (isset($urlAllNews)) { echo $urlAllNews; } ?>
 </div>
 
+<?php if (isset($btnUrl)): ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array(
+        'type'=>'primary',
+        'url'=>$btnUrl['url'],
+        'label'=>$btnUrl['name'],
+        'htmlOptions'=>array(
+            'style'=>'float:right',
+        ),
+    )); ?>
+<?php endif; ?>
 
-
-
+<?php 
+    //print_r($model[count($model)-1]['id']);
+?>
