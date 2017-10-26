@@ -140,7 +140,8 @@ class NewsSearch extends News
 	{	   
 	    $model = Yii::app()->db->createCommand()
 	       ->from('{{view_feed_news_day}}')
-	       ->limit(self::LIMIT_TOP_NEWS);
+	       ->limit(self::LIMIT_TOP_NEWS)
+	       ->order('date_create desc, id desc');
 	    return $model->queryAll();	   
 	}
 	
