@@ -50,7 +50,7 @@ $this->breadcrumbs=array(
     <div style="clear: both;"></div>
 </div>
 
-<!-- div class="bs-callout bs-callout-info" style="vertical-align: middle;">
+<div class="bs-callout bs-callout-info" style="vertical-align: middle;">
     <img src="/images/browsers/48x483.png" width="44" height="48" style="float: left; margin-right: 10px;" />
     <span style="font-weight: bold;">Internet Explorer</span>
     <div class="spoiler-wrap">
@@ -61,7 +61,7 @@ $this->breadcrumbs=array(
         </div>
     </div>                  
     <div style="clear: both;"></div>
-</div-->
+</div>
 
 <!--div class="well">        
     <div class="well" style="background-color: white;"></div>

@@ -1,8 +1,5 @@
 <?php
 
-
-
-
 if (isset($breadcrumbs))
 {
 	$this->breadcrumbs = $breadcrumbs;
@@ -46,6 +43,6 @@ if (isset($breadcrumbs))
 			'class'=>'bootstrap.widgets.TbPager',
 			'displayFirstAndLast'=>true,
 		),
-				
 	));
 ?>
+

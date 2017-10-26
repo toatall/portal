@@ -61,8 +61,13 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
+	    if (Yii::app()->request->isAjaxRequest)
+	    {
+	        return 'Страница не поддерживает ajax-запрос';
+	    }
+	    
 		//$model = new NewsSearch();
-		$this->render('index', [
+		return $this->render('index', [
 		    'modelUFNS'=>NewsSearch::getFeedNewsDay(),
 		    'modelIFNS'=>NewsSearch::getFeedIfns(),
 		    'modelPressClub'=>NewsSearch::feedDopNews('PressClub'),
@@ -71,6 +76,7 @@ class SiteController extends Controller
 		]);
 	}
 
+	
 	/**
 	 * This is the action to handle external exceptions.
 	 */
@@ -87,10 +93,10 @@ class SiteController extends Controller
 		}
 	}
 
+	
 	/**
 	 * Displays the contact page
-	 */
-	
+	 */	
 	public function actionContact()
 	{
 		$model=new ContactForm;
@@ -116,7 +122,10 @@ class SiteController extends Controller
 	}
 	
     
-    
+    /**
+     * Допустимые браузеры
+     * @return
+     */
     public function actionBrowsers()
     {
     	$this->pageTitle = 'Рекомендуемые браузеры';    	
@@ -152,7 +161,9 @@ class SiteController extends Controller
    	
    	
    	/**
-   	 * Доска почета (+ дни рождения)
+   	 * Доска почета
+   	 * @param $year string год
+   	 * @author oleg
    	 */
    	public function actionHallFame($year=null)
    	{

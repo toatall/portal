@@ -63,11 +63,11 @@ class CommentController extends Controller
 			}
 		}
 		
-		return $this->renderPartial('_form',array(
+		return $this->renderPartial('_form', [
 			'id'=>$id,
 			'model'=>$model,
 			'modelAll'=>$modelAll,
-		));
+		]);
 	}
 	
 	
@@ -91,9 +91,22 @@ class CommentController extends Controller
 			{
 				$model->attributes=$_POST['Comment'];
 				if ($model->save())
+				{
 					echo 'OK';
 					Yii::app()->end();
+				}
+				elseif (Yii::app()->request->isAjaxRequest)
+				{				    
+				    $errors = '';
+				    foreach ($model->getErrors() as $err)
+				    {				     
+				        $errors .= implode('<br />', $err);
+				    }				    
+				    echo $errors;
+				    Yii::app()->end();
+				}
 			}
+			
 			return  $this->renderPartial('_form',array(
 				'id'=>$id,
 				'model'=>$model,
@@ -109,17 +122,27 @@ class CommentController extends Controller
 	
 	private function loadModel($id)
 	{
-		$model = Comment::model()->findByPk($id);
+	    $model = Comment::model()->findByPk($id);
+	    /*$model = Yii::app()->db->createCommand()
+	       ->from('{{comment}}')
+	       ->where('id=:id', [':id'=>$id])
+	       ->queryRow();
+	    */
 		if ($model===null)
 			throw new CHttpException(404,'Страница не найдена!');
 		return $model;
 	}
-	
+		
 	
 	private function loadModels($id)
 	{
-		$model = Comment::model()->findAll(array('condition'=>'id_parent=:id_parent','params'=>array(':id_parent'=>$id),'order'=>'date_create asc'));
-		if ($model===null)
+		//$model = Comment::model()->findAll(array('condition'=>'id_parent=:id_parent','params'=>array(':id_parent'=>$id),'order'=>'date_create asc'));
+		$model = Yii::app()->db->createCommand()
+		  ->from('{{comment}}')
+		  ->where('id_parent=:id_parent and date_delete is null', [':id_parent'=>$id])
+		  ->queryAll();
+		
+	  if ($model===null)
 			throw new CHttpException(404,'Страница не найдена!');
 		return $model;
 	}

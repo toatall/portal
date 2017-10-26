@@ -30,8 +30,7 @@ class News extends CActiveRecord
 {
 	
 	
-	const DEFAULT_MODULE = 'news';
-	
+	const DEFAULT_MODULE = 'news';	
     
     private $_thumbImageHeight = 200;  // размер миниатюр для галереи (ширина - пикселей)
     private $_miniatureImageHeight = 150; // размер миниатюры для главной страницы

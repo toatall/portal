@@ -287,4 +287,32 @@ class FileHelper extends CComponent
 	}
 	
 	
+	
+	/**
+	 * Расчет размера файла в Байтах, Кб, Мб, Гб, Тб
+	 * @param int $size
+	 * @return string
+	 */
+	public static function fileSizeToText($size)
+	{
+	    $arBytes = array(
+	        0 => array('unit'=>'Тб', 'value'=>pow(1024,4)),
+	        1 => array('unit'=>'Гб', 'value'=>pow(1024,3)),
+	        2 => array('unit'=>'Мб', 'value'=>pow(1024,2)),
+	        3 => array('unit'=>'Кб', 'value'=>pow(1024,1)),
+	        4 => array('unit'=>'Байт', 'value'=>1),
+	    );
+	    
+	    foreach ($arBytes as $arItem) {
+	        if ($size >= $arItem['value']) {
+	            $result = $size / $arItem['value'];
+	            $result = str_replace('.', ',', strval(round($result,2))).' '.$arItem['unit'];
+	            break;
+	        }
+	    }
+	    
+	    return $result;
+	}
+	
+	
 }

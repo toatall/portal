@@ -369,7 +369,7 @@ class Conference extends CActiveRecord
         
         $conferenceName = $this->_typeConference[$this->type_conference]['name'];
         
-	    $subject = 'Уведомление о ' . ($this->isNewRecord ? 'создании ' : 'изменении ') . $conferenceName . ', назначенное на ' . $this->date_start;
+	    $subject = 'Уведомление о ' . $conferenceName . ', назначенное на ' . $this->date_start;
 	    $message = '<h1>' . date('d.m.Y', strtotime($this->date_start)) . ' в ' .  date('H:i:s', strtotime($this->date_start)) . ' будет проводиться ' . $conferenceName . '</h1>';
 	    $message .= '<br />Тема: ' . $this->theme;	    
 	    $message .= '<br /><br /><a href="' . Yii::app()->controller->createAbsoluteUrl('/conference/view', ['id'=>$this->id]) . '" target="_blank">Подробнее...</a>';
