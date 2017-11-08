@@ -350,4 +350,28 @@ class RatingData extends CActiveRecord
 	}
 	
 	
+	/**
+	 * Render for tree
+	 * @param Tree(array) $modelTree
+	 * @return 
+	 */
+	public function treeAction($modelTree)
+	{
+	    
+	    $model = Yii::app()->db->createCommand()
+    	    ->from('{{rating_main}}')
+    	    ->where('id_tree=:id_tree', [':id_tree'=>$modelTree['id']])
+    	    ->queryAll();
+	    
+    	Yii::app()->controller->pageTitle = $modelTree['name'];
+	    
+	    Yii::app()->controller->render('application.views.department.rating', [
+	        'model'=>$model,
+	        'modelTree'=>$modelTree,
+	        'breadcrumbs'=>array(
+	            $modelTree['name'],
+	        ),
+	    ]);
+	}
+	
 }

@@ -12,7 +12,7 @@ $this->pageTitle=Yii::app()->name;
         'tabs'=>array(           
             array(
                 'label'=>'Новость дня',
-                'content'=>'<div id="container_news_day"></div>',
+                'content'=>'<div id="container_news_day"></div><div class="page-header"><a href="" class="btn btn-primary" style="float:right;">Все новости</a></div>',
                 'active'=>true,
             ),
             array(

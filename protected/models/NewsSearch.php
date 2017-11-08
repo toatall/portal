@@ -142,6 +142,10 @@ class NewsSearch extends News
 	       ->from('{{view_feed_news_day}}')
 	       ->limit(self::LIMIT_TOP_NEWS)
 	       ->order('date_create desc, id desc');
+	    
+	    if ($id>0 && is_numeric($id))
+	       $model->where('id<:id', [':id'=>$id]);
+	       
 	    return $model->queryAll();	   
 	}
 	
