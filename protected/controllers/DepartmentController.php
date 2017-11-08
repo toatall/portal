@@ -391,10 +391,17 @@ class DepartmentController extends Controller
 	private function render_ratingData($idDepartment, $idTree)
 	{
 		$model = $this->loadModelRatingMainByTreeId($idTree);
+		$modelDepartment = $this->loadModel($idDepartment);
+		$modelTree = $this->modelTree;
+		$this->pageTitle = $modelDepartment->department_name . ': Рейтинг';
 		$this->render('rating', [
-			'model'=>$model, 			
-			'modelDepartment'=>$this->loadModel($idDepartment),
-			'modelTree'=>$this->modelTree,			
+			'model'=>$model, 						
+			'modelTree'=>$modelTree,	
+		    'breadcrumbs'=>array(
+		        'Отделы' => array('department/index'),
+		        $modelDepartment->concatened => array('department/view', 'id'=>$modelDepartment->id),
+		        $modelTree->name,
+		    ),
 		]);
 	}
 	

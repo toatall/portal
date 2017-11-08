@@ -213,6 +213,7 @@ class NewsController extends Controller
 	{	    
 	    $model = NewsSearch::getFeedNewsDay($id);
 	    return $this->renderPartial('/site/index/_news', [
+	        'type'=>'newsDay',
 	        'model'=> $model,
 	        'btnUrl' => [
 	            'url'=>$this->createUrl('news/index', array('organization'=>'8600')),

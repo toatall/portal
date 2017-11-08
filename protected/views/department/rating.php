@@ -1,15 +1,8 @@
 <?php
-	
-$this->pageTitle = $modelDepartment->department_name . ': Рейтинг';
-
-$this->breadcrumbs=array(
-	'Отделы' => array('department/index'),
-	$modelDepartment->concatened => array('department/view', 'id'=>$modelDepartment->id),
-	$modelTree->name,
-);
+$this->breadcrumbs=$breadcrumbs;
 ?>
 
-<h1 class="page-header"><?= $modelTree->name ?></h1>
+<h1 class="page-header"><?= $modelTree['name'] ?></h1>
 
 
 <style>
@@ -46,14 +39,14 @@ $this->breadcrumbs=array(
 	foreach ($model as $m)
 	{
 		$tabs[] = [
-			'label'=>$m->name,
-			'content'=>'<div id="tab_content_' . $m->id . '"></div>',			
+			'label'=>$m['name'],
+			'content'=>'<div id="tab_content_' . $m['id'] . '"></div>',			
 			'active'=>$flagActive,			
 		];
 		$flagActive=false;
 
-		Yii::app()->clientScript->registerScript('ajax_tab_rating_' . $m->id, 'ajaxGET("' . 
-			Yii::app()->controller->createUrl('department/ratingData', ['id'=>$m->id]) . '", {}, "#tab_content_' . $m->id . '"); ', CClientScript::POS_END);
+		Yii::app()->clientScript->registerScript('ajax_tab_rating_' . $m['id'], 'ajaxGET("' . 
+			Yii::app()->controller->createUrl('department/ratingData', ['id'=>$m['id']]) . '", {}, "#tab_content_' . $m['id'] . '"); ', CClientScript::POS_END);
 		
 	}
 	
