@@ -43,7 +43,7 @@
 
 <?php
     // файлы    
-    if (count($files)): 
+    if (isset($files) && count($files)): 
 ?>
 <div class="spoiler-wrap">
     <div class="spoiler-head folded clickable unfolded"><i class="icon-file"></i> Файлы</div>
@@ -65,7 +65,7 @@
 
 <?php
     // изображения
-    if (count($images)): 
+    if (isset($images) && count($images)): 
     
             
 ?>
