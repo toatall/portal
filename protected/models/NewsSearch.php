@@ -146,7 +146,7 @@ class NewsSearch extends News
 	    if ($id>0 && is_numeric($id))
 	       $model->where('id<:id', [':id'=>$id]);
 	       
-	    return $model->queryAll();	   
+	    return $model->queryAll();
 	}
 	
 	
@@ -166,12 +166,17 @@ class NewsSearch extends News
 	 * Новости Инспекций
 	 * @return CDbCommand
 	 */
-	public static function getFeedIfns()
+	public static function getFeedIfns($id=0)
 	{		    
-	    return Yii::app()->db->createCommand()
-	        ->limit(self::LIMIT_TOP_NEWS)
+	    $model = Yii::app()->db->createCommand()	        
     	    ->from('{{view_feed_news_ifns}}')
-    	    ->queryAll();
+    	    ->order('date_create desc, id desc')
+    	    ->limit(self::LIMIT_TOP_NEWS);
+	    
+	    if ($id>0 && is_numeric($id))
+	        $model->where('id<:id', [':id'=>$id]);
+	    
+        return $model->queryAll();
 	}
 	
 	
@@ -180,14 +185,18 @@ class NewsSearch extends News
 	 * Дополнительные разделы
 	 * @return CDbCommand
 	 */
-	public static function feedDopNews($module)
+	public static function feedDopNews($module, $id=0)
 	{
-	    return Yii::app()->db->createCommand()
+	    $model = Yii::app()->db->createCommand()
     	    ->from('{{view_feed_news}}')
     	    ->limit(self::LIMIT_TOP_NEWS)
     	    ->where('param1=:param1', [':param1'=>$module])
-    	    ->order('date_create desc, id desc')
-    	    ->queryAll();
+    	    ->order('date_create desc, id desc');
+	    
+	    if ($id>0 && is_numeric($id))
+	        $model->andWhere('id<:id', [':id'=>$id]);
+	        
+        return $model->queryAll();
 	}
 	
 	

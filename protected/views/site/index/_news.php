@@ -28,36 +28,33 @@
 </div>
 
 
-<?php 
-    $lastId = isset($model[count($model)-1]['id']) ? $model[count($model)-1]['id'] : 0;    
-?>
-
-
 <?php if (isset($type)): ?>
 
     <?php if ($lastId > 0): ?>
-    <div id="content-next-<?= $type ?>">
+    <div id="content_next_<?= $type ?>">
     	<button id="btn-show-<?= $type ?>" class="btn btn-default" data-last-id="<?= $lastId ?>">Показать еще...</button>
+    	<?php if (isset($btnUrl)): ?>
+            <?php $this->widget('bootstrap.widgets.TbButton', array(
+                'type'=>'primary',
+                'url'=>$btnUrl['url'],
+                'label'=>$btnUrl['name'],
+                'htmlOptions'=>array(
+                    'style'=>'float:right',
+                ),
+            )); ?>
+        <?php endif; ?>
     </div>
     <?php endif;?>
     
     <script type="text/javascript">
     	$('#btn-show-<?= $type ?>').on('click', function() {
-    		ajaxNews('<?= Yii::app()->controller->createUrl('news/newsDay', ['id'=>$lastId]) ?>', {}, '#content-next-<?= $type ?>');    		
+    		ajaxNews('<?= $urlAjax ?>', {}, '#container_<?= $type ?>', true);
+    		$('#content_next_<?= $type ?>').remove();
     	});
     </script>
-    
-<?php endif;?>
 
+<?php else:?>
 
-
-<br />
-<!-- div style="float:right;">
-	<?php if (isset($urlAllNews)) { echo $urlAllNews; } ?>
-</div-->
-
-
-<div class="page-header">
     <?php if (isset($btnUrl)): ?>
         <?php $this->widget('bootstrap.widgets.TbButton', array(
             'type'=>'primary',
@@ -68,6 +65,6 @@
             ),
         )); ?>
     <?php endif; ?>
-</div>
 
+<?php endif; ?>
 

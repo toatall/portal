@@ -12,7 +12,7 @@ $this->pageTitle=Yii::app()->name;
         'tabs'=>array(           
             array(
                 'label'=>'Новость дня',
-                'content'=>'<div id="container_news_day"></div><div class="page-header"><a href="" class="btn btn-primary" style="float:right;">Все новости</a></div>',
+                'content'=>'<div id="container_news_day"></div><!--div class="page-header"><a href="" class="btn btn-primary" style="float:right;">Все новости</a></div-->',
                 'active'=>true,
             ),
             array(
@@ -68,11 +68,11 @@ $this->pageTitle=Yii::app()->name;
 
 	jQuery(function() {
 		// load news day
-	    ajaxNews('<?= Yii::app()->controller->createUrl('news/newsDay') ?>', {}, '#container_news_day');
+	    ajaxNews('<?= Yii::app()->controller->createUrl('news/newsDay') ?>', {}, '#container_news_day', true);
 	    // load news ifns
-		ajaxNews('<?= Yii::app()->controller->createUrl('news/newsIfns') ?>', {}, '#container_news_ifns');
+		ajaxNews('<?= Yii::app()->controller->createUrl('news/newsIfns') ?>', {}, '#container_news_ifns', true);
 	    // load humor
-		ajaxNews('<?= Yii::app()->controller->createUrl('news/Humor') ?>', {}, '#container_humor');
+		ajaxNews('<?= Yii::app()->controller->createUrl('news/Humor') ?>', {}, '#container_humor', true);
 
 	    // then modal news preview close(hide)
 		$('#modalPreviewNews').on('hide', function() {

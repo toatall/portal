@@ -41,20 +41,45 @@ function loadAjaxConferenceToday()
  * @param gif
  * @returns
  */
-function ajaxGET(url, data, container, gif)
+function ajaxGET(url, data, container, gif, append)
 {
 	gif = gif || '<img src="/images/loading.gif" />';
+	gif = '<div id="img_loader">' + gif + '</div>';
 	
-	$(container).html(gif);
+	if (append == true)
+	{
+		$(container).append(gif);
+	}
+	else
+	{
+		$(container).html(gif);
+	}
+	
 	$.ajax({
 		url: url,
 		data: data,
 	})
 	.done(function(data){
-		$(container).html(data);
+		if (append == true)
+		{
+			$('#img_loader').remove();
+			$(container).append(data);
+		}
+		else
+		{
+			$(container).html(data);
+		}
 	})
 	.error(function(jqXHR){
-		$(container).html('<div class="alert alert-danger">' + jqXHR.statusText + '</div>');
+		if (append == true)
+		{
+			$('#img_loader').remove();
+			$(container).append('<div class="alert alert-danger">' + jqXHR.statusText + '</div>');
+		}
+		else
+		{
+			$(container).html('<div class="alert alert-danger">' + jqXHR.statusText + '</div>');
+		}
 	});
 }
 
@@ -65,9 +90,9 @@ function ajaxGET(url, data, container, gif)
  * @param container
  * @returns
  */
-function ajaxNews(url, data, container)
+function ajaxNews(url, data, container, append)
 {
-	return ajaxGET(url, data, container, '<img src="/images/loader.gif" />');
+	return ajaxGET(url, data, container, '<img src="/images/loader.gif" />', append);
 }
 
 
@@ -77,7 +102,8 @@ function getURLParameter(name) {
 	return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
 }
 
-function changeUrlParam (param, value) {
+function changeUrlParam (param, value) 
+{
 	var currentURL = window.location.href+'&';
 	var change = new RegExp('('+param+')=(.*)&', 'g');
 	var newURL = currentURL.replace(change, '$1='+value+'&');

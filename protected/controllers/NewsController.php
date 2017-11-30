@@ -210,11 +210,14 @@ class NewsController extends Controller
 	 * @return string
 	 */
 	public function actionNewsDay($id=0)
-	{	    
+	{	    	    
 	    $model = NewsSearch::getFeedNewsDay($id);
+	    $lastId = isset($model[count($model)-1]['id']) ? $model[count($model)-1]['id'] : 0; 
 	    return $this->renderPartial('/site/index/_news', [
-	        'type'=>'newsDay',
+	        'urlAjax'=>Yii::app()->controller->createUrl('news/newsDay', ['id'=>$lastId]),
+	        'type'=>'news_day',
 	        'model'=> $model,
+	        'lastId'=>$lastId,
 	        'btnUrl' => [
 	            'url'=>$this->createUrl('news/index', array('organization'=>'8600')),
 	            'name'=>'Все новости',
@@ -222,11 +225,15 @@ class NewsController extends Controller
 	    ]);
 	}
 	
-	public function actionNewsIfns()
+	public function actionNewsIfns($id=0)
 	{
-	    $model = NewsSearch::getFeedIfns();
+	    $model = NewsSearch::getFeedIfns($id);
+	    $lastId = isset($model[count($model)-1]['id']) ? $model[count($model)-1]['id'] : 0; 
 	    return $this->renderPartial('/site/index/_news', [
+	        'urlAjax'=>Yii::app()->controller->createUrl('news/newsIfns', ['id'=>$lastId]),
+	        'type'=>'news_ifns',
 	        'model'=> $model,
+	        'lastId'=>$lastId,
 	        'btnUrl' => [
 	            'url'=>$this->createUrl('news/index'),
 	            'name'=>'Все новости',
@@ -234,11 +241,15 @@ class NewsController extends Controller
 	    ]);
 	}
 	
-	public function actionHumor()
+	public function actionHumor($id=0)
 	{
-	    $model = NewsSearch::feedDopNews('Humor');
+	    $model = NewsSearch::feedDopNews('Humor', $id);
+	    $lastId = isset($model[count($model)-1]['id']) ? $model[count($model)-1]['id'] : 0; 
 	    return $this->renderPartial('/site/index/_news', [
+	        'urlAjax'=>Yii::app()->controller->createUrl('news/Humor', ['id'=>$lastId]),
+	        'type'=>'humor',
 	        'model'=> $model,
+	        'lastId'=>$lastId,
 	        'btnUrl' => [
 	            'url'=>$this->createUrl('news/index', array('section'=>'Humor')),
 	            'name'=>'Все материалы',
