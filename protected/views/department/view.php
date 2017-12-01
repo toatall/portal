@@ -9,8 +9,8 @@ $this->breadcrumbs=array(
 <?php 	    
 	$this->renderPartial('application.views.news._view', [
 	    'model'=>$modelNews[0], 
-	    'dirFiles'=>$dirFile, 
-	    'dirImages'=>$dirImage,
+	    'dirFile'=>$dirFile, 
+	    'dirImage'=>$dirImage,
 	    'files'=>$files,
 	    'images'=>$images,
 	]);
