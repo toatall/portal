@@ -176,7 +176,7 @@ class DepartmentController extends Controller
                ->query()->read();*/
 	        $modelFirstNews = News::model()->findAll('id_tree=:id_tree and date_delete is null and date_start_pub <= getdate() and date_end_pub >= getdate() and flag_enable = 1', 
 	            [':id_tree'=>$this->model->id_tree]);
-	       
+	        
             if (count($modelFirstNews) > 0)
             {
 	           // render news
@@ -186,6 +186,8 @@ class DepartmentController extends Controller
 	               'modelNews'=>$modelFirstNews,
 	               'dirImage'=>$dirs['dirImage'],
 	               'dirFile'=>$dirs['dirFile'],
+	               'files'=>File::filesForDownload($modelFirstNews[0]['id'], 'news'),
+	               'images'=>Image::imagesForDownload($modelFirstNews[0]['id'], 'news'),
 	           ]);
             }
 	    }
