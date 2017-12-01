@@ -123,6 +123,8 @@ class DepartmentController extends Controller
                 'modelNews'=>$modelNews,
                 'dirImage'=>$dirs['dirImage'],
                 'dirFile'=>$dirs['dirFile'],
+                'files'=>File::filesForDownload($modelNews[0]['id'], 'news'),
+                'images'=>Image::imagesForDownload($modelNews[0]['id'], 'news'),
             ]);            
         }
         // 2.2 Вывести весь список новостей
@@ -212,6 +214,8 @@ class DepartmentController extends Controller
                    'modelNews'=>$modelFromListNews,
                    'dirImage'=>$dirs['dirImage'],
                    'dirFile'=>$dirs['dirFile'],
+                   'files'=>File::filesForDownload($modelFromListNews[0]['id'], 'news'),
+                   'images'=>Image::imagesForDownload($modelFromListNews[0]['id'], 'news'),
                ]);
            }
 	    }
