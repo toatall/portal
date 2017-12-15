@@ -24,14 +24,23 @@
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/menu.css" />    
     <?php Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl . '/js/main.js', CClientScript::POS_END); ?>
+    
+    <?php Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl . '/js/snow.js', CClientScript::POS_END); ?>
+    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/snow.css" />
 </head>
     
 <body>
-  
+
+	<img src="/images/elka.gif" style="height: 250px; position: absolute; margin-right: 10px; margin-top: 10px; z-index: 3000; right: 10px;" />
+  	
 <!-- header -->	
 	<table id="head">
 	    <tr>
-	        <td id="header-right"><a href="index.php"></a></td>
+	    	<td id="header-right">	    	
+	        	<div style="float:right; z-index:1040;">
+	        		
+	        	</div>
+	        </td>	        
 	    </tr>
 	</table>
 <!-- header -->
@@ -133,6 +142,6 @@
 
 </div><!-- page -->
 
-	
 </body>
+
 </html>
