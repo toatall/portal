@@ -25,29 +25,16 @@
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/menu.css" />    
     <?php Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl . '/js/main.js', CClientScript::POS_END); ?>
     
-    <?php Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl . '/js/snow.js', CClientScript::POS_END); ?>
-    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/snow.css" />
+    
 </head>
     
-<body>
-	<?php 
-	   $d1 = strtotime(date('d.m.Y'));
-	   $d2 = strtotime('01.01.'.(date('Y')+1));
-	   $d = round(($d2-$d1)/(60*60*24));
-	?>
-	<img src="/images/elka.gif" style="height: 250px; position: absolute; margin-right: 10px; margin-top: 10px; z-index: 3000; right: 10px;" />
-  	
+<body>	
+	
+	
 <!-- header -->	
 	<table id="head">
 	    <tr>
-	    	<td id="header-right">	    	
-	        	<div style="float:right; z-index:1040; color:white; margin-right:200px; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 20px; font-weight: bold; text-align: center;">	        		
-	        		До нового года осталось
-	        		<br /><br /><br />
-	        		<span class="badge-info" style="font-size:50px;">&nbsp;<?= $d ?>&nbsp;</span> 
-	        		<br /><br />дней
-	        	</div>
-	        </td>	        
+	    	<td id="header-right"></td>	        
 	    </tr>
 	</table>
 <!-- header -->
