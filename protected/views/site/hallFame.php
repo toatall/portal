@@ -43,12 +43,14 @@
 <hr />
 
 
-<?php     
+<?php  
+/*
     echo TbHtml::beginFormTb(TbHtml::FORM_LAYOUT_HORIZONTAL, '/site/happyBirthday', 'get');
     echo TbHtml::dropDownListControlGroup('year', $year, $yearList, ['id'=>'years', 'label'=>'Год', 'onchange'=>'this.form.submit();']);
     echo TbHtml::endForm();
+    */
 ?>
-<hr />
+
 <?php 
     if (!$photoFiles):
 ?>

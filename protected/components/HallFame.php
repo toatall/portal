@@ -4,7 +4,8 @@ class HallFame
 {
     // каталог с файлами
     const URL_IMAGES = '/repository/board_fame/';
-    const PATH_IMAGES = 'E:/www/portal' . self::URL_IMAGES;
+    const PATH_IMAGES = 'E:/WWW/portal' . self::URL_IMAGES;
+    //const PATH_IMAGES = 'C:/inetpub/wwwroot/portal/web' . self::URL_IMAGES;
     // интервал смены картинок
     const INTERVAL_CHANGE = 10; 
    
@@ -39,8 +40,9 @@ class HallFame
             $this->year = date('Y')-1;
         }
         elseif (!isset($this->years[$this->year]))
-        {            
-            return false;
+        {     
+            $this->year = 'default';
+            //return false;
         }
         
         // поиск файлов
@@ -70,6 +72,8 @@ class HallFame
         return (count($this->years) > 0);
     }
     
+     
+    
     public function showPhoto()
     {    
         return $this->files;
@@ -85,8 +89,17 @@ class HallFame
     {
         $this->files = []; // очистка файлов
         
+        if (!file_exists(self::PATH_IMAGES . $year . '/'))
+        {
+            $year = 'default/';
+        }
+        /*else 
+        {
+            $path = self::PATH_IMAGES . 'default/'; // формирование пути
+        }*/
+    
         $path = self::PATH_IMAGES . $year . '/'; // формирование пути
-
+        
         if (file_exists($path))
         {               
             $dh  = opendir($path);
@@ -101,10 +114,14 @@ class HallFame
                 {
                     $this->files[] = [
                         'image' => self::URL_IMAGES . $year . '/' . iconv('windows-1251', 'utf-8', $filename),
-                        'label' => 'Доска почета  ' . $year,
+                        'label' => null,//'Доска почета  ' . $year,
                     ];
                 }
             }                       
+        }
+        else
+        {
+            exit($path);
         }
     }
     
