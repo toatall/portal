@@ -31,7 +31,9 @@
     <?php echo $form->textFieldRow($model,'sort',array('class'=>'span5')); ?>
  	
  	<?php if (Yii::app()->user->admin): ?>
+ 		<div class="alert alert-info">
     	<?php echo $form->checkBoxRow($model,'allOrganization'); ?>
+    	</div>
     <?php endif; ?>
     
     <?php echo $form->checkBoxRow($model,'use_material'); ?>
@@ -80,12 +82,14 @@
     	<?php        	
     		if (Yii::app()->user->admin)
     		{
+    		    echo '<div class="alert alert-info">';
 	    		echo $form->dropDownListRow($model, 'module',
 	            	CHtml::listData(Module::listCurrentUser(),'name','description'),
 	                	array(
 	                    	'class'=>'span5',
 	                        'maxlength'=>50,
                 ));
+	    		echo '</div>';
     		}
         ?>        	
 
@@ -109,7 +113,7 @@
         // ГРУППЫ
         function getListGroups()
         {
-            $('#user_group_body').html('<img src="/images/loading.gif" /> Загрузка...');                 
+            $('#user_group_body').html('<img src="/images/loading.gif" /> Загрузка...');
             $.ajax({
                 url: '<?php echo $this->createUrl('/admin/tree/getListGroup/'); ?>',
                 type: 'POST',
@@ -169,7 +173,7 @@
     
     <?php if (Yii::app()->user->admin): ?>    
     
-    <div id="content_permission" class="well">  
+    <div id="content_permission" class="well alert alert-info">  
         <h5 style="background-color: white;" class="well">Доступ</h5>
         <p><?php echo $form->checkBoxRow($model, 'useParentRight', 
             $model->isNewRecord ? array('checked'=>'checked') : array()
@@ -282,19 +286,20 @@
     
     
    
-    <a href="" id="lnk-params" class="btn btn-primary">Дополнительные параметры</a>
+    <a href="" id="lnk-params" class="btn btn-primary">Дополнительные параметры</a><br /><br />
     <script type="text/javascript">
 		$('#lnk-params').on('click', function() {
 			$('#params').toggle();
 			return false;
 		});
     </script>
-    <div id="params" class="well" style="display: none; padding: 10px;">
+    <div id="params" class="well alert alert-info" style="display: none; padding: 10px;">
     	<?php echo $form->textFieldRow($model,'param1',array('class'=>'span5','maxlength'=>250)); ?>
     	<?php echo $form->textFieldRow($model,'alias',array('class'=>'span5','maxlength'=>50)); ?>
     </div>
         
     <?php endif; ?>
+    
     <br/><br/>
     <?= $form->checkBoxRow($model, 'disable_child') ?>
     

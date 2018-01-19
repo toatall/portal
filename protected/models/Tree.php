@@ -23,6 +23,8 @@
 class Tree extends CActiveRecord
 {    
     
+    const defaultModule = 'news';
+    
     public $permissionUser;
     public $permissionGroup;
     public $useParentRight; // галочка, которая разрешает/запрещает наследование прав
@@ -376,18 +378,6 @@ class Tree extends CActiveRecord
     }
     
   	
-	/**
-	 * Модуль по-умолчанию
-	 * @return string
-	 * 
-	 *  @author oleg
-	 *  @version 15.08.2016
-	 */
-	public function getDefaultModule()
-	{
-		return 'page';
-	}
-	
 	
 	/**
 	 * Check correct using tree organization
@@ -429,7 +419,8 @@ class Tree extends CActiveRecord
         	    ))
         	    ->queryScalar();	    
 	}
-    
+	
+	    
     
     
 }

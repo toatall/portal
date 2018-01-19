@@ -257,7 +257,7 @@ class Department extends CActiveRecord
 						
 		$model = Yii::app()->db->createCommand()
 		  ->from('{{tree}}')
-		  ->where('id_parent=:id_parent', [':id_parent'=>$id])
+		  ->where('id_parent=:id_parent and date_delete is null', [':id_parent'=>$id])
 		  ->select('id, name')
 		  ->queryAll();
 		

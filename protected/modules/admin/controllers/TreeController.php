@@ -44,17 +44,19 @@ class TreeController extends AdminController
 	}
 
 	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * Создание нового раздела
+	 * 
+	 * Параметры доступные только для пользователя с ролью администратор
+	 * $allOrganization - для свех налоговых органов (для остальных пользователей = 0)
+	 * $module - модуль (для остальных пользователей news)
+	 * 
 	 */
 	public function actionCreate()
 	{
 		$model=new Tree;
-		//$model->module = $model->defaultModel;
+		$model->module = Tree::defaultModule;
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-                
+		// save model
 		if(isset($_POST['Tree']))
 		{            
 			$model->attributes=$_POST['Tree'];
@@ -71,6 +73,7 @@ class TreeController extends AdminController
                 $model->use_tape = false;
                 $model->module = null;
             }
+            /*             
             else
             {
                 if (!Yii::app()->user->admin)
@@ -82,6 +85,7 @@ class TreeController extends AdminController
                     }                    
                 }
             }
+            */
             
 			if($model->save())
             {                                               
@@ -111,7 +115,7 @@ class TreeController extends AdminController
                 }
 
             }
-		}
+		} // end save model
 
 		$this->render('create',array(
 			'model'=>$model,
