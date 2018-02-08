@@ -21,7 +21,7 @@ $this->menu=array(
 		'id',
 		//'id_tree',
 		'rating_year',
-		'rating_period',
+		'ratingPeriodDescription',
 		'date_create',
 		/*
 		'log_change',		

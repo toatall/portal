@@ -136,10 +136,13 @@ class RatingData extends CActiveRecord
 		$criteria->compare('rating_period',$this->rating_period,true);
 		$criteria->compare('date_create',$this->date_create,true);
 		$criteria->compare('author',$this->author,true);
-		$criteria->compare('log_change',$this->log_change,true);
+		$criteria->compare('log_change',$this->log_change,true);	
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+		    'sort'=>array(
+		        'defaultOrder'=>'rating_year desc, rating_period desc',
+		    ),
 		));
 	}
 
@@ -372,6 +375,12 @@ class RatingData extends CActiveRecord
 	            $modelTree['name'],
 	        ),
 	    ]);
+	}
+	
+	
+	public function getRatingPeriodDescription()
+	{
+	    return (isset($this->periods[$this->rating_period]) ? $this->periods[$this->rating_period] : $this->rating_period);
 	}
 	
 }
