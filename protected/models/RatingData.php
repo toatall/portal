@@ -110,6 +110,7 @@ class RatingData extends CActiveRecord
 			'author' => 'Автор',
 			'log_change' => 'Журнал изменений',
 			'fileView' => 'Файлы',
+		    'ratingPeriodDescription'=>'Период',
 		);
 	}
 
