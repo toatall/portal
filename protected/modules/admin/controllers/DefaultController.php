@@ -62,7 +62,7 @@ class DefaultController extends AdminController
 		{
 			if (Yii::app()->user->login($identity))
 			{								
-				$url = /*!empty(Yii::app()->user->returnUrl) ? Yii::app()->user->returnUrl :*/['/site/index'];
+				$url = !empty(Yii::app()->user->returnUrl) ? Yii::app()->user->returnUrl :['/site/index'];
 				$this->redirect($url);
 			}
 			else 
