@@ -23,7 +23,7 @@ class SiteController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'hallFame', 'contact', 'captcha', 'error'),
+				'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'hallFame', 'contact', 'captcha', 'error', 'virus'),
 				'users' => array('@'),
 			),
 			array(
@@ -175,7 +175,22 @@ class SiteController extends Controller
    	        'year'=>$model->getYear(),
    	        'yearList'=>$model->getYears(),
    	    ]);   	    
-   	}   	   
+   	}   	
+   	
+   	
+   	/**
+   	 * Запись информации от вируса-банера
+   	 * @param string $login
+   	 */
+   	public function actionVirus($login)
+   	{
+   	    if (empty($login))
+   	        return;
+   	    Yii::app()->db->createCommand()
+   	        ->insert('{{virusBanner}}', [
+   	            'login_name'=>$login,
+   	        ]);
+   	}
    
    	
     
