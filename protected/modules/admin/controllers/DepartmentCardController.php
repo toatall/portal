@@ -112,7 +112,7 @@ class DepartmentCardController extends AdminController
 	 */
 	public function actionDelete($id)
 	{
-	    if (Yii::app()->user->inRole('admin'))
+	    if (!Yii::app()->user->inRole('admin'))
 	        throw new CHttpException(403,'У вас недостаточно прав для выполнения указанного действия.');
 	    
 		if(Yii::app()->request->isPostRequest)
