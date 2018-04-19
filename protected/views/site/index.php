@@ -86,7 +86,17 @@ $this->pageTitle=Yii::app()->name;
 	    if (url_w!=null)
 	    {
 		    $('#modalPreviewNews').modal('show');
-		    ajaxNews(url_w, {}, '#modal-content-news-previwe');		    
+		    //ajaxNews(url_w, {}, '#modal-content-news-previwe');		    
+		    
+		    //obj = ajaxJSON(url_w, {a:'asdas', b:'asdas'});
+		    //alert(obj);
+
+			ajaxJSON(url_w, {
+				title: '#modal-title-news-preview',
+				content: '#modal-content-news-previwe'
+			});
+		    
+		    
 		}
 		
 	});
@@ -95,7 +105,10 @@ $this->pageTitle=Yii::app()->name;
 	function loadNews(url, title, hash)
 	{			
 		$('#modal-title-news-preview').html(title);
-		ajaxNews(url, {}, '#modal-content-news-previwe');		
+		ajaxJSON(url, {
+			title: '#modal-title-news-preview',
+			content: '#modal-content-news-previwe'
+		});
 		changeUrlParam('w', url);
 		return false;
 	}

@@ -671,4 +671,11 @@ class News extends CActiveRecord
 		return parent::model($className);
 	}
 	
+	
+	public function treeAction($treeModel)
+	{
+	    
+	}
+	
+	
 }

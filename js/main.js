@@ -57,9 +57,9 @@ function ajaxGET(url, data, container, gif, append)
 	
 	$.ajax({
 		url: url,
-		data: data,
+		data: data		
 	})
-	.done(function(data){
+	.done(function(data){		
 		if (append == true)
 		{
 			$('#img_loader').remove();
@@ -70,7 +70,7 @@ function ajaxGET(url, data, container, gif, append)
 			$(container).html(data);
 		}
 	})
-	.error(function(jqXHR){
+	.fail(function(jqXHR){
 		if (append == true)
 		{
 			$('#img_loader').remove();
@@ -81,6 +81,33 @@ function ajaxGET(url, data, container, gif, append)
 			$(container).html('<div class="alert alert-danger">' + jqXHR.statusText + '</div>');
 		}
 	});
+}
+
+function ajaxJSON(url, containers, gif)
+{	
+	gif = gif || '<img src="/images/loading.gif" />';
+	gif = '<div id="img_loader">' + gif + '</div>';
+	
+	$.ajax({
+		url: url,		
+		dataType: "json"
+	})
+	.done(function(data){		
+		// заголовок
+		if (data.hasOwnProperty('title') && ('title' in containers))
+		{
+			$(containers['title']).html(data.title);
+		}
+		// контент
+		if (data.hasOwnProperty('content') && ('content' in containers))
+		{
+			$(containers['content']).html(data.content);
+		}
+	})
+	.fail(function(jqXHR){
+		//return '<div class="alert alert-danger">' + jqXHR.statusText + '</div>';
+	});
+	
 }
 
 /**

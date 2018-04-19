@@ -44,13 +44,19 @@ class NewsController extends Controller
 		VisitNews::saveVisit($id);		
 		
 		if (Yii::app()->request->isAjaxRequest)
-    		return $this->renderPartial('_viewAjax',array(
-    			'model'=>$model,           
-    			'dirImage'=>$dirImage,
-    			'dirFile'=>$dirFile,
-    		    'files'=>File::filesForDownload($id, 'news'),
-    		    'images'=>Image::imagesForDownload($id, 'news'),
-    		), false, true);
+		{
+		    echo CJSON::encode([
+		        'title'=>$model['title'],
+		        'content'=> $this->renderPartial('_viewAjax',array(
+        			'model'=>$model,           
+        			'dirImage'=>$dirImage,
+        			'dirFile'=>$dirFile,
+        		    'files'=>File::filesForDownload($id, 'news'),
+        		    'images'=>Image::imagesForDownload($id, 'news'),
+        		), true, true),
+            ]);
+		    Yii::app()->end();
+		}
     		
 		return $this->render('view',array(
 		    'model'=>$model,
@@ -127,7 +133,7 @@ class NewsController extends Controller
 	 *  4 если указан раздел и код организации, то вывести список материалов данной организации
 	 * @author tvog17
 	 */
-	public function actionIndex($organization=null, $section=null)
+	public function actionIndex($organization=null, $section=null, $s=null)
 	{
 		
 		$organizationModel = null;		
@@ -140,7 +146,8 @@ class NewsController extends Controller
 				
 		$treeModel = null;
 		// проверка раздела
-		if ($section!==null && ($treeModel=Yii::app()->db->createCommand()->from('{{tree}}')->where('module=:module and param1=:param1',[':module'=>'news', ':param1'=>$section])->query()->read()) === null)
+		if ($section!==null && ($treeModel=Yii::app()->db->createCommand()->from('{{tree}}')
+		      ->where('module=:module and param1=:param1',[':module'=>'news', ':param1'=>$section])->query()->read()) === null)
 		{
 			throw new CHttpException(404,'Страница не найдена.');
 		}
@@ -223,6 +230,19 @@ class NewsController extends Controller
 	            'name'=>'Все новости',
 	        ],
 	    ]);
+	    /*return CJSON::encode([
+	        'title'=>$model['title'],
+	        'content'=>$this->renderPartial('/site/index/_news', [
+    	        'urlAjax'=>Yii::app()->controller->createUrl('news/newsDay', ['id'=>$lastId]),
+    	        'type'=>'news_day',
+    	        'model'=> $model,
+    	        'lastId'=>$lastId,
+    	        'btnUrl' => [
+    	            'url'=>$this->createUrl('news/index', array('organization'=>'8600')),
+    	            'name'=>'Все новости',
+    	        ],
+            ], true)
+	    ]);*/
 	}
 	
 	public function actionNewsIfns($id=0)
