@@ -29,13 +29,23 @@
 </head>
     
 <body>	
-	
+	<?php 
+	   $d1 = new DateTime();
+	   $d2 = new DateTime('2018-05-16');
+	   $dateDiff = $d1->diff($d2)->format('%r%a');	
+	?>
 	
 <!-- header -->	
 	<table id="head">
 	    <tr>
-	    	<td id="header-right"></td>	        
-	    </tr>
+	    	<td id="header-right">
+	    		<?php if ($dateDiff > 0): ?>
+	    		<div style="color: #fff; float: right; width:300px;">
+	    			<h4>До начала XV Спартакиады налоговых органов Югры осталось</h4> <h1><?= $dateDiff ?></h1> <h4>дней</h4>
+	    		</div>
+	    		<?php endif; ?>
+	    	</td>	    	
+	    </tr>	   
 	</table>
 <!-- header -->
 
