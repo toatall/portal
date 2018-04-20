@@ -208,6 +208,8 @@ class Module extends CActiveRecord
     {
     	if (Yii::app()->user->isGuest) return null;
     	
+    	return self::model()->findAll();
+    	/*
     	if (Yii::app()->user->admin)
     		return self::model()->findAll();
     	
@@ -219,6 +221,7 @@ class Module extends CActiveRecord
     		->leftJoin('{{group_user}} gp', '[group].[id_group]=[gp].[id_group]')
     		->where('[user].[id_user] = ' . Yii::app()->user->id . ' or [gp].[id_user]=' . Yii::app()->user->id)
     		->queryAll();
+        */
     }
     
 }

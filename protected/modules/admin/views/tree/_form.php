@@ -90,7 +90,7 @@
 	                        'maxlength'=>50,
                 ));
 	    		echo '</div>';
-    		}
+    		}    		
         ?>        	
 
     	<?php echo $form->checkBoxRow($model,'use_tape'); ?>

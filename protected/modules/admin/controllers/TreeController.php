@@ -28,7 +28,7 @@ class TreeController extends AdminController
             ),
             array('deny',  // deny all users
 				'users'=>array('*'),
-			),			            
+			),
 		);
 	}
 
@@ -73,22 +73,9 @@ class TreeController extends AdminController
                 $model->use_tape = false;
                 $model->module = null;
             }
-            /*             
-            else
-            {
-                if (!Yii::app()->user->admin)
-                {
-                    $record = Tree::model()->findByPk($model->id_parent);
-                    if (count($record)>0)
-                    {
-                        $model->module=$record->module;
-                    }                    
-                }
-            }
-            */
             
 			if($model->save())
-            {                                               
+            {                      
                 $permissionGroups = (isset($_POST['Tree']['permissionGroup'])) 
                     ? $_POST['Tree']['permissionGroup'] : array();
                 $permissionUsers = (isset($_POST['Tree']['permissionUser'])) 
@@ -113,7 +100,6 @@ class TreeController extends AdminController
                 {
                     $this->redirect(array('view','id'=>$model->id));
                 }
-
             }
 		} // end save model
 
@@ -145,40 +131,41 @@ class TreeController extends AdminController
             }            
             
 			if($model->save())
-            {                
-                $permissionGroups = (isset($_POST['Tree']['permissionGroup'])) 
-                    ? $_POST['Tree']['permissionGroup'] : array();
-                $permissionUsers = (isset($_POST['Tree']['permissionUser'])) 
-                    ? $_POST['Tree']['permissionUser'] : array();
-                
-                Access::saveRelationsPermissions($model->id, $model,
-                    $permissionGroups, $permissionUsers);
-                
-                /* дополнительные настройки прав */
-                $flagDopAccessModel=false;
-                
-                if (($model->module != null) && (Yii::app()->user->admin))
-                {                    
-                    if (@class_exists($model->module))
+            {      
+                if (Yii::app()->user->admin)
+                {
+                    $permissionGroups = (isset($_POST['Tree']['permissionGroup'])) 
+                        ? $_POST['Tree']['permissionGroup'] : array();
+                    $permissionUsers = (isset($_POST['Tree']['permissionUser'])) 
+                        ? $_POST['Tree']['permissionUser'] : array();
+                    
+                    Access::saveRelationsPermissions($model->id, $model,
+                        $permissionGroups, $permissionUsers);
+                    
+                    /* дополнительные настройки прав */
+                    $flagDopAccessModel=false;
+                    
+                    if (($model->module != null) && (Yii::app()->user->admin))
+                    {                    
+                        if (@class_exists($model->module))
+                        {
+                            $dopAccessModel = new $model->module;
+                            if ($dopAccessModel->hasProperty('useOptionalAccess') && $dopAccessModel->useOptionalAccess) 
+                                $flagDopAccessModel = true;
+                            if (property_exists($model->module, 'useOptionalAccess'))
+                                $flagDopAccessModel = true;
+                            
+                        }                    
+                    }
+                    
+                    if ($flagDopAccessModel)
                     {
-                        $dopAccessModel = new $model->module;
-                        if ($dopAccessModel->hasProperty('useOptionalAccess') && $dopAccessModel->useOptionalAccess) 
-                            $flagDopAccessModel = true;
-                        if (property_exists($model->module, 'useOptionalAccess'))
-                            $flagDopAccessModel = true;
-                        
-                    }                    
+                        return $this->redirect(array('access','id'=>$model->id));
+                    }
+                    
                 }
                 
-                if ($flagDopAccessModel)
-                {
-                    $this->redirect(array('access','id'=>$model->id));
-                }
-                else 
-                {
-                    $this->redirect(array('view','id'=>$model->id));
-                }
-                                 
+                return $this->redirect(array('view','id'=>$model->id));                                 
             }
 		}
 
