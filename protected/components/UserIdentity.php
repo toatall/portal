@@ -32,8 +32,7 @@ class UserIdentity extends CUserIdentity
 		{
 			$this->_id = $model->id;
 			$this->setState('admin', $model->role_admin);
-			$this->setState('username_fio', (isset($model->profile->name)
-				? $model->profile->name : ''));
+			$this->setState('username_fio', (isset($model->fio)	? $model->fio : ''));
 			$this->setState('isUFNS', $this->getIsUFNS($model->default_organization));
 			$this->setState('guest', false);
 			$this->setState('roles', $this->getRoles($model->role_admin));

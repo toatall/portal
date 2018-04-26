@@ -5,7 +5,7 @@
  *
  * The followings are the available columns in table '{{user}}':
  * @property integer $id
- * @property string $username 
+ * @property string $fio 
  * @property string default_organization
  * @property string current_organization
  * @property string $username_windows
@@ -15,6 +15,14 @@
  * @property string $date_edit
  * @property string $date_delete 
  * @property string $folder_path
+ * @property string $telephone
+ * @property string $post
+ * @property string $rank
+ * @property string $photo_file
+ * @property string $about
+ * @property string $departmnet
+ * @property string $hash
+ * @property string $organization_name
  */
 class User extends CActiveRecord
 {
@@ -42,18 +50,16 @@ class User extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('username_windows', 'required'),            
-            array('username', 'unique', 'attributeName'=>'username', 'className'=>'User'),
+			array('username_windows', 'required'),                        
 			array('username_windows', 'unique', 'attributeName'=>'username_windows', 'className'=>'User'),
-			array('username, username_windows', 'length', 'max'=>250),
-			array('folder_path', 'length', 'max'=>50),			
+			array('fio, username_windows, post, rank, photo_file, department, organization_name', 'length', 'max'=>250),
+			array('folder_path, telephone', 'length', 'max'=>50),
+		    array('hash', 'length', 'max'=>32),
 			array('default_organization, current_organization', 'length', 'max'=>5),			
             array('id', 'numerical', 'integerOnly'=>true),
 			array('blocked, role_admin', 'boolean'),			
-			/*array('date_create, date_edit, date_delete', 'date', 
-				'allowEmpty'=>true, 'format'=>'dd.MM.yyyy hh:mm:ss'),*/
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			
+		    // search rule
 			array('id, username, username_windows, date_create, date_edit, date_delete, blocked, 
 				default_organizartion, current_organization, profile_name', 'safe', 'on'=>'search'),
 			array('profile_name, users', 'safe'),
@@ -80,18 +86,24 @@ class User extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ИД',
-			'username' => 'Логин',					
-			'username_windows' => 'Windows-логин',
+			'id' => 'ИД',			
+			'username_windows' => 'Логин',
             'date_create' => 'Дата создания',			
 			'date_edit' => 'Дата изменения',
 			'date_delete' => 'Дата удаления',
 			'blocked' => 'Блокировка',           
-			'role_admin' => 'Роль админа',
-            /*'current_organization'=>'Доступные ораганизации',*/
+			'role_admin' => 'Роль админа',            
             'default_organization'=>'Организация',			
 			'organizations' => 'Доступные ораганизации',	
-			'folder_path' => 'Дополнительный каталог'
+			'folder_path' => 'Дополнительный каталог',
+		    'telephone' => 'Телефон',
+		    'post' => 'Должность',
+		    'rank' => 'Чин',
+		    'photo_file' => 'Аватар',
+		    'about' => 'Описание',
+		    'departmnet' => 'Отдел',
+		    'organization_name' => 'Организация',
+		    
 		);
 	}
 	
@@ -114,9 +126,7 @@ class User extends CActiveRecord
         $users = Yii::app()->request->getParam('users');
         
 		$criteria=new CDbCriteria;
-		
-		$criteria->with = array('profile');				
-		
+		//$criteria->with = array('profile');				
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('t.username',$this->username,true);
 		$criteria->compare('t.username_windows',$this->username_windows,true);
@@ -127,8 +137,7 @@ class User extends CActiveRecord
 		$criteria->compare('role_admin',$this->role_admin);    
         $criteria->compare('t.default_organization', isset(Yii::app()->session['organization'])
         	? Yii::app()->session['organization'] : $this->default_organization);
-        
-        $criteria->compare('profile.name',$this->profile_name,true);
+        //$criteria->compare('profile.name',$this->profile_name,true);
         
         if ($no_admin == null) { $no_admin = Yii::app()->request->getParam('no_admin'); }        
         $criteria->compare('t.folder_path',$this->folder_path,true);
@@ -168,7 +177,7 @@ class User extends CActiveRecord
             $criteria->compare('default_organization',Yii::app()->session['organization']);   
         }
         
-        $criteria->compare('profile.name',$this->profile_name,true);
+        //$criteria->compare('profile.name',$this->profile_name,true);
         //$criteria->addNotInCondition('t.id',$users);
         $criteria->addNotInCondition('t.id',explode(',', $this->users));
         
