@@ -5,8 +5,7 @@
  *
  * The followings are the available columns in table '{{user}}':
  * @property integer $id
- * @property string $username
- * @property string $password
+ * @property string $username 
  * @property string default_organization
  * @property string current_organization
  * @property string $username_windows
@@ -22,9 +21,6 @@ class User extends CActiveRecord
 	
 	const GUEST_NAME = 'Гость';
 	
-    public $password_repeat;
-    public $_password_old;
-    
     public $organizations=array();
     public $profile_name;
     
@@ -50,9 +46,7 @@ class User extends CActiveRecord
             array('username', 'unique', 'attributeName'=>'username', 'className'=>'User'),
 			array('username_windows', 'unique', 'attributeName'=>'username_windows', 'className'=>'User'),
 			array('username, username_windows', 'length', 'max'=>250),
-			array('password', 'compare', 'compareAttribute'=>'password_repeat'),
-			array('folder_path', 'length', 'max'=>50),
-			array('password, password_repeat', 'length', 'max'=>50),
+			array('folder_path', 'length', 'max'=>50),			
 			array('default_organization, current_organization', 'length', 'max'=>5),			
             array('id', 'numerical', 'integerOnly'=>true),
 			array('blocked, role_admin', 'boolean'),			
@@ -73,13 +67,10 @@ class User extends CActiveRecord
 	{
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
-		return array(
-            
+		return array(           
 			'organization'=>array(self::MANY_MANY, 'Organization',
-                '{{user_organization}} (id_user, id_organization)'),
-				
-			'profile' => array(self::BELONGS_TO, 'Profile', 'id'),
-				
+                '{{user_organization}} (id_user, id_organization)'),				
+			//'profile' => array(self::BELONGS_TO, 'Profile', 'id'),
 		);
 	}
 
@@ -90,9 +81,7 @@ class User extends CActiveRecord
 	{
 		return array(
 			'id' => 'ИД',
-			'username' => 'Логин',		
-			'password' => 'Пароль',
-			'password_repeat' => 'Подтверждение пароля',
+			'username' => 'Логин',					
 			'username_windows' => 'Windows-логин',
             'date_create' => 'Дата создания',			
 			'date_edit' => 'Дата изменения',
@@ -135,8 +124,7 @@ class User extends CActiveRecord
 		$criteria->compare('t.date_edit',$this->date_edit,true);		
 		$criteria->addCondition('t.date_delete is null');
 		$criteria->compare('t.blocked',$this->blocked);
-		$criteria->compare('role_admin',$this->role_admin);
-        // $criteria->compare('current_organization',$this->current_organization);                
+		$criteria->compare('role_admin',$this->role_admin);    
         $criteria->compare('t.default_organization', isset(Yii::app()->session['organization'])
         	? Yii::app()->session['organization'] : $this->default_organization);
         
@@ -206,8 +194,12 @@ class User extends CActiveRecord
     
 	
 	/**
-	 * Событие перед сохранением в БД
-	 * @return parent::beforeSave();
+	 * <EVENTS>
+	 */
+	
+	/**
+	 * {@inheritDoc}
+	 * @see CActiveRecord::beforeSave()
 	 */
     protected function beforeSave()
     {        
@@ -217,25 +209,42 @@ class User extends CActiveRecord
         if ($this->date_delete == null)
         	$date_delete = new CDbExpression('null'); 
         
-        if (empty($this->password) && empty($this->password_repeat))
-        {
-        	$this->password = $this->_password_old;
-        }
-        else
-        {
-        	$this->password = CPasswordHelper::hashPassword($this->password);        	
-        }
-        
         return parent::beforeSave();
     }   
     
-     
-    
+    /**
+     * {@inheritDoc}
+     * @see CActiveRecord::afterSave()
+     */
     protected function afterSave()
     {
     	Log::insertLog($this);
     	return parent::afterSave();
     }
+    
+    /**
+     * {@inheritDoc}
+     * @see CActiveRecord::afterFind()
+     */
+    protected function afterFind()
+    {
+        if (!empty($this->organization)) {
+            foreach ($this->organization as $val) {
+                $this->organizations[]=$val->code;
+            }
+        }
+        
+        $this->date_create = ConvertDate::find($this->date_create);
+        $this->date_edit = ConvertDate::find($this->date_edit);
+        $this->date_delete = ConvertDate::find($this->date_delete);        
+        
+        parent::afterFind();
+    }
+    
+    /**
+     * </EVENTS>
+     */
+    
     
         
     /**
@@ -268,31 +277,7 @@ class User extends CActiveRecord
     }
       
         
-    /*
-    public function getAdminsName()
-    {        	
-    	if (Yii::app()->user->isGuest)
-    		return array(null);
-    	
-    	return array(Yii::app()->user->admin ? Yii::app()->user->name : null);
-    }
-    */
     
-    protected function afterFind()
-    {
-        if (!empty($this->organization)) {
-            foreach ($this->organization as $val) {
-                $this->organizations[]=$val->code;
-            }
-        }
-                
-        $this->date_create = ConvertDate::find($this->date_create);
-        $this->date_edit = ConvertDate::find($this->date_edit);
-        $this->date_delete = ConvertDate::find($this->date_delete);
-        $this->_password_old = $this->password;
-        
-        parent::afterFind();
-    }
     
     public function getDropDownList()
     {
@@ -410,31 +395,6 @@ class User extends CActiveRecord
     }
     
     
-    /**
-    @todo delete/refactor
-     **/
-    /*
-    public function getUsersByTreeAccess($id_tree)
-    {
-        $record = Access::model()->with('user', 'profile')->findAll(array(
-            'order'=>'[user].default_organization, [user].username',
-            'condition'=>'t.id_tree=:id_tree AND is_group=0 AND t.id_organization=:id_organization',
-            'params'=>array(
-                ':id_tree'=>$id_tree,
-            	':id_organization'=>Yii::app()->session['organization'],
-            )
-        ));
-        $resultArray = array();
-        
-        foreach ($record as $value)
-        {            
-            $resultArray[$value->user->id] = (!empty($value->user->username_windows) ? 
-            	$value->user->username_windows : $value->user->name)
-            	. (isset($value->profile->name) ? ' (' . $value->profile->name . ')' : '');            	
-        }
-        return $resultArray;
-    }*/
-           
     
     
     /**
@@ -481,12 +441,15 @@ class User extends CActiveRecord
     }
     
     
+    /**
+     * Учетная запись пользователя с его ФИО
+     * @return string
+     */
     public function getConcatened()
     {
     	return (!empty($this->username_windows) ? $this->username_windows : $this->username)
     		. ' (' . (isset($this->profile->name) ? $this->profile->name : ' ') . ')';
     }
-    
     
     
     /**
@@ -515,9 +478,7 @@ class User extends CActiveRecord
      * @author oleg
      */
     public static function findCreatePerson($username)
-    {
-    	
-    	//$username = self::extractLogin($username);
+    {    	
     	if ($username===null) return null; // если не удалось извлечь имени пользователя
     	
     	// пытаемся найти пользователя
@@ -533,7 +494,6 @@ class User extends CActiveRecord
     	}
     	
     	return $model;
-    	
     }
     
     
