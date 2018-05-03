@@ -158,16 +158,16 @@ class User extends CActiveRecord
         
         $criteria=new CDbCriteria;
         
-        $criteria->with = array('profile');
+        //$criteria->with = array('profile');
         
         $criteria->compare('id',$this->id);
-		$criteria->compare('username',$this->username,true);	
+		$criteria->compare('fio',$this->fio,true);	
 		$criteria->compare('username_windows',$this->username_windows,true);
         $criteria->compare('date_create',$this->date_create,true);
 		$criteria->compare('date_edit',$this->date_edit,true);
 		$criteria->compare('blocked',$this->blocked);
         $criteria->compare('current_organization',$this->current_organization);  
-        $criteria->compare('t.folder_path',$this->folder_path,true);
+        //$criteria->compare('t.folder_path',$this->folder_path,true);
         if (Yii::app()->user->admin)
         {
             $criteria->compare('default_organization',$this->default_organization);
@@ -185,7 +185,7 @@ class User extends CActiveRecord
         return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
             'sort'=>array(
-                'defaultOrder'=>'t.default_organization asc, t.username asc',
+                'defaultOrder'=>'t.default_organization asc, t.fio asc',
             ),
 		));        
     }
@@ -456,8 +456,8 @@ class User extends CActiveRecord
      */
     public function getConcatened()
     {
-    	return (!empty($this->username_windows) ? $this->username_windows : $this->username)
-    		. ' (' . (isset($this->profile->name) ? $this->profile->name : ' ') . ')';
+    	return (!empty($this->username_windows) ? $this->username_windows : '')
+    	   . ' (' . $this->fio . ')';
     }
     
     
@@ -512,17 +512,16 @@ class User extends CActiveRecord
     	$photo = '/images/user-nophoto.png';
     	
     	$model = self::model()->find('username_windows=:username',[':username'=>$login]);
-    	if ($model!==null && isset($model->profile->name))
+    	if ($model!==null && isset($model->fio))
     	{
-    		$username = $model->profile->name;
-    		if ($model->profile->photo_file != null && file_exists(Yii::app()->basePath . '\..\images\profiles\\' . $model->profile->photo_file))
+    		$username = $model->fio;
+    		if ($model->photo_file != null && file_exists(Yii::app()->basePath . '\..\images\profiles\\' . $model->photo_file))
     		{
-    			$photo = '/images/profiles/' . $model->profile->photo_file;
+    			$photo = '/images/profiles/' . $model->photo_file;
     		}
     	}    	
     	return Yii::app()->controller->renderFile(dirname(__FILE__) . '/../views/profile/info.php', array('username'=>$username, 'photo'=>$photo));
-    }
-        
+    }          
     
     
 }
