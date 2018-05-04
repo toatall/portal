@@ -14,19 +14,53 @@
 class LoginGuest
 {
 	
+    /**
+     * Логин пользователя
+     * @var string
+     */
+	private $LoginName = 'guest';
 	
 	/**
-	 * информация о пользователе
+	 * Логин с доменом
+	 * @var string
 	 */
-	private $LoginName = 'guest'; // Логин пользователя
-	private $FullLogin = 'guest'; // Логин с доменом
-	private $AD_displayName = ''; // ФИО
-	private $AD_department = '';  // отдел
-	private $AD_post = ''; 	 	  // должность
-	private $AD_company = ''; 	  // НО
-	private $IP = '';			  // IP адрес
-	private $Host = '';			  // Хост
+	private $FullLogin = 'guest';
 	
+	/**
+	 * ФИО
+	 * @var string
+	 */	
+	private $AD_displayName = '';
+	
+	/**
+	 * Отдел
+	 * @var string
+	 */
+	private $AD_department = '';
+	
+	/**
+	 * Должность
+	 * @var string
+	 */
+	private $AD_post = '';
+	
+	/**
+	 * Код организации
+	 * @var string
+	 */
+	private $AD_company = '';
+	
+	/**
+	 * ip-адрес клиента
+	 * @var string
+	 */
+	private $IP = '';
+	
+	/**
+	 * Имя хоста клиента
+	 * @var string
+	 */
+	private $Host = '';	
 	
 	/**
 	 * Создание экземпляра класса
@@ -37,23 +71,21 @@ class LoginGuest
 		return new self;		
 	}
 	
-	
 	/**
 	 * Запуск процедуры получения информации о пользователе
 	 */
 	public function run()
-	{		
-		
+	{
 		if (session_id() !== null)
 			session_start();
 		
 		// если пользователь уже прошел данную процедуру, то пропускаем
 		if (isset($_SESSION['auth_login']))
-		{			
+		{
 			return;
 		}
 		
-		
+		// информация о хосте и ip-адресе клиента
 		$this->getRemoteAddress();
 		
 		// если не существует переменной AUTH_USER, т.е. выключен режим windows-аутентефикации в IIS
@@ -63,22 +95,22 @@ class LoginGuest
 			return $this->saveSession();
 		}
 		
-		
 		$authUser = $_SERVER['AUTH_USER'];
 		$authUser = split('[\]', $authUser);
 		if (count($authUser) < 2) return $this->saveSession();
 		$this->LoginName = $authUser[1];
 		$this->FullLogin = $_SERVER['AUTH_USER'];
 		
+		// получение информации из AD
 		$this->getADInformation();
 		
+		// сохранение данных в сессии
 		$this->saveSession();
 	}
 	
-	
-	
 	/**
 	 * Получение информации о IP и хосте пользователя
+	 * @uses run()
 	 */
 	private function getRemoteAddress()
 	{
@@ -86,9 +118,9 @@ class LoginGuest
 		$this->Host = gethostbyaddr($this->IP);
 	}
 	
-	
 	/**
 	 * Поиск пользователя в AD и сохранение информации
+	 * @uses run()
 	 */
 	private function getADInformation()
 	{
@@ -123,6 +155,7 @@ class LoginGuest
 		
 	/**
 	 * Сохранение сессии
+	 * @uses run()
 	 */
 	private function saveSession()
 	{		

@@ -1,19 +1,18 @@
 <?php
 
 /**
- * Помощник для работы с файлами
- * @author tvog17
- * @version 05.07.2017
- *
+ * Хелпер для работы с файлами
+ * @author oleg
  */
 class FileHelper extends CComponent
 {
 	
 	/**
-	 * Каталоги, где размещаются файлы и изображения
-	 * @param int $idNews
-	 * @return array
-	 * @version 05.07.2017
+	 * Вовращает каталоги, где размещаются файлы и изображения
+	 * @param int $idNews идентификатор материала
+	 * @return array['dirImage', 'dirFile'] 
+	 * @uses DepartmentController::showTreeNode()
+	 * @uses DepartmentController::showDepartment()
 	 */
 	public static function fileImageDirByNewsId($idNews, $orgCode=null)
 	{		
@@ -24,8 +23,7 @@ class FileHelper extends CComponent
 	       ->query()->read();
 	   
 	    if ($model !== null)
-	    {
-    	    //$modelTree = Tree::model()->findByPk($model->id_tree);
+	    {    	    
     	    $modelTree = Yii::app()->db->createCommand()
     	       ->from('{{tree}}')
     	       ->where('id=:id', [':id'=>$model['id_tree']])
@@ -51,8 +49,6 @@ class FileHelper extends CComponent
 		return  ['dirImage'=>$dirImage, 'dirFile'=>$dirFile];
 	}
 	
-	
-	
 	/**
 	 * Сохранение файлов в папку (БД)
 	 * 
@@ -68,6 +64,7 @@ class FileHelper extends CComponent
 	 *         'id' => 1, // ИД модели
 	 *     )
 	 * @return string[]
+	 * @uses RatingMain::afterSave()
 	 */
 	public static function filesUpload($name, $pathFile, $modelOptions = array())
 	{	    
@@ -131,8 +128,6 @@ class FileHelper extends CComponent
 	    return $resultArray;
 	}
 	
-	
-	
 	/**
 	 * Вывод списка уже загруженных файлов, с checkbox, для возможности их удаления
 	 * 
@@ -145,6 +140,7 @@ class FileHelper extends CComponent
 	 * @param string $modelName
 	 * @param string $modelId
 	 * @return NULL|mixed
+	 * @deprecated
 	 */
 	public static function showFilesUpload($files, $modelName=null, $modelId=null)
 	{
@@ -175,9 +171,6 @@ class FileHelper extends CComponent
 	    }
 	}
 	
-	
-	
-	
 	/**
 	 * Удаление отмеченных файлов
 	 * @param array $options
@@ -186,6 +179,7 @@ class FileHelper extends CComponent
 	 *     [modelId] string - ИД модели
 	 *     
 	 *     [all] bool - true/false, в случае необходимости удаления всех файлов (например, в котроллере delete)	     
+	 * @deprecated
 	 */
 	public static function postDeleteFiles($options = array())
 	{
@@ -270,12 +264,12 @@ class FileHelper extends CComponent
 	    }
 	}
 	
-	
 	/**
 	 * Генерация пути за счет имени модели и ИД имодели
 	 * @param string $modelName
 	 * @param int $modelId
 	 * @return mixed
+	 * @deprecated
 	 */
 	public static function generatePathFromModel($modelName, $modelId)
 	{
@@ -286,12 +280,11 @@ class FileHelper extends CComponent
 	    return $pathFile;
 	}
 	
-	
-	
 	/**
 	 * Расчет размера файла в Байтах, Кб, Мб, Гб, Тб
 	 * @param int $size
 	 * @return string
+	 * @deprecated 
 	 */
 	public static function fileSizeToText($size)
 	{
@@ -310,7 +303,6 @@ class FileHelper extends CComponent
 	            break;
 	        }
 	    }
-	    
 	    return $result;
 	}
 	

@@ -1,24 +1,42 @@
 <?php
 
+/**
+ * Работа с Microsoft ActiveDirectory
+ * @author alexeevich
+ */
 class LDAPInfo
 {
-	// настройки для подключения к ActiveDirectory	
+	/**
+	 * Настройки для подключения к ActiveDirectory
+	 * @var array
+	 */
 	private $config;
-
-	// результаты поиска
+	
+	/**
+	 * Результаты поиска
+	 * @var array
+	 */
 	private $_resultSearch = array();
-	// при возникновении ошибки, сюда запивается текст
+	
+	/**
+	 * При возникновении ошибки, сюда запивается текст
+	 * @var string
+	 */
 	private $_error = null;
 	
-	
-
+	/**
+	 * Коструктор
+	 */
 	public function __construct()	
 	{
 		$this->config = require(__DIR__ . '/../config/paramsAD.php');
 	}
-
-	
-	
+    
+	/**
+	 * @magic
+	 * @param string $name
+	 * @return mixed|NULL
+	 */
 	public function __get($name)
 	{
 		if (isset($this->_resultSearch[$name][0]))
@@ -35,14 +53,10 @@ class LDAPInfo
 
 	/**
 	 * Получение информации о пользователе из AcriveDirectory
-	 *
-	 * @param string $username
-	 * @return ldap_get_entities | false
-	 * @author oleg
-	 * @version 13.05.2016 - create
-	 * 			27.02.2017 - refactoring
-	 * 			19.07.2017 - add error exception
-	 *
+	 * @param string $username логин пользователя
+	 * @throws Exception
+	 * @return array|false
+	 * @uses LoginGuest::getADInformation()
 	 */
 	public function getInfoAD($username)
 	{
@@ -55,7 +69,6 @@ class LDAPInfo
 				
 			if ($ldap_connect)
 			{
-
 				if (@ldap_bind($ldap_connect, $this->config['bindLogin'], $this->config['bindPassword'])
 						&& @ldap_bind($ldap_connect, $this->config['bindLogin'], $this->config['bindPassword']))
 				{
@@ -80,8 +93,7 @@ class LDAPInfo
 						}						
 					}										
 				}			
-			}
-			
+			}			
 			throw new Exception('AD error text: #' . ldap_errno($ldap_connect) . ': ' . ldap_error($ldap_connect));					
 		}
 		catch (Exception $ex)
@@ -91,8 +103,10 @@ class LDAPInfo
 		return false;
 	}	
 
-
-	
+    /**
+     * Получение информации о последней ошибке
+     * @return string
+     */
 	public function getError()
 	{
 		return $this->_error;

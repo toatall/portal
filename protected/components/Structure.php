@@ -1,6 +1,9 @@
 <?php
 
-
+/**
+ * @deprecated
+ * @author 8600-90331
+ */
 class Structure extends Controller
 {
     

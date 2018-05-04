@@ -1,15 +1,33 @@
 <?php
 
+/**
+ * Доска почета
+ * @author alexeevich
+ */
 class HallFame
 {
-    // каталог с файлами
+    /**
+     * Uri-ссылка, где размещены материалы 
+     * @var string
+     */
     const URL_IMAGES = '/repository/board_fame/';
+    
+    /**
+     * Каталог, где размещены материалы
+     * @var string
+     */
     const PATH_IMAGES = 'E:/WWW/portal' . self::URL_IMAGES;
-    //const PATH_IMAGES = 'C:/inetpub/wwwroot/portal/web' . self::URL_IMAGES;
-    // интервал смены картинок
-    const INTERVAL_CHANGE = 10; 
    
-    // расширения
+    /**
+     * Интервал смены картинок
+     * @var integer
+     */
+    const INTERVAL_CHANGE = 10; 
+       
+    /**
+     * Допустимые расширения изображений
+     * @var array
+     */
     const FIND_EXTENSIONS = [
         'JPG',
         'JPEG',
@@ -18,14 +36,28 @@ class HallFame
         'GIF',
     ];
     
+    /**
+     * Год
+     * @var string
+     */
     private $year;
+    
+    /**
+     * Файлы изображений
+     * @var array
+     */
     private $files; 
     
+    /**
+     * Список годов
+     * @var array
+     */
     private $years = [];
     
     
     /**
      * Поиск изображений за указанный период и вывод их в виде списка
+     * @param string $year год
      */ 
     public function __construct($year=null)
     {
@@ -41,15 +73,18 @@ class HallFame
         }
         elseif (!isset($this->years[$this->year]))
         {     
-            $this->year = 'default';
-            //return false;
+            $this->year = 'default';            
         }
         
         // поиск файлов
         $this->loadFiles($this->year);
     }
     
-    
+    /**
+     * Поиск каталогов с годами
+     * @return boolean
+     * @uses __construct()
+     */
     private function scanDirYears()
     {
         $path = self::PATH_IMAGES;
@@ -67,23 +102,23 @@ class HallFame
                     $this->years[$filename] = $filename;
                 }
             }
-        }
-        
+        }        
         return (count($this->years) > 0);
     }
-    
      
-    
+    /**
+     * Список изображений
+     * @return array
+     * @uses SiteController:actionHallFame()
+     */
     public function showPhoto()
     {    
         return $this->files;
     }
     
-    
     /**
      * Поиск изображений по маске $this->dateFilter
      * Если не удолось найти изображение, то нужно подгрузить файлы
-     * 
      */
     private function loadFiles($year)
     {
@@ -93,11 +128,7 @@ class HallFame
         {
             $year = 'default/';
         }
-        /*else 
-        {
-            $path = self::PATH_IMAGES . 'default/'; // формирование пути
-        }*/
-    
+        
         $path = self::PATH_IMAGES . $year . '/'; // формирование пути
         
         if (file_exists($path))
@@ -114,7 +145,7 @@ class HallFame
                 {
                     $this->files[] = [
                         'image' => self::URL_IMAGES . $year . '/' . iconv('windows-1251', 'utf-8', $filename),
-                        'label' => null,//'Доска почета  ' . $year,
+                        'label' => null,
                     ];
                 }
             }                       
@@ -125,12 +156,21 @@ class HallFame
         }
     }
     
+    /**
+     * Список годов
+     * @return array
+     * @uses SiteController::actionHallFame()
+     */
     public function getYears()
     {
         return $this->years;
     }
     
-    
+    /**
+     * Год
+     * @return string
+     * @uses SiteController::actionHallFame()
+     */
     public function getYear()
     {
         return $this->year;

@@ -22,7 +22,8 @@
  * @property string	ADTelephone - телефонный номер
  * @property string ADPrincipalName - логин пользователя с доменом (username@regions.tax.nalog.ru)
  * @property string ADMemberOf - группы, в которые входит пользователь
- *
+ * 
+ * @uses UserInfo::inst()
  */
 class UserAuth
 {
@@ -30,7 +31,7 @@ class UserAuth
 	const SESSION_PREFIX = 'portal_';
 	
 	/**
-	 * User fields
+	 * Свойства
 	 * @var array
 	 */
 	private $_fields = array(
@@ -49,11 +50,20 @@ class UserAuth
 		'ADMemberOf' => '',
 	);
 	
+	/**
+	 * Конструктор
+	 */
 	public function __construct()
 	{
 		$this->run();
 	}
 	
+	/**
+	 * Магический метод для получения значений свойств
+	 * @param string $name
+	 * @return mixed|string
+	 * @magic
+	 */
 	public function __get($name)
 	{
 		if (isset($this->_fields[$name]))
@@ -61,6 +71,12 @@ class UserAuth
 		return '';
 	}
 		
+	/**
+	 * Магический метод для присвоения значений свойствам
+	 * @param string $name
+	 * @param string $value
+	 * @magic
+	 */
 	public function __set($name, $value)
 	{
 		if (isset($this->_fields[$name]))
@@ -69,25 +85,23 @@ class UserAuth
 		}		
 	}
 	
-	
-	
 	/**
-	 * Запуск процедуры получения информации о пользователе
+	 * Получение информации о пользователе из сессии $_SESSION
+	 * @uses $this->loadSession()
 	 */
 	public function run()
 	{				
 		// загрузить данные из сесии
-		
 		if (session_id() !== null)
 			session_start();
-				
 		return $this->_fields['userAuth'] = $this->loadSession();
 	}
-	
-	
+		
 	/**
 	 * Загрузка сессии
-	 * @return boolean
+	 * @return boolean	
+	 * @see $this->run()
+	 * @uses $this->getUserInfo()
 	 */
 	private function loadSession()
 	{
@@ -106,9 +120,9 @@ class UserAuth
 		}
 	}
 	
-	
 	/**
 	 * Сохранение сессии
+	 * @see $this->getUserInfo()
 	 */
 	private function saveSession() 
 	{
@@ -118,8 +132,13 @@ class UserAuth
 		}
 	}
 	
-	
-	
+	/**
+	 * Получение информации из ActiveDirectory
+	 * Результат сохраняется в сессию $_SESSION
+	 * @uses $this->getADInformation()
+	 * @uses $this->getRemoteAddress()
+	 * @return boolean
+	 */
 	private function getUserInfo()
 	{
 		if (!isset($_SERVER['AUTH_USER']) || empty($_SERVER['AUTH_USER']))
@@ -138,10 +157,10 @@ class UserAuth
 		
 		return $this->_fields['userAuth'] = true;
 	}
-	
-	
+		
 	/**
 	 * Получение информации о IP и хосте пользователя
+	 * @see $this->getUserInfo()
 	 */
 	private function getRemoteAddress()
 	{
@@ -149,9 +168,14 @@ class UserAuth
 		$this->clientHost = gethostbyaddr($this->clientIP);
 	}
 	
-	
 	/**
-	 * Поиск пользователя в AD и сохранение информации
+	 * Поиск пользователя в ActiveDirectory 
+	 * и сохранение информации в $this->_fields[]
+	 * @see LDAPInfo
+	 * @see $this->getUserInfo()
+	 * @uses $this->getOrganization()
+	 * @uses $this->convertMembers()
+	 * @return boolean
 	 */
 	private function getADInformation()
 	{		
@@ -178,9 +202,10 @@ class UserAuth
 		}
 	}
 	
-	
 	/**
 	 * Получение организации пользователя из его логина
+	 * (первые 4 символа)
+	 * @see $this->getADInformation()
 	 * @return string|NULL
 	 */
 	private function getOrganization()
@@ -194,7 +219,13 @@ class UserAuth
 		return null;
 	}
 	
-	
+	/**
+	 * Преобразование наименование групп
+	 * обрезание DN пути
+	 * @param array $ADMembers
+	 * @see $this->getADInformation()
+	 * @return array
+	 */
 	private function convertMembers($ADMembers)
 	{
 		if (!is_array($ADMembers) || count($ADMembers)==0)

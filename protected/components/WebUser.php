@@ -1,10 +1,15 @@
 <?php
 
-
+/**
+ * Расширение класса пользователя
+ * @author alexeevich
+ * @see CWebUser
+ */
 class WebUser extends CWebUser
 {
 	
 	/**
+	 * Класс вызывается при каждом обовлении страницы
 	 * {@inheritDoc}
 	 * @see CWebUser::init()
 	 */
@@ -14,12 +19,10 @@ class WebUser extends CWebUser
 		$this->updateLastAction();
 	}
 	
-	
 	/**
 	 * Обновление времени последней активности пользователя
 	 * Для реализации статистики в части просмортра текущих пользователей на сайте
-	 * @author tvog17
-	 * @version 27.07.2017
+	 * @uses init()	
 	 */
 	private function updateLastAction()
 	{
@@ -31,10 +34,11 @@ class WebUser extends CWebUser
 				'last_action' => new CDbExpression('getdate()'),
 			], 'id=:id', [':id'=>$lastId]);
 	}
-	
 		
 	/**
-	 * @param array $roles
+	 * Проверка, состоит ли пользователь в указанных группах
+	 * Группу можно указать одну как строку, либо несколько как массив
+	 * @param array|string $roles роли
 	 * @return boolean
 	 */
 	public function inRole($roles)
@@ -49,11 +53,9 @@ class WebUser extends CWebUser
 		{
 			if (in_array($role, Yii::app()->user->roles))
 				return true;
-		}	
-		
+		}
 		return false;
 	}
-	
 	
 	/**
 	 * {@inheritDoc}
@@ -61,12 +63,10 @@ class WebUser extends CWebUser
 	 */
 	public function login($identity, $duration=0)
 	{	
-		$loginResult = parent::login($identity, $duration);
-		$this->saveLogOpertaion('login');
-		return $loginResult;
+	    $this->saveLogOpertaion('login');
+		return parent::login($identity, $duration);
 	}
-	
-	
+		
 	/**
 	 * {@inheritDoc}
 	 * @see CWebUser::logout()
@@ -76,11 +76,12 @@ class WebUser extends CWebUser
 		$this->saveLogOpertaion('logout');
 		return parent::logout($destroySession);
 	}
-	
-	
+		
 	/**
 	 * Сохранение информации об аутентификации пользователя (вход и выход)
 	 * @param string $operation
+	 * @uses login()
+	 * @uses logout()
 	 */
 	private function saveLogOpertaion($operation)
 	{
@@ -100,16 +101,19 @@ class WebUser extends CWebUser
 		$this->setState('lastLoginId', Yii::app()->db->getLastInsertID());
 	}
 	
-	
 	/**
 	 * Получить список доступных текущему пользователю групп
+	 * @see Group
 	 * @return number|array
 	 */
 	public function getUserGroupsId()
 	{
 	    if (Yii::app()->user->isGuest)
 	        return 0;
-	    return CHtml::listData(Group::model()->with('groupUsers')->findAll('groupUsers.id=:id_user', [':id_user'=>Yii::app()->user->id]), 'id', 'id');
+	    return CHtml::listData(Group::model()->with('groupUsers')->findAll('groupUsers.id=:id_user', 
+	        [
+	            ':id_user'=>Yii::app()->user->id,	            
+	        ]), 'id', 'id');
 	}
 		
 	

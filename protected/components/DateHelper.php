@@ -1,9 +1,17 @@
 <?php
 
-
+/**
+ * Хелпер для работы с датами и веременем
+ * @author oleg
+ * @see CComponent
+ */
 class DateHelper extends CComponent
 {
-	
+	/**
+	 * Спсиок месяцев
+	 * @var array
+	 * @uses arrayMonths()
+	 */
 	private static $_monthNames = array(
 			'01' => 'Январь',
 			'02' => 'Февраль',
@@ -19,6 +27,11 @@ class DateHelper extends CComponent
 			'12' => 'Декабрь',				
 		);
 	
+	/**
+	 * Список дней недели
+	 * @var array
+	 * @uses weekByNumber()
+	 */
 	private static $_weekNames = array(
 			1 => 'Понедельник',
 			2 => 'Вторник',
@@ -29,45 +42,57 @@ class DateHelper extends CComponent
 			7 => 'Воскресение'
 	);
 	
-	
 	/**
 	 * Список месяцев (на рус.)
 	 * @return string[]
 	 * @author tvog17
+	 * @todo Where used?
+	 * @deprecated
 	 */
 	public static function arrayMonths()
 	{
 		return self::$_monthNames;
 	}
 	
-	
 	/**
 	 * Наименование месяца по его номеру
-	 * @param unknown $number
-	 * @return NULL|string
+	 * @param int $number день месяца
+	 * @return null|string
+	 * @uses Conference::getDateStartFormat()
 	 */
 	public static function monthByNumber($number)
 	{
 		return (isset(self::$_monthNames[$number]) ? self::$_monthNames[$number] : null);
 	}
 	
-	
 	/**
 	 * Наименование дня недели по номеру
-	 * @param int(1-7) $numer
+	 * @param int $numer день недели
 	 * @return NULL|string
-	 * @author tvog17
+	 * @uses Conference::getDateStartFormat()
 	 */
 	public static function weekByNumber($numer)
 	{
 		return (isset(self::$_weekNames[$numer]) ? self::$_weekNames[$numer] : null);
 	}
 	
-	
 	/**
-	 * Извлечение даты и времени (через пробел)
+	 * Преобразование даты и времени 
+	 * в формат ДД.ММ.ГГГГ ЧЧ:ММ:СС
 	 * @param string $date
 	 * @return string
+	 * @uses Comment::afterFind()
+	 * @uses Department::afterFind()
+	 * @uses Menu::afterFind()
+	 * @uses Conference::afterFind()
+	 * @uses News::afterFind()
+	 * @uses Ifns::afrerFind()
+	 * @uses Group::afterFind()
+	 * @uses RatingData::afterFind()
+	 * @uses RatingMain::afterFind()
+	 * @uses Telephone::afterFind()
+	 * @uses Tree::afterFind()
+	 * @uses User::afterFind()
 	 */
 	public static function explodeDateTime($date)
 	{
@@ -76,46 +101,47 @@ class DateHelper extends CComponent
 		return date('d.m.Y H:i:s',strtotime($date));
 	}
 	
-	
 	/**
 	 * Извлечение только даты
 	 * @param string $date
 	 * @return string
+	 * @uses Conference::explodeDateTime()
 	 */
 	public static function explodeDate($date)
 	{
 		return date('d.m.Y',strtotime($date));
 	}
 	
-	
 	/**
 	 * Извлечение только времени
 	 * @param string $time
 	 * @return string
+	 * @uses Conference::explodeDateTime()
 	 */
 	public static function explodeTime($time)
 	{
 		return date('H:i:s',strtotime($time));
 	}
 	
-	
 	/**
 	 * Извлечение по формату php (@see php date function)
 	 * @param string $date
 	 * @param string $format
 	 * @return string
+	 * @todo where used?
+	 * @deprecated
 	 */
 	public static function explodeFormat($date, $format)
 	{
 		return date($format,strtotime($date));
 	}
 	
-	
 	/**
 	 * Сбор даты и времени из отдельных переменных
 	 * @param string $date
 	 * @param string $time
 	 * @return string
+	 * @uses Conference::beforeSave()
 	 */
 	public static function implodeDateTime($date, $time)
 	{

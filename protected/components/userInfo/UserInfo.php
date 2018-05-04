@@ -2,33 +2,45 @@
 
 require_once dirname(__FILE__) . '\UserAuth.php';
 
-
 /**
  * Получение информации о пользователе
- * из массива $_SERVER и ActiveDirectory
+ * из глобального массива $_SERVER['AUTH_USER'] и ActiveDirectory
  * и сохранение в сесии
  * 
- * Разработано под web-сервер IIS с включением
- * Windows-аутентификации (имя пользователя должно
- * находится в массиве $_SERVER['AUTH_USER'])
+ * Предназначено под web-сервер IIS с включением
+ * Windows-аутентификации
  * 
- * @author tvog17
- * @version 12.07.2017
+ * @author alexeevich
+ * @static
  */
 class UserInfo 
 {
 	
-	// экземпляр класса UserAuth
+	/**
+	 * Экземпляр класса UserAuth
+	 * @var UserAuth
+	 * @static
+	 */
 	private static $instance = null;
-	
-	
-	// создание / возвращение $instance
+
+	/**
+	 * Возвращает единственный экземпляр UserAuth
+	 * @static
+	 * @return UserAuth
+	 * @uses CommentController::actionForm()
+	 * @uses LikeController::loadCountLike()
+	 * @uses InterviewController::actionLike()
+	 * @uses ServiceController::actionUser()
+	 * @uses SiteController::actionContact()
+	 * @uses WebUser::saveLogOpertaion()
+	 * @uses RatingData::beforeSave()
+	 * @uses RatingMain::beforeSave()
+	 */
 	public static function inst()
 	{
 		if (self::$instance === null)
 			self::$instance = new UserAuth();
 		return self::$instance;
 	}
-	
 	
 }
