@@ -16,10 +16,17 @@
  */
 class Module extends CActiveRecord
 {
-	
+	/**
+	 * Доступ пользователей к модулю
+	 * @var array
+	 */
 	public $permissionUser;
-	public $permissionGroup;
 	
+	/**
+	 * Доступ групп к модулю
+	 * @var array
+	 */
+	public $permissionGroup;
 	
 	/**
 	 * @return string the associated database table name
@@ -43,8 +50,7 @@ class Module extends CActiveRecord
 			array('description, author', 'length', 'max'=>250),
 			array('dop_action, author', 'length', 'max'=>250),
             array('only_one, children_node, dop_action_right_admin', 'numerical', 'integerOnly'=>true),            
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			// The following rule is used by search().			
 			array('name, description, author, log_change, date_create, only_one, children_node, dop_action, dop_action_right_admin', 
 					'safe', 'on'=>'search'),
 		);

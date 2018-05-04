@@ -19,11 +19,16 @@
  * @property integer $status
  * @property string $date_create
  * @property string $log_access
+ * 
+ * @deprecated
  */
 class JornalRequest extends CActiveRecord
 {
-    
-    public $useOptionalAccess = false; // флаг отвечающий за дополнительные настройки прав
+    /**
+     * Флаг отвечающий за дополнительные настройки прав
+     * @var bool
+     */
+    public $useOptionalAccess = false; 
     
 	/**
 	 * @return string the associated database table name

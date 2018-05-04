@@ -42,6 +42,7 @@ class Organization extends CActiveRecord
 
 	/**
 	 * @return array relational rules.
+	 * @deprecated
 	 */
 	public function relations()
 	{
@@ -79,9 +80,7 @@ class Organization extends CActiveRecord
 	 * based on the search/filter conditions.
 	 */
 	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	{		
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('code',$this->code);
@@ -109,7 +108,10 @@ class Organization extends CActiveRecord
 		return parent::model($className);
 	}
     
-    
+    /**
+     * {@inheritDoc}
+     * @see CActiveRecord::beforeSave()
+     */
     protected function beforeSave()
     {        
         if ($this->isNewRecord)                   
@@ -118,6 +120,10 @@ class Organization extends CActiveRecord
         return parent::beforeSave();
     }
     
+    /**
+     * {@inheritDoc}
+     * @see CActiveRecord::afterFind()
+     */
     protected function afterFind()
     {        
         $this->date_create = date('d.m.Y H:i:s', strtotime($this->date_create));
@@ -125,19 +131,22 @@ class Organization extends CActiveRecord
         parent::afterFind();
     }
     
+    /**
+     * Имя организации с кодом
+     * @return string
+     */
     public function getFullName()
     {
         return $this->code.' ('.$this->name.')';
     }
     
-    
+    /**
+     * Подведоственные организации
+     * Для меню на главной странице
+     * @return array
+     */
     public static function getSubMenu()
-    {
-        /*
-        $model = Organization::model()->findAll(array(
-            'condition'=>"code<>'8600'",
-            'order'=>'sort asc',
-        ));*/
+    {        
         $model = Yii::app()->db->createCommand()
             ->from('{{organization}}')
             ->where('code<>:code', [':code'=>'8600'])
@@ -155,15 +164,12 @@ class Organization extends CActiveRecord
         return $resultArray;
     }
     
-    
     /**
      * Проверка на присутствие кода организации в имени логина пользователя
-     * 
      * @param string $username
      * @return Organization|null
-     * @author oleg
-     * @version 16.05.2016 - create
-     * 			21.02.2017 - refactoring
+     * @author alexeevich
+     * @uses User::saveWindowsUser()     
      */
     public static function codeOrganizationByUsernameWindows($username)
     {    	
@@ -175,15 +181,12 @@ class Organization extends CActiveRecord
     	return null;
     }
     
-    
     /**
-     * Получение пользователем текущей орагнизации (User.current_organization)
-     * 
+     * Получение текущей орагнизации (User.current_organization) для текущего пользователя   
      * Если у пользователя по какой-либо причине отсутсвует доступ
      * к текущей организации, то выбирается первая доступная пользователю организации
-     * 
-     * @author oleg
-     * @version 17.05.2016
+     * @author alexeevich
+     * @see User
      */
     public static function loadCurrentOrganization()
     {
@@ -211,17 +214,14 @@ class Organization extends CActiveRecord
     	if ($userCurrentOrganization===null)
     	{
     		if (isset($userModel->organization))
-    		{
-    			
+    		{    			
     			if (isset($userModel->organization[0]->code))
     			{
     				$userCurrentOrganization = $userModel->organization[0]->code;
     				User::changeOrganization($userCurrentOrganization);
     			}
-    		}    		
-    	}     	    
+    		}
+    	}   
     }
-    
-    
     
 }

@@ -23,22 +23,51 @@
  */
 class Department extends CActiveRecord
 {
-    
+    /**
+     * Показывать только первую новость
+     * @var integer
+     */
     const GP_SHOW_FIRST_NEWS = 0;
+    
+    /**
+     * Показывать новости из списка 
+     * @var integer
+     */
     const GP_SHOW_NEWS_FROM_LIST = 1;
+    
+    /**
+     * Показывать структуру отдела
+     * @var integer
+     */
     const GP_SHOW_STRUCT = 2;
     
-    // что показывать по умолчанию, при переходе в отдел
+    /**
+     * Вид главной страницы отдела
+     * @var array
+     * @uses getTypeGeneralPage()
+     */
     private $_typeGeneralPage = array(
         self::GP_SHOW_FIRST_NEWS => 'Отображать первую новость',
         self::GP_SHOW_NEWS_FROM_LIST => 'Показать новость из списка',
         self::GP_SHOW_STRUCT => 'Показать структуру отдела',
     );
     
+	/**
+	 * Дополнительные настройки прав
+	 * @var boolean
+	 */
+	public $useOptionalAccess = false; 
 	
-	public $useOptionalAccess = false; // флаг отвечающий за дополнительные настройки прав
-	
+	/**
+	 * @deprecated
+	 * @var unknown
+	 */
 	public $permissionUser;
+	
+	/**
+	 * @deprecated
+	 * @var unknown
+	 */
 	public $permissionGroup;
 	
 	/**
@@ -62,9 +91,7 @@ class Department extends CActiveRecord
 			array('id_organization', 'length', 'max'=>5),
 			array('department_index', 'length', 'max'=>2),
 			array('department_name, author', 'length', 'max'=>250),
-			array('date_edit, log_change, permissionUser, permissionGroup', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			array('date_edit, log_change, permissionUser, permissionGroup', 'safe'),			
 			array('id, id_tree, id_organization, department_index, department_name, date_create, 
 				date_edit, author, log_change', 'safe', 'on'=>'search'),
 		);
@@ -74,15 +101,11 @@ class Department extends CActiveRecord
 	 * @return array relational rules.
 	 */
 	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
+	{		
 		return array(
 			'tree' => array(self::BELONGS_TO, 'Tree', 'id_tree'),
 			'organization' => array(self::BELONGS_TO, 'Organization', 'id_organization'),
-			'card' => array(self::HAS_MANY, 'DepartmentCard', 'id_department'),
-			//'accessUser' => array(self::HAS_MANY, 'AccessDepartmentUser', 'id_department'=>'id'),
-			//'accessGroup' => array(self::HAS_MANY, 'AccessDepartmentGroup', 'id_department'=>'id'),
+			'card' => array(self::HAS_MANY, 'DepartmentCard', 'id_department'),			
 		);
 	}
 
@@ -121,10 +144,10 @@ class Department extends CActiveRecord
 	 *
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
+	 * @see CDbCriteria
 	 */
 	public function search($forUser=false)
-	{
-		
+	{		
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.id',$this->id);
@@ -158,20 +181,18 @@ class Department extends CActiveRecord
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
 	 * @return Department the static model class
+	 * @static
 	 */
 	public static function model($className=__CLASS__)
 	{	     
 		return parent::model($className);
 	}
 	
-	
-	
 	/**
-	 * Стандартное событие AR beforeSave()
-	 * @author oleg
-	 * @version 15.08.2016
+	 * @see CActiveRecord::beforeSave()
+	 * {@inheritdoc}
 	 */
-	public function beforeSave()
+	protected function beforeSave()
 	{
 		if ($this->isNewRecord)
 		{
@@ -184,41 +205,33 @@ class Department extends CActiveRecord
 		return parent::beforeSave();
 	}
 	
-	
 	/**
-	 * Стандартное событие AR afterFind()
-	 * @author oleg
-	 * @version 16.08.2016
+	 * @see CActiveRecord::afterFind()
+	 * @see DateHelper
+	 * {@inheritdoc}
 	 */
-	public function afterFind()
+	protected function afterFind()
 	{
-		$this->date_create = ConvertDate::find($this->date_create);		
+		$this->date_create = DateHelper::explodeDateTime($this->date_create);		
 		return parent::afterFind();
 	}
 	
-	
+	/**
+	 * Возвращается индекс и наименование отдела
+	 * @return string
+	 */
 	public function getConcatened()
 	{
 		return $this->department_index . ' ' . $this->department_name;
 	}
 	
-	
-	
+	/**
+	 * @return array
+	 * @deprecated
+	 */
 	public static function departmentForMenu()
 	{	    
 	    $resArray = array();
-	    
-	    /*
-		$model = self::model()->findAll(['order'=>'department_index']);	   
-		
-		foreach ($model as $m)
-		{
-			$resArray[] = array(
-				'label' => $m->concatened,
-				'url' => ['/department/view', 'id'=>$m->id],
-			);
-		}*/
-	    
 	    $model = Yii::app()->db->createCommand()
 	       ->from('{{department}}')
 	       ->order('department_index asc')
@@ -230,31 +243,25 @@ class Department extends CActiveRecord
 	            'url' => ['/department/view', 'id'=>$m['id']],
 	        ];
 	    }
-	    
 		return $resArray;
 	}
-	
-	
+		
 	/**
-	 * Меню отдела 
-	 * 
+	 * Меню отдела
 	 * @param int $id
 	 * @return array
-	 * 	
 	 * @author oleg
-	 * @version 06.03.2017 - create
-	 * 			31.07.2017 - update: add rating 
-	 *          12.10.2017 - refactor: change AR on DAO
+	 * @uses DepartmentController::loadMenu()
 	 */
 	public function getMenu($id=null)
 	{
-		$resultMenu = array();
+		$resultMenu = array();		
 		
 		if ($id===null)
 		{			
 			$id = $this->id_tree;
 		}
-						
+		
 		$model = Yii::app()->db->createCommand()
 		  ->from('{{tree}}')
 		  ->where('id_parent=:id_parent and date_delete is null', [':id_parent'=>$id])
@@ -274,7 +281,7 @@ class Department extends CActiveRecord
 	
 	/**
 	 * Разновидность страницы для установки по умолчанию
-	 * @return string[]
+	 * @return array
 	 */
 	public function getTypeGeneralPage()
 	{
@@ -283,17 +290,22 @@ class Department extends CActiveRecord
 	
 	/**
 	 * Список новостей для dropDownList, в качестве установки стрницы по умолчанию
-	 * @return string[]
+	 * @see CHtml
+	 * @see News
+	 * @return array
 	 */
 	public function getTreeList()
 	{
 	    return CHtml::listData(News::model()->findAll('id_tree=:id_tree and date_delete is null and flag_enable=1', 
-	        [':id_tree'=>$this->id_tree]), 'id', 'title');
-	    
+	        [':id_tree'=>$this->id_tree]), 'id', 'title');	    
 	}
 	
-	
-	
+	/**
+	 * Спроверка прав доступа для пользователя к отделу
+	 * с идентификатором $idDepartment
+	 * @param int $idDepartment идентификатор отдела
+	 * @return boolean
+	 */
 	public static function checkAccessUser($idDepartment)
 	{
 	    if (Yii::app()->user->admin) return true;

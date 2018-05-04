@@ -11,6 +11,9 @@
  * @property string $date_update
  * @property string $date_create
  * @property string $log_change
+ * 
+ * 
+ * @deprecated
  */
 class UpdateEod extends CActiveRecord
 {

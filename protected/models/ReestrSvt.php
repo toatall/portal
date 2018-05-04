@@ -25,6 +25,7 @@
  * @property string $date_edit
  * @property string $log_change
  * @property integer $status_code
+ * @deprecated
  */
 class ReestrSvt extends CActiveRecord
 {

@@ -2,19 +2,24 @@
 
 /**
  * Model for search
- * @author tvog17
- * @version 29.06.2017
+ * @author alexeeivch
+ * @see News
  */
 class NewsSearch extends News
 {
 	
-	
+	/**
+	 * Количество новостей
+	 * @var integer
+	 */
 	const LIMIT_TOP_NEWS = 5;
 	
-	
+	/**
+	 * Дополнительный параметр
+	 * @var string
+	 */
 	public $param1;
-	
-	
+		
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 *
@@ -64,7 +69,6 @@ class NewsSearch extends News
 		));
 	}
 	
-	
 	/**
 	 * Search for frontend
 	 * @return CActiveDataProvider
@@ -101,14 +105,18 @@ class NewsSearch extends News
 		));
 	}
 	
-	
-	
+	/**
+	 * Поиск
+	 * @param string $page
+	 * @see CDbCriteria
+	 * @return CActiveDataProvider
+	 */
 	public function searchPages($page)
 	{
 		$criteria=new CDbCriteria;
 
 		$criteria->with = array('tree');
-		 
+		
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('t.id_tree',$this->id_tree);
 		$criteria->compare('t.title',$this->title,true);
@@ -129,12 +137,13 @@ class NewsSearch extends News
 			'sort'=>array('defaultOrder'=>'t.date_create desc'),
 		));
 	}
-	
 		
     /**
      * Новости для раздела "Новость дня"
      * @param number $id
      * @return array
+     * @uses NewsController::actionNewsDay()
+     * @uses SiteController::actionIndex()
      */
 	public static function getFeedNewsDay($id=0)
 	{	   
@@ -149,10 +158,10 @@ class NewsSearch extends News
 	    return $model->queryAll();
 	}
 	
-	
 	/**
 	 * Новости Управления
 	 * @return CDbCommand
+	 * @deprecated
 	 */
 	public static function getFeedUFNS()
 	{		    
@@ -161,10 +170,11 @@ class NewsSearch extends News
     	    ->queryAll();
 	}
 	
-	
 	/**
 	 * Новости Инспекций
 	 * @return CDbCommand
+	 * @uses NewsController::actionNewsIfns()
+	 * @uses SiteController::actionIndex()
 	 */
 	public static function getFeedIfns($id=0)
 	{		    
@@ -179,11 +189,11 @@ class NewsSearch extends News
         return $model->queryAll();
 	}
 	
-	
-	
 	/**
 	 * Дополнительные разделы
 	 * @return CDbCommand
+	 * @uses NewsController::actionHumor()
+	 * @uses SiteController::actionIndex()
 	 */
 	public static function feedDopNews($module, $id=0)
 	{
@@ -198,9 +208,5 @@ class NewsSearch extends News
 	        
         return $model->queryAll();
 	}
-	
-	
-	
-	
 	
 }

@@ -10,6 +10,7 @@
  * @property boolean $use_organization
  * @property string $date_create
  * @property string $date_modification
+ * @deprecated нужно это?
  */
 class Section extends CActiveRecord
 {
@@ -32,8 +33,7 @@ class Section extends CActiveRecord
 			array('name, module', 'required'),
 			array('name, module', 'length', 'max'=>50),
 			array('use_organization, date_create, date_modification', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			// The following rule is used by search().			
 			array('id, name, module, use_organization, date_create, date_modification', 'safe', 'on'=>'search'),
 		);
 	}

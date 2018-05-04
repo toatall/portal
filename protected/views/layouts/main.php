@@ -135,10 +135,12 @@
     
 	<div id="footer">
         <h3>&copy; Управление ФНС России 
-                по Ханты-Мансийскому автономному округу - Югре, <?php echo date('Y'); ?></h3>                                                                   
+                по Ханты-Мансийскому автономному округу - Югре, <?php echo date('Y'); ?>
+                <br /><span style="font-size:14px; color:white;">Разработка и сопровождение: Трусов Олег Алексеевич</span>                
+		</h3>                                                   
         <?php echo CHtml::link('Рекомендуемые браузеры', array('site/browsers')); ?>
         <br /><br />
-        <?php echo Statistic::StatisticOnlineAndDay(); ?>
+        <?php echo Log::StatisticOnlineAndDay(); ?>
         <br />
         <?= CHtml::link('Направить обращение', array('site/contact')) ?>
         <br /><br />        

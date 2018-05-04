@@ -20,9 +20,13 @@
  */
 class RatingData extends CActiveRecord
 {
-	
+    
+	/**
+	 * Периоды для рейтинга
+	 * @var array
+	 */
 	private $periods = array(
-		
+		// месяцы
 		'01_1_mes' => 'Январь',
 		'02_1_mes' => 'Февраль',
 		'03_1_mes' => 'Март',
@@ -35,21 +39,19 @@ class RatingData extends CActiveRecord
 		'10_1_mes' => 'Октябрь',
 		'11_1_mes' => 'Ноябрь',
 		'12_1_mes' => 'Декабрь',
-		
+		// кварталы
 		'03_2_kv' => '1 квартал',
 		'06_2_kv' => '2 квартал',
 		'09_2_kv' => '3 квартал',
 		'12_2_kv' => '4 квартал',
-		
+		// полугодия
 		'06_3_pol' => '1 полугодие',
 		'12_3_pol' => '2 полугодие',
-			
+        // 9 месяцев
 		'09_4_9mes' => '9 месяцев',
-		
-		'12_5_god' => 'Годовой',			
-			
+		// год
+		'12_5_god' => 'Годовой',					
 	);
-	
 	
 	/**
 	 * @return string the associated database table name
@@ -73,8 +75,7 @@ class RatingData extends CActiveRecord
 			array('author', 'length', 'max'=>250),
 			array('date_create, log_change, id_rating_main', 'unsafe'),
 			array('note', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			// The following rule is used by search().			
 			array('id, id_rating_main, note, rating_year, rating_period, date_create, 
 				author, log_change', 'safe', 'on'=>'search'),
 		);
@@ -110,7 +111,7 @@ class RatingData extends CActiveRecord
 			'author' => 'Автор',
 			'log_change' => 'Журнал изменений',
 			'fileView' => 'Файлы',
-		    'ratingPeriodDescription'=>'Период',
+		    'periodName'=>'Период',
 		);
 	}
 
@@ -158,9 +159,46 @@ class RatingData extends CActiveRecord
 		return parent::model($className);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see CActiveRecord::beforeSave()
+	 * @see UserInfo
+	 */
+	protected function beforeSave()
+	{
+	    if ($this->isNewRecord)
+	    {
+	        $this->date_create = new CDbExpression('getdate()');
+	        $this->author = UserInfo::inst()->userLogin;
+	    }
+	    return parent::beforeSave();
+	}
 	
 	/**
-	 * @return string[] - years
+	 * {@inheritDoc}
+	 * @see CActiveRecord::afterFind()
+	 * @see DateHelper
+	 */
+	protected function afterFind()
+	{
+	    $this->date_create = DateHelper::explodeDateTime($this->date_create);
+	    return parent::afterFind();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see CActiveRecord::beforeDelete()
+	 */
+	protected function beforeDelete()
+	{
+	    // delete all files
+	    $this->deleteFiles([], true);
+	    return parent::beforeDelete();
+	}
+	
+	/**
+	 * Доступные года для рейтига (+- 2 года от текущего)
+	 * @return array
 	 */
 	public function getYears()
 	{
@@ -174,14 +212,13 @@ class RatingData extends CActiveRecord
 	}
 	
 	/**
-	 * @return string[] - periods
+	 * Периоды для рейтинга
+	 * @return array 
 	 */
 	public function getPeriods()
 	{
 		return $this->periods;
 	}
-	
-	
 	
 	/**
 	 * Сохранение файлов рейтинга
@@ -189,9 +226,10 @@ class RatingData extends CActiveRecord
 	 */
 	public function saveFiles()
 	{		
+	    // определение модуля
 		$module_name = Tree::model()->findByPk($this->ratingMain->id_tree)->module;
 		
-		// сохранение файлов
+		// получение списка файлов 
 		$files = CUploadedFile::getInstancesByName('files');
 		
 		if (isset($files) && count($files)>0)
@@ -200,7 +238,8 @@ class RatingData extends CActiveRecord
 				Yii::app()->params['pathDocumets']);
 			$baseDir = str_replace('{module}', $module_name, $baseDir);
 			$baseDir = str_replace('{id}', $this->id, $baseDir);
-		
+		    
+			// создание каталога, если его нет
 			if (!file_exists($_SERVER['DOCUMENT_ROOT'].$baseDir))
 			{
 				if (!@mkdir($_SERVER['DOCUMENT_ROOT'].$baseDir, 0777, true))
@@ -213,6 +252,7 @@ class RatingData extends CActiveRecord
 				 
 				if ($file->saveAs($_SERVER['DOCUMENT_ROOT'] . $baseDir . $fileName))
 				{					
+				    // сохранение информации о файлах в БД
 					Yii::app()->db->createCommand()->insert('{{file}}', [
 						'id_model'=>$this->id,
 						'model'=>'ratingData',
@@ -227,13 +267,11 @@ class RatingData extends CActiveRecord
 		}
 	}
 	
-	
 	/**
 	 * Удаление файла(ов)
-	 * 
 	 * @param array $listFiles - список файлов [id=>name,...]
-	 * @param bool $all - признак удаления всех файлов // @todo удалить
-	 * @version 28.07.2017
+	 * @param bool $all - признак удаления всех файлов // 
+	 * @todo move to FileHelper
 	 */
 	public function deleteFiles($listFiles, $all=false)
 	{
@@ -258,11 +296,10 @@ class RatingData extends CActiveRecord
 			}
 		}
 	}
-	
 		
 	/**
-	 * Наименование периода
-	 * @return string|NULL
+	 * Наименование периода в $this
+	 * @return string|null
 	 */
 	public function getPeriodName()
 	{
@@ -271,21 +308,23 @@ class RatingData extends CActiveRecord
 		return null;
 	}
 	
-	
-	
-	public function getFileDownload()
+	/**
+	 * Ссылка для загрузки файла и информация о количесве загруженных файлов
+	 * @return string
+	 */
+	 public function getFileDownload()
 	{
 		$result = '';
 		foreach ($this->files as $file)
 		{
-			$result .= CHtml::link($file->file_name, ['file/download', 'id'=>$file->id], array('target'=>'_blank')) . ' (<i class="icon-download" title="Загрузок"></i> ' . $file->count_download . ')<br />';
+			$result .= CHtml::link($file->file_name, ['file/download', 'id'=>$file->id], array('target'=>'_blank')) 
+                . ' (<i class="icon-download" title="Загрузок"></i> ' . $file->count_download . ')<br />';
 		}
 		return $result;
 	}
 	
-	
 	/**
-	 * List files for view "View"
+	 * Список файлов
 	 * @return string
 	 */
 	public function getFileView()
@@ -298,51 +337,12 @@ class RatingData extends CActiveRecord
 		return $result;
 	}
 	
-	
 	/**
-	 * {@inheritDoc}
-	 * @see CActiveRecord::beforeSave()
-	 */
-	protected function beforeSave()
-	{
-		if ($this->isNewRecord)
-		{
-			$this->date_create = new CDbExpression('getdate()');
-			$this->author = UserInfo::inst()->userLogin;
-		}
-		return parent::beforeSave();
-	}
-	
-	
-	/**
-	 * {@inheritDoc}
-	 * @see CActiveRecord::afterFind()
-	 */
-	protected function afterFind()
-	{
-		$this->date_create = DateHelper::explodeDateTime($this->date_create);
-		return parent::afterFind();
-	}
-	
-	
-	/**
-	 * {@inheritDoc}
-	 * @see CActiveRecord::beforeDelete()
-	 */
-	protected function beforeDelete()
-	{		
-		// delete all files
-		$this->deleteFiles([], true);
-		return parent::beforeDelete();		
-	}
-	
-	
-	/**
-	 * Ratings for RatingMain and year
+	 * Это зачем?
 	 * @param int $idMain
 	 * @param int $year
 	 * @param string $orderAsc
-	 * @return static[]
+	 * @return self
 	 */
 	public static function dataRating($idMain, $year, $orderAsc=true)
 	{
@@ -352,16 +352,15 @@ class RatingData extends CActiveRecord
 			'order'=>'rating_period ' . ($orderAsc ? 'asc' : 'desc'),
 		]);
 	}
-	
-	
+		
 	/**
 	 * Render for tree
 	 * @param Tree(array) $modelTree
 	 * @return 
+	 * @deprecated это зачем?
 	 */
 	public function treeAction($modelTree)
-	{
-	    
+	{	    
 	    $model = Yii::app()->db->createCommand()
     	    ->from('{{rating_main}}')
     	    ->where('id_tree=:id_tree', [':id_tree'=>$modelTree['id']])
@@ -376,12 +375,6 @@ class RatingData extends CActiveRecord
 	            $modelTree['name'],
 	        ),
 	    ]);
-	}
-	
-	
-	public function getRatingPeriodDescription()
-	{
-	    return (isset($this->periods[$this->rating_period]) ? $this->periods[$this->rating_period] : $this->rating_period);
 	}
 	
 }

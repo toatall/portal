@@ -34,14 +34,14 @@ class Image extends CActiveRecord
 			array('id_page, image_size', 'numerical', 'integerOnly'=>true),
 			array('image_name, image_name_thumbs', 'length', 'max'=>250),
 			array('module', 'length', 'max'=>50),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+		    // search
 			array('id, id_page, image_name, image_name_thumbs, image_size, module, date_create', 'safe', 'on'=>'search'),
 		);
 	}
 
 	/**
 	 * @return array relational rules.
+	 * @deprecated
 	 */
 	public function relations()
 	{
@@ -80,9 +80,7 @@ class Image extends CActiveRecord
 	 * based on the search/filter conditions.
 	 */
 	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	{		
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
@@ -111,21 +109,26 @@ class Image extends CActiveRecord
 	
 	
 	/**
-	 * Получение списка файлов для скачивания
-	 * @param int $model_id - идентификатор модели
-	 * @param string $model_name - наименование модели
+	 * Получение списка файлов
+	 * Поиск производится по названию модели ($model_name) 
+	 * и ее идентификатору ($model_id)
+	 * @param int $model_id идентификатор модели
+	 * @param string $model_name наименование модели
 	 * @return array
-	 * @author oleg
+	 * @author alexeevich
+	 * @uses DepartmentController::showTreeNode()
+	 * @uses DepartmentController::showDepartment()
+	 * @uses NewsController::actionView()
 	 */
 	public static function imagesForDownload($model_id, $model_name)
 	{
 	    return Yii::app()->db->createCommand()
-	    ->from('{{image}}')
-	    ->where('id_model=:id_model and model=:model', [
-	        ':id_model'=>$model_id,
-	        ':model'=>$model_name,
-	    ])
-	    ->queryAll();
+    	    ->from('{{image}}')
+    	    ->where('id_model=:id_model and model=:model', [
+    	        ':id_model'=>$model_id,
+    	        ':model'=>$model_name,
+    	    ])
+    	    ->queryAll();
 	}
 	
 }

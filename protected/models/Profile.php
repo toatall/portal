@@ -19,6 +19,8 @@
  *
  * The followings are the available model relations:
  * @property User $idUser
+ * 
+ * @deprecated
  */
 class Profile extends CActiveRecord
 {
@@ -158,6 +160,7 @@ class Profile extends CActiveRecord
 	 * Сохранение информации о пользователе из ActiveDirectory
 	 * @param unknown $modelUser
 	 * @return NULL|Profile
+	 * @deprecated
 	 */
 	public static function findSaveProfile($modelUser)
 	{

@@ -13,6 +13,7 @@
  * The followings are the available model relations:
  * @property Department $idDepartment
  * @property Group $idGroup
+ * @deprecated
  */
 class AccessDepartmentGroup extends CActiveRecord
 {

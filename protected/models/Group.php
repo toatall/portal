@@ -16,7 +16,10 @@
  */
 class Group extends CActiveRecord
 {    
-	
+	/**
+	 * Группы не участвующие в поиске
+	 * @var array
+	 */
 	public $groups;
 	
 	/**
@@ -26,15 +29,12 @@ class Group extends CActiveRecord
 	{
 		return '{{group}}';
 	}
-        
-    
+     
 	/**
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
+	{		
 		return array(
 			array('name', 'unique', 'attributeName'=>'name', 'className'=>'Group'),
 			array('name', 'required'),
@@ -42,9 +42,7 @@ class Group extends CActiveRecord
 			array('id_organization', 'length', 'max'=>5, 'min'=>4),
 			array('name', 'length', 'max'=>250),
 			array('description', 'length', 'max'=>500),
-			array('groups', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			array('groups', 'safe'),			
 			array('id, name, description, date_create, date_edit, sort, id_organization', 'safe', 'on'=>'search'),
 		);
 	}
@@ -92,8 +90,6 @@ class Group extends CActiveRecord
 	 */
 	public function search()
 	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
@@ -101,8 +97,7 @@ class Group extends CActiveRecord
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('date_create',$this->date_create,true);
 		$criteria->compare('date_edit',$this->date_edit,true);
-        $criteria->compare('sort',$this->sort,true);
-        //$criteria->compare('id_organization',$this->id_organization,true);
+        $criteria->compare('sort',$this->sort,true);        
         $criteria->compare('id_organization', isset(Yii::app()->session['organization']) 
         	? Yii::app()->session['organization'] : $this->id_organization);
         
@@ -111,10 +106,12 @@ class Group extends CActiveRecord
 		));
 	}     
     
+	/**
+	 * Поиск...
+	 * @return CActiveDataProvider
+	 */
     public function searchForTree()
-    {
-        //$groups = Yii::app()->request->getParam('groups');
-        
+    {        
         $criteria=new CDbCriteria;
         $criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);		
@@ -149,16 +146,23 @@ class Group extends CActiveRecord
 		return parent::model($className);
 	}
     
-    
+    /**
+     * {@inheritDoc}
+     * @see CActiveRecord::afterFind()
+     * @see DateHelper
+     */
     protected function afterFind()
     {               
         $this->date_create = DateHelper::explodeDateTime($this->date_create);
-        $this->date_edit = DateHelper::explodeDateTime($this->date_edit);
-        
+        $this->date_edit = DateHelper::explodeDateTime($this->date_edit);        
         parent::afterFind();
     }
     
-    
+    /**
+     * {@inheritDoc}
+     * @see CActiveRecord::beforeSave()
+     * @see DateHelper
+     */
     protected function beforeSave()
     {        
         if ($this->isNewRecord)                   
@@ -169,14 +173,18 @@ class Group extends CActiveRecord
         else
         {
         	$this->date_edit = new CDbExpression('getdate()');
-        }               
-        
+        }
         return parent::beforeSave();
     }      
     
-    
+    /**
+     * {@inheritDoc}
+     * @see CActiveRecord::afterSave()
+     * @see DateHelper
+     */
     protected function afterSave()
     {
+        parent::afterSave();
         $command = Yii::app()->db->createCommand();
         $command->delete('{{group_user}}', 'id_group=:id', array(':id'=>$this->id));
         foreach ($this->groupUsers as $val)
@@ -190,14 +198,11 @@ class Group extends CActiveRecord
             ));
         }                
         Log::insertLog($this);        
-        return parent::afterSave();
     }
     
-    
-    
     /**
-     * 
-     * @return NULL[]
+     * Список пользователей в текущей группе
+     * @return array
      */
     public function getListGroupUsers()
     {

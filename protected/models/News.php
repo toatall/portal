@@ -29,13 +29,35 @@
 class News extends CActiveRecord
 {
 	
-	
+	/**
+	 * Имя модуля по умолчанию
+	 * @var string
+	 */
 	const DEFAULT_MODULE = 'news';	
     
-    private $_thumbImageHeight = 200;  // размер миниатюр для галереи (ширина - пикселей)
-    private $_miniatureImageHeight = 150; // размер миниатюры для главной страницы
-    public $useOptionalAccess = false; // флаг отвечающий за дополнительные настройки прав
-    public $_thumbail_image; // миниатюра
+	/**
+	 * Размер миниатюр для галереи (ширина - пикселей)
+	 * @var integer
+	 */
+    private $_thumbImageHeight = 200;
+    
+    /**
+     * Размер миниатюры для главной страницы
+     * @var integer
+     */
+    private $_miniatureImageHeight = 150; 
+    
+    /**
+     * Флаг отвечающий за дополнительные настройки прав
+     * @var bool
+     */
+    public $useOptionalAccess = false;
+    
+    /**
+     * Миниатюра
+     * @var string
+     */
+    public $_thumbail_image;
     
 	/**
 	 * @return string the associated database table name
@@ -44,15 +66,23 @@ class News extends CActiveRecord
 	{
 		return '{{news}}';
 	}         
-
+    
+	/**
+	 * Returns the static model of the specified AR class.
+	 * Please note that you should have this exact method in all your CActiveRecord descendants!
+	 * @param string $className active record class name.
+	 * @return News the static model class
+	 */
+	public static function model($className=__CLASS__)
+	{
+	    return parent::model($className);
+	}
     
 	/**
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
+	{		
 		return array(
 			array('id_tree, title, date_start_pub, date_end_pub, message2', 'required'),
 			array('id_tree, flag_enable, general_page, id_organization, on_general_page, count_like, count_comment, count_visit', 
@@ -64,7 +94,7 @@ class News extends CActiveRecord
 			array('message1, message2, date_create, date_edit, date_delete, 
                 flag_enable, general_page, _thumbail_image', 'safe'),
 			array('id, id_tree, id_organization, count_like, count_comment, count_visit', 'unsafe'),
-				
+			// search	
 			array('id, id_tree, id_organization, title, message1, message2, author, date_start_pub, date_end_pub, date_create,
                 date_edit, date_delete, flag_enable, thumbail_image, general_page, param1', 'safe', 'on'=>'search'),
             array('_thumbail_image', 'file', 'types'=>'jpg, jpeg, gif, png', 'allowEmpty'=>true),
@@ -106,9 +136,7 @@ class News extends CActiveRecord
 			'date_create' => 'Дата создания',			
 			'date_delete' => 'Удален',
 			'flag_enable' => 'Опубликовано',
-            'thumbail_image' => 'Миниатюра',
-            //'thumbail_title' => 'Заголовок для миниатюры',
-            //'thumbail_text' => 'Текст для миниатюры',
+            'thumbail_image' => 'Миниатюра',            
             'general_page' => 'Главная страница',
             'log_change' => 'История изменений',
 			'files' => 'Файлы',
@@ -120,10 +148,6 @@ class News extends CActiveRecord
 		);
 	}
 
-	
-    
-    
-    
     /**
      * {@inheritDoc}
      * @see CActiveRecord::beforeSave()
@@ -150,25 +174,22 @@ class News extends CActiveRecord
                     ':id'=>$this->id,
                 )
             );            
-        }
-                
+        }               
         return parent::beforeSave();
     }
-
     
 	/**
 	 * {@inheritDoc}
 	 * @see CActiveRecord::afterFind()
 	 */
     protected function afterFind()
-    {                
-        $this->date_create = ConvertDate::find($this->date_create);
-        $this->date_edit = ConvertDate::find($this->date_edit);
-        $this->date_delete = ConvertDate::find($this->date_delete);
-        $this->date_start_pub = ConvertDate::find($this->date_start_pub, true);
-        $this->date_end_pub = ConvertDate::find($this->date_end_pub, true);
-        
+    {            
         parent::afterFind();
+        $this->date_create      = DateHelper::explodeDateTime($this->date_create);
+        $this->date_edit        = DateHelper::explodeDateTime($this->date_edit);
+        $this->date_delete      = DateHelper::explodeDateTime($this->date_delete);
+        $this->date_start_pub   = DateHelper::explodeDateTime($this->date_start_pub, true);
+        $this->date_end_pub     = DateHelper::explodeDateTime($this->date_end_pub, true);        
     }
         
     
@@ -176,11 +197,16 @@ class News extends CActiveRecord
      *  Параметры:
      *      $id - УН новости
      *      $delFile - массив УН файлов для удаления
-     *      $delImage - масств УН изображений для удаления    
-     **/
+     *      $delImage - масств УН изображений для удаления 
+     * @param unknown $id
+     * @param unknown $delFile
+     * @param unknown $delImage
+     * @param unknown $idTree
+     * @deprecated
+     * @todo move to FileHelper
+     */
     public function deleteFilesImages($id, $delFile, $delImage, $idTree)
-    {
-    	
+    {    	
         // удаляем файлы помеченные для удаления
         if (count($delFile) > 0) 
         {
@@ -301,11 +327,11 @@ class News extends CActiveRecord
         }
     }
 
-   
-    
     /**
      * Удаление каталога с содержимым
      * @param string $dir
+     * @deprecated
+     * @todo move to FileHelper
      */
     private function removeDirectory($dir) 
     {
@@ -331,12 +357,15 @@ class News extends CActiveRecord
     	}
     	catch (exception $e) { /* exception */ }
     }
-    
-    
-    /** Сохранение файлов для новости
-     *  Параметры: 
-     *      $id - УН новости
-     **/
+        
+    /**
+     * Сохранение файлов для новости
+     * @param int $id идентификатор новости
+     * @param int $idTree идентификатор структуры
+     * @see Tree
+     * @uses NewsController::actionCreate()
+     * @todo Если используется только как вызов от текущей модели, то убрать параметры, и использовать их от $this
+     */
     public function saveFiles($id, $idTree)
     {
         $module_name = Tree::model()->findByPk($idTree)->module;
@@ -345,16 +374,19 @@ class News extends CActiveRecord
         $files = CUploadedFile::getInstancesByName('files');
         if (isset($files) && count($files)>0)
         {
+            // получение каталога для размещения файла
             $baseDir = str_replace('{code_no}', Yii::app()->session['organization'],
                 Yii::app()->params['pathDocumets']);
             $baseDir = str_replace('{module}', $module_name, $baseDir);
             $baseDir = str_replace('{id}', $id, $baseDir);    
             
-            if (!file_exists($_SERVER['DOCUMENT_ROOT'].$baseDir))
+            // создание каталога, если его нет
+            if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $baseDir))
             {
-                mkdir($_SERVER['DOCUMENT_ROOT'].$baseDir, 0777, true);
+                mkdir($_SERVER['DOCUMENT_ROOT'] . $baseDir, 0777, true);
             }
-
+            
+            // загрузка всех файлов
             foreach ($files as $file)
             {
             	$fileName = iconv('UTF-8', 'windows-1251', $file->name);
@@ -362,45 +394,52 @@ class News extends CActiveRecord
                 if ($file->saveAs($_SERVER['DOCUMENT_ROOT'] . $baseDir . $fileName))
                     Yii::app()->db->createCommand("
                         INSERT INTO {{file}} (model, id_model, file_name, file_size, date_create)
-                            VALUES ('news', $id, '" . /*$baseDir .*/ $file->name . "'," . $file->size . ",getdate());
+                            VALUES ('news', $id, '" . $file->name . "'," . $file->size . ",getdate());
                     ")->execute();
             }
         }
     }
     
-    
-    
     /**
      * Сохранение изображений для новости
-     * @param int $id - УН новости
-     * @param int $idTree - УН раздела
+     * @param int $id идентификатор новости
+     * @param int $idTree идентификатор структуры
+     * @see Tree
+     * @see ImageHelper
+     * @todo Если используется только как вызов от текущей модели, то убрать параметры, и использовать их от $this
      */
     public function saveImages($id, $idTree)
     {
+        // текущий модуль (нужен для указания пути)
         $module_name = Tree::model()->findByPk($idTree)->module;
         
         // сохранение изображений
         $files = CUploadedFile::getInstancesByName('images');
         if (isset($files) && count($files)>0)
         {            
-            
+            // получение каталога для размещения изображений
             $baseDir = str_replace('{code_no}', Yii::app()->session['organization'],
                 Yii::app()->params['pathImages']);
             $baseDir = str_replace('{module}', $module_name, $baseDir);
             $baseDir = str_replace('{id}', $id, $baseDir);
                         
-            
+            // создание каталога, если его нет
             if (!file_exists($_SERVER['DOCUMENT_ROOT'].$baseDir)) 
             {
-                mkdir($_SERVER['DOCUMENT_ROOT'].$baseDir, 0777, true);                
+                mkdir($_SERVER['DOCUMENT_ROOT'] . $baseDir, 0777, true);                
             }
-
+            
+            // загрузка всех изображений
             foreach ($files as $file)
             {
+                // в случае, если имя кириллицей, то преобразуем к win-1251, чтобы не получились иероглифы
 				$fileName = iconv('UTF-8', 'windows-1251', $file->name);
 				
                 if ($file->saveAs($_SERVER['DOCUMENT_ROOT'] . $baseDir . $fileName)) 
                 {
+                    // ImageHelper нужен для сохранения копии изображения с меньшими размерами,
+                    // что позволит загрузить изображения более быстрее
+                    // Оригинал всегда будет доступен при нажатии на маленькое избражение
                     $imageHelper = new ImageHelper;
                     $thumbNameImage = '';
                     if ($imageHelper->load($_SERVER['DOCUMENT_ROOT'] . $baseDir . $fileName))
@@ -424,47 +463,55 @@ class News extends CActiveRecord
                     // сохраняем в базу                   
                     Yii::app()->db->createCommand("
                         INSERT INTO {{image}} (model,id_model,image_name,image_name_thumbs,image_size,date_create)
-                            VALUES ('news', $id, '" /*.$baseDir*/ . $file->name."','".$baseDir.$thumbNameImage."',".$file->size.",getdate());
+                            VALUES ('news', $id, '" . $file->name."','".$baseDir.$thumbNameImage."',".$file->size.",getdate());
                     ")->execute();
                 }
-                
             }
         }
     }
-    
         
-   
     /**
      * Сохранение миниатюры изображения для новости
-     * @param News $model
+     * @param News $model новость
      * @param string $oldImageName
+     * @see ImageHelper
+     * @see Tree
+     * @todo Если используется только как вызов от текущей модели, то убрать параметры, и использовать их от $this
      */
     public function saveThumbailForNews($model,$oldImageName='')
     {
+        // текущий модуль (нужен для указания пути)
         $module_name = Tree::model()->findByPk($model->id_tree)->module;
+        
         // сохранение изображений
-        $file = CUploadedFile::getInstance($model,'_thumbail_image');        
+        $file = CUploadedFile::getInstance($model,'_thumbail_image');
+        
+        // если изображение есть, т.е. его выбрал пользователь
         if (isset($file) && count($file)>0)
         {
             // если файл уже был ранее загружен, то удаляем его
             if ($oldImageName!='')
             {
-                if (file_exists($_SERVER['DOCUMENT_ROOT'].$oldImageName))
-                    unlink($_SERVER['DOCUMENT_ROOT'].$oldImageName);
+                if (file_exists($_SERVER['DOCUMENT_ROOT'] . $oldImageName))
+                    unlink($_SERVER['DOCUMENT_ROOT'] . $oldImageName);
             }
             
+            // получение каталога для размещения изображений
             $baseDir = str_replace('{code_no}', Yii::app()->session['organization'],
                 Yii::app()->params['miniatureImage']);
             $baseDir = str_replace('{module}', $module_name, $baseDir);
             $baseDir = str_replace('{id}', $model->id, $baseDir);
             
+            // создание каталога, если его нет
             if (!file_exists($_SERVER['DOCUMENT_ROOT'].$baseDir))
             {
                 mkdir($_SERVER['DOCUMENT_ROOT'].$baseDir, 0777, true);
             }
             
+            // в случае, если имя кириллицей, то преобразуем к win-1251, чтобы не получились иероглифы
             $fileName = iconv('UTF-8', 'windows-1251', $file->name);
             
+            // ImageHelper приведения размера изображения к определенным размерам
             $imageHelper = new ImageHelper;
             $thumbNameImage = '';
             if ($imageHelper->load($file->tempName))
@@ -472,7 +519,7 @@ class News extends CActiveRecord
                 if ($imageHelper->getHeight() > $this->_miniatureImageHeight)
                     $imageHelper->resizeToHeight($this->_miniatureImageHeight);
 
-                $imageHelper->save($_SERVER['DOCUMENT_ROOT'] .$baseDir. $fileName);
+                $imageHelper->save($_SERVER['DOCUMENT_ROOT'] . $baseDir. $fileName);
                                                 
                 Yii::app()->db->createCommand()
                     ->update('{{news}}', array(
@@ -481,13 +528,13 @@ class News extends CActiveRecord
             }                                                           
         }
     }
-    
-    
-       
+
     /**
      * Расчет размера файла в Байтах, Кб, Мб, Гб, Тб
      * @param int $size
      * @return string
+     * @deprecated
+     * @todo перенести данную функцию в FileHelper
      */
     public function getSizeText($size)
     {
@@ -508,8 +555,6 @@ class News extends CActiveRecord
         }
         return $result;
     }
-    
-    
         
     /**
      * Получение списка изображений со ссылкой на эти файлы
@@ -519,6 +564,8 @@ class News extends CActiveRecord
      * @param string $getRecords - параметр означающий, что нужно
      * 		передать массив с id и file_name для действия Update 
      * @return void|string[]|string
+     * @deprecated
+     * @todo перенести в File
      */
     public function listFiles($id, $idTree, $getRecords=false)
     {
@@ -579,6 +626,8 @@ class News extends CActiveRecord
                    передать массив с id и image_name для действия Update 
      * @return void|string[]|string
      * @author tvog17
+     * @deprecated
+     * @tood перенести в Image
      */
     public function getListImages($id, $idTree, $getRecords=false)
     {       
@@ -625,12 +674,12 @@ class News extends CActiveRecord
         return ($list!='')?$list:'Нет';
     }
     
-    
-    
     /**
      * Get organization name
      * @return string
      * @author tvog17
+     * @deprecated
+     * @todo move to Organization
      */
     public function getOrganization()
     {        
@@ -638,9 +687,10 @@ class News extends CActiveRecord
             'code'=>$this->tree->id_organization,
         )))->name;
     }
-    
-    /*
+        
+    /**
      * Миниатюра (с каталогом)
+     * @return string
      */
     public function getThumbail_image_path()
     {  
@@ -652,26 +702,19 @@ class News extends CActiveRecord
     	return $dir . $this->thumbail_image;    	
     }
     
-    
+    /**
+     * Название организации для текущей новости
+     * @return string
+     */
     public function getOrganization_name()
     {
         return $this->organization->name;
     }
     
-        
-
-	/**
-	 * Returns the static model of the specified AR class.
-	 * Please note that you should have this exact method in all your CActiveRecord descendants!
-	 * @param string $className active record class name.
-	 * @return News the static model class
+	/** 
+	 * @param unknown $treeModel
+	 * @deprecated
 	 */
-	public static function model($className=__CLASS__)
-	{	    
-		return parent::model($className);
-	}
-	
-	
 	public function treeAction($treeModel)
 	{
 	    

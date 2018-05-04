@@ -43,8 +43,7 @@ class Interview extends CActiveRecord
 			array('author', 'length', 'max'=>250),
 			array('alias', 'length', 'max'=>50),
 			array('description, date_edit, log_change', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			// The following rule is used by search().			
 			array('id, title, description, date_start, date_end, count_like, date_create, date_edit, author, log_change, alias', 'safe', 'on'=>'search'),
 		);
 	}
@@ -63,6 +62,7 @@ class Interview extends CActiveRecord
 
 	/**
 	 * @return array customized attribute labels (name=>label)
+	 * @deprecated
 	 */
 	public function attributeLabels()
 	{
@@ -94,9 +94,7 @@ class Interview extends CActiveRecord
 	 * based on the search/filter conditions.
 	 */
 	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	{		
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
@@ -126,7 +124,6 @@ class Interview extends CActiveRecord
 	{
 		return parent::model($className);
 	}
-	
 	
 	/**
 	 * Срок голосования истек

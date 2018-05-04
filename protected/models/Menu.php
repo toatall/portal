@@ -16,7 +16,11 @@
  */
 class Menu extends CActiveRecord
 {
-	
+	/**
+	 * Левое меню
+	 * @var array
+	 * @uses DepartmnetController::loadMenu()
+	 */
 	public static $leftMenuAdd = array();
 	
 	/**
@@ -31,9 +35,7 @@ class Menu extends CActiveRecord
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
+	{		
 		return array(
 			array('id_parent, type_menu, name, blocked', 'required'),
 			array('id_parent, type_menu, sort_index', 'numerical', 'integerOnly'=>true),
@@ -41,9 +43,8 @@ class Menu extends CActiveRecord
 			array('name, author', 'length', 'max'=>45),
 			array('link', 'length', 'max'=>500),
 			array('submenu_code', 'length', 'max'=>1000),
-			array('date_create, date_edit', 'safe'),			
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			array('date_create, date_edit', 'safe'),	
+		    // search
 			array('id, id_parent, type_menu, name, link, submenu_code, 
 				date_create, date_edit, author', 'safe', 'on'=>'search'),
 		);
@@ -51,11 +52,10 @@ class Menu extends CActiveRecord
 
 	/**
 	 * @return array relational rules.
+	 * @deprecated
 	 */
 	public function relations()
 	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
 		return array(
 		);
 	}
@@ -92,11 +92,10 @@ class Menu extends CActiveRecord
 	 *
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
+	 * @see CDbCriteria
 	 */
 	public function search()
 	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
@@ -122,13 +121,17 @@ class Menu extends CActiveRecord
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
 	 * @return Menu the static model class
+	 * @uses getTree()
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
     
-    
+    /**
+     * {@inheritDoc}
+     * @see CActiveRecord::beforeSave()    
+     */
     protected function beforeSave()
     {
         if ($this->isNewRecord)
@@ -143,28 +146,27 @@ class Menu extends CActiveRecord
         return parent::beforeSave();
     }
     
-    
+    /**
+     * {@inheritDoc}
+     * @see CActiveRecord::afterFind()
+     * @see DateHelper
+     */
     protected function afterFind()
     {
     	parent::afterFind();
-    	$this->date_create = ConvertDate::find($this->date_create);
-    	$this->date_edit = ConvertDate::find($this->date_edit);
+    	$this->date_create = DateHelper::explodeDateTime($this->date_create);
+    	$this->date_edit = DateHelper::explodeDateTime($this->date_edit);
     }
-    
-    
-    
-    /** ***************************************
-     *     
-     *              BACK END
-     * 
-     * ****************************************/
-     
-     
-     
-    
-    /** Построение дерева меню сайта
-     *      относительно текущего НО (Yii::app()->session['code_no'])
-     * */
+
+    /**
+     * Построение дерева меню сайта
+     * относительно текущего НО (Yii::app()->session['code_no'])
+     * @param int $id
+     * @param int $parent_id
+     * @param int $type_menu   
+     * @see Access
+     * @return array
+     */
     public function getTree($id=0, $parent_id=0, $type_menu)
     {
         $criteria=new CDbCriteria;
@@ -172,13 +174,13 @@ class Menu extends CActiveRecord
         $criteria->addCondition('id<>'.$id); 
         $criteria->addCondition('type_menu='.$type_menu);                                  
                 
-        $orgData = Menu::model()->findAll($criteria);
+        $orgData = self::model()->findAll($criteria);
         
         $data = array();
         
         foreach ($orgData as $value)
         {   
-            if (Yii::app()->user->admin || Access::model()->checkAccessUserForTree($value->id))
+            if (Yii::app()->user->admin || Access::checkAccessUserForTree($value->id))
             {
                 $data[] = array(
                     'id'=>$value->id,
@@ -213,9 +215,17 @@ class Menu extends CActiveRecord
         }
         return $data;
     } 
-    
-    
-    /** Дерево меню для DropDownList **/
+        
+    /**
+     * Дерево меню для DropDownList
+     * @param int $type_menu тип меню (сверху, слева)
+     * @param int $id идентификатор меню, которое не должно отображаться
+     * @param int $parent_id идентификатор родительского меню
+     * @param int $level уровень вложенности
+     * @see CDbCriteria
+     * @see Access
+     * @return array
+     */
     public function getMenuDropDownList($type_menu, $id=0, $parent_id=0, $level=1)
     {        
         $criteria=new CDbCriteria;
@@ -227,7 +237,7 @@ class Menu extends CActiveRecord
         $orgData = Menu::model()->findAll($criteria);
         foreach ($orgData as $value)
         {     
-            if (Yii::app()->user->admin || Access::model()->checkAccessUserForTree($value->id))
+            if (Yii::app()->user->admin || Access::checkAccessUserForTree($value->id))
             {                
                 $item = array($value->id => str_repeat('--', $level).' '.$value->name);
                 $flagLevel = 1;
@@ -242,13 +252,10 @@ class Menu extends CActiveRecord
         return $data;
     }
     
-    
-    
     /**
      * Верхнее меню в шаблоне сайта
-     * @param int $id_parent
+     * @param int $id_parent идентификатор родителя
      * @return array
-     * @desc 10.10.2017: зааменен AR поиск на DAO
      */
     public static function getTopMenuArray($id_parent=0)
     {            
@@ -272,10 +279,14 @@ class Menu extends CActiveRecord
             );            
         }
         return $resultArray;
-    } 
-         
-    
+    }
 
+    /**
+     * Преобразование меню из массива в html-текст
+     * @param array $arrayMenu массив меню
+     * @return string
+     * @uses getLeftMenuArray()
+     */
     private function convertSubMenuFromArray($arrayMenu)
     {
         $res = '';
@@ -297,10 +308,11 @@ class Menu extends CActiveRecord
         return $res;
     }
     
-    
     /**
      * Левое меню
-     * @param int $id_parent
+     * @param int $id_parent идентификатор родителя
+     * @return string
+     * @uses in file views/layout/main.php
      */
     public function getLeftMenuArray($id_parent=0)
     {        
@@ -310,17 +322,17 @@ class Menu extends CActiveRecord
             ->where('blocked=0 AND type_menu=2 AND id_parent=:id_parent', [':id_parent'=>$id_parent])
             ->order('sort_index asc')
             ->queryAll();
-        
+
         foreach ($model as $value)
         {
             if ($value['name'] == '---') 
-            { 
+            {
                 $resultMenu .= '<li class="divider"></li>'; 
-                continue; 
+                continue;
             }
-            
+
             $subMenu = ($value['submenu_code'] != '') ? eval('return ' . $value['submenu_code']) : null;
-            
+
             $existsStaticSubMenu = Yii::app()->db->createCommand()
                 ->from('{{menu}}')
                 ->select('count(id)')
@@ -333,7 +345,6 @@ class Menu extends CActiveRecord
                     (strpos($value['link'],'array') !== false) ? eval('return ' . $value['link']) : $value['link']
                     ), array('target' => ($value['target'] != '') ? $value['target'] : null));
                 
-                
                 // сначала статичное меню, если есть
                 if ($existsStaticSubMenu > 0)
                 {
@@ -341,28 +352,29 @@ class Menu extends CActiveRecord
                     if ($subMenu==null) { $resultMenu .= '</ul>'; }
                 }
                 
-                
                 if ($subMenu!=null)
                 {
                     $resultMenu .= ($existsStaticSubMenu > 0)
                         ? '<li class="divider"></li>' : '<ul class="dropdown-menu">';
                     $resultMenu .= $this->convertSubMenuFromArray($subMenu).'</ul>';
                 }
-                $resultMenu .= '</li>';               
-        }
-        
+                $resultMenu .= '</li>'; 
+        }        
         return $resultMenu;
     }
     
-    
-    
+    /**
+     * 
+     * @todo где-то испольуется?
+     * @param array $arr
+     * @param boolean $main
+     * @return string
+     * @uses in file views/layouts/main.php
+     */
     public function getLeftMenuAdd($arr, $main=true)
-    {    	
-    
-    	$resultMenu = '';
-    	
-    	if (count($arr)>0) $resultMenu .= '<ul class="dropdown-menu' . ($main ? ' dropdown-menu-main dropdown-menu-wrap' : '') . '">';
-    	
+    {    	    
+    	$resultMenu = '';    	
+    	if (count($arr)>0) $resultMenu .= '<ul class="dropdown-menu' . ($main ? ' dropdown-menu-main dropdown-menu-wrap' : '') . '">';    	
     	foreach ($arr as $a)
     	{
     		$flagItems = isset($a['items']) && count($a['items'])>0;
@@ -370,8 +382,7 @@ class Menu extends CActiveRecord
     			. CHtml::link($a['name'], $a['link']) . ($flagItems ? $this->getLeftMenuAdd($a['items'], false) : '') . '</li>';
     	}
     	
-    	if (count($arr)>0) $resultMenu .= '</ul>';
-    	
+    	if (count($arr)>0) $resultMenu .= '</ul>';    	
     	return $resultMenu;
     	
     }

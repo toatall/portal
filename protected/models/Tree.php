@@ -22,14 +22,35 @@
  */
 class Tree extends CActiveRecord
 {    
-    
+    /**
+     * Модуль по умолчанию
+     * @var string
+     */
     const defaultModule = 'news';
     
+    /**
+     * Доступ пользователей к узлу
+     * @var array
+     */
     public $permissionUser;
-    public $permissionGroup;
-    public $useParentRight; // галочка, которая разрешает/запрещает наследование прав
-    public $allOrganization;
     
+    /**
+     * Доступ групп к узлу
+     * @var array
+     */
+    public $permissionGroup;
+    
+    /**
+     * Галочка, которая отвечает за наследование прав
+     * @var bool
+     */
+    public $useParentRight;
+    
+    /**
+     * Предназначен ли данный узел для всех орагнизаций
+     * @var bool
+     */
+    public $allOrganization;
     
 	/**
 	 * @return string the associated database table name
@@ -56,19 +77,25 @@ class Tree extends CActiveRecord
             array('module', 'checkModule'),
 			array('use_organization, use_tape, use_material,  
                 permissionUser, permissionGroup, useParentRight', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			// The following rule is used by search().			
 			array('id, id_parent, id_organization, name, sort, module, use_organization, 
                 use_tape, use_material, date_create, log_change, organization, disable_child, 
                 alias', 'safe', 'on'=>'search'),
 		);
 	}
     
+	/**
+	 * ПРАВИЛО. Проверка использования модуля более 1 раза
+	 * Только для модулей, который необходимо использовать 1 раз
+	 * @param string $attribute
+	 * @see Tree
+	 * @see Module
+	 */
     public function checkModule($attribute)
-    {       
-        if (Module::model()->exists('name=:name AND only_one=1', array(':name'=>$this->module))
-            && (Tree::model()->exists('id<>:id AND module=:module', 
-                array(':id'=>(!$this->isNewRecord ? $this->id : 0), ':module'=>$this->module))))
+    {   
+        $moduleExists = Module::model()->exists('name=:name AND only_one=1', array(':name'=>$this->module));
+        $treeExists = Tree::model()->exists('id<>:id AND module=:module', array(':id'=>(!$this->isNewRecord ? $this->id : 0), ':module'=>$this->module));
+        if ($moduleExists && $treeExists)
         {
             $treeName = Tree::model()->find('module=:module', array(':module'=>$this->module));
             $this->addError($attribute, 'Модуль уже используется в разделе &laquo;'.$treeName->name.'&raquo;');
@@ -132,9 +159,7 @@ class Tree extends CActiveRecord
 	 * based on the search/filter conditions.
 	 */
 	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	{		
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
@@ -148,8 +173,7 @@ class Tree extends CActiveRecord
         $criteria->compare('use_material',$this->use_material);
 		$criteria->compare('date_create',$this->date_create,true);
 		$criteria->compare('date_modification',$this->date_modification,true);
-		$criteria->addInCondition('organization', array('0000', Yii::app()->session['organization']));
-        //$criteria->compare('organization',Yii::app()->session['code_no']);
+		$criteria->addInCondition('organization', array('0000', Yii::app()->session['organization']));        
         if (!Yii::app()->user->inRole(['admin']))
             $criteria->compare('date_delete', CDbExpression('NULL'));
        	$criteria->compare('disable_child', $this->disable_child);
@@ -170,7 +194,6 @@ class Tree extends CActiveRecord
 	    return parent::model($className);
 	}
     
-	
 	/**
 	 * {@inheritDoc}
 	 * @see CActiveRecord::beforeSave()
@@ -182,8 +205,7 @@ class Tree extends CActiveRecord
             $this->date_create = new CDbExpression('getdate()');
             $this->author = Yii::app()->user->name;
         }            
-        $this->log_change = LogChange::setLog($this->log_change,
-            ($this->isNewRecord ? 'создание' : 'изменение'));
+        $this->log_change = Log::setLog($this->log_change, ($this->isNewRecord ? 'создание' : 'изменение'));
         
         $this->id_organization = Yii::app()->session['organization'];
         
@@ -193,21 +215,25 @@ class Tree extends CActiveRecord
         return parent::beforeSave();        
     }
     
-    
     /**
      * {@inheritDoc}
      * @see CActiveRecord::afterFind()
      */
     protected function afterFind()
-    {
-        /*$this->date_create = date('d.m.Y H:i:s', strtotime($this->date_create));
-        $this->date_modification = date('d.m.Y H:i:s', strtotime($this->date_modification));*/
-    	$this->date_create = ConvertDate::find($this->date_create);
+    {       
+    	$this->date_create = DateHelper::explodeDateTime($this->date_create);
     	$this->allOrganization = ($this->id_organization == '0000');
         parent::afterFind();
     }
-    
-    /** Дерево структуры для DropDownList **/
+        
+    /**
+     * Дерево структуры для DropDownList
+     * @param int $id идентификатор структуры
+     * @param int $parent_id идентификатор родителя
+     * @param number $level уровень
+     * @see Tree
+     * @return array|number
+     */
     public function getTreeDropDownList($id=0, $parent_id=0, $level=1)
     {        
         $criteria=new CDbCriteria;
@@ -238,24 +264,31 @@ class Tree extends CActiveRecord
         return $data;
     }
     
+    /**
+     * Наименование структуры
+     * @param int $id идентификатор структуры
+     * @return string
+     */
     public function getNameById($id)
     {
         $data = Tree::model()->findByPk($id);
-        if (count($data))
+        if ($data !== null)
             return $data->name;
         return 'Родитель';
     }
-    
-    
-    /** Построение дерева структуры сайта
-     *      относительно текущего НО (Yii::app()->session['code_no'])
-     * */
+        
+    /**
+     * Построение дерева структуры сайта
+     * относительно текущего НО (Yii::app()->session['code_no'])
+     * @param int $id идентификатор структуры
+     * @param int $parent_id идентификатор родителя
+     * @return array
+     */
     public function getTree($id=0, $parent_id=0)
     {
         $criteria=new CDbCriteria;
         $criteria->addCondition('id_parent='.$parent_id);
-        $criteria->addCondition('id<>'.$id);
-        //$criteria->addCondition("id_organization='".Yii::app()->session['organization']."'");
+        $criteria->addCondition('id<>'.$id);        
         $criteria->addInCondition('id_organization', array('0000', Yii::app()->session['organization']));
         if (!Yii::app()->user->inRole(['admin']))
             $criteria->addCondition('date_delete is null'); 
@@ -300,16 +333,17 @@ class Tree extends CActiveRecord
             }
         }
         return $data;
-    }                    
-   
+    }
     
-    
-    /** Построение дерева структуры сайта НА ГЛАВНОЙ СТРАНИЦЕ
-     *      относительно текущего НО (Yii::app()->session['organization'])
-     * */
+    /**
+     * Построение дерева структуры сайта на главной странице административной зоны
+     * относительно текущего НО (Yii::app()->session['organization'])
+     * @param number $id
+     * @param number $parent_id
+     * @return array
+     */
     public function getTreeForMain($id=0, $parent_id=0)
-    {
-        
+    {        
         $criteria=new CDbCriteria;
         $criteria->addCondition('id_parent='.$parent_id);
         $criteria->addCondition('id<>'.$id);
@@ -339,14 +373,16 @@ class Tree extends CActiveRecord
             {
                 $data = array_merge($data, $this->getTreeForMain($id, $value->id));
             }
-                       
         }
         return $data;
     }
-    
-    /** Проверка прав у родительских разделов для текущего пользователя
-     *      относительно раздела $idParent
-     * */
+        
+    /**
+     * Проверка прав у родительских разделов для текущего пользователя
+     * относительно раздела $idParent
+     * @param int $idParent идентификатор родителя
+     * @return boolean
+     */
     public function checkParentRight($idParent)
     {
         if (Yii::app()->user->inRole(['admin'])) return true;
@@ -377,12 +413,11 @@ class Tree extends CActiveRecord
         }
     }
     
-  	
-	
 	/**
 	 * Check correct using tree organization
 	 * @param int $id
 	 * @return boolean
+	 * @deprecated
 	 */
 	public static function checkTreeNode($id)
 	{
@@ -395,16 +430,12 @@ class Tree extends CActiveRecord
 		if ($modelModule===null)
 			return false;
 		if (!$modelModule->only_one && $model->id_organization<>Yii::app()->session['organization'])
-			return false;
-		
+			return false;		
 		return true;
 	}
 	
-	
-	
 	/**
-	 * Get allow user to node tree
-	 * @author tvog17
+	 * Проверка прав для аутентефицированного пользователя к текущему узлу
 	 * @return bool
 	 */
 	public function getAllowAccess()
@@ -420,7 +451,4 @@ class Tree extends CActiveRecord
         	    ->queryScalar();	    
 	}
 	
-	    
-    
-    
 }

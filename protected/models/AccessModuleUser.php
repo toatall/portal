@@ -7,6 +7,7 @@
  * @property integer $id_user
  * @property string $module_name
  * @property string $date_create
+ * @deprecated
  */
 class AccessModuleUser extends CActiveRecord
 {

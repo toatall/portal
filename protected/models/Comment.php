@@ -19,7 +19,6 @@
 class Comment extends CActiveRecord
 {
 	/**
-	 * Наименование таблицы
 	 * {@inheritdoc}
 	 * @return string the associated database table name
 	 */
@@ -29,7 +28,6 @@ class Comment extends CActiveRecord
 	}
 
 	/**
-	 * Правила проверки вводимых данных
 	 * {@inheritdoc}
 	 * @return array validation rules for model attributes.
 	 */
@@ -44,7 +42,6 @@ class Comment extends CActiveRecord
 	}
 
 	/**
-	 * Связи с другими классами (таблицами)
 	 * {@inheritdoc}
 	 * @return array relational rules.
 	 */
@@ -56,7 +53,6 @@ class Comment extends CActiveRecord
 	}
 
 	/**
-	 * Наименование аттрибутов
 	 * {@inheritdoc}
 	 * @return array customized attribute labels (name=>label)
 	 */
@@ -117,7 +113,6 @@ class Comment extends CActiveRecord
 	
 	
 	/**
-	 * Событие перед сохранением записи
 	 * {@inheritDoc}
 	 * @see CActiveRecord::beforeSave()
 	 */
@@ -128,7 +123,6 @@ class Comment extends CActiveRecord
 	}
 		
 	/**
-	 * Событие после сохранения записи
 	 * {@inheritDoc}
 	 * @see CActiveRecord::afterSave()
 	 */
@@ -153,7 +147,6 @@ class Comment extends CActiveRecord
 		$this->date_create = DateHelper::explodeDateTime($this->date_create);
 	}
 	
-	
 	/**
 	 * @todo Where use?
 	 * Кнопка удаления комментария
@@ -161,24 +154,31 @@ class Comment extends CActiveRecord
 	 */
 	public function getButtonDelete()
 	{
+	    throw new CHttpException(410);
+	    /*
 		if ((Yii::app()->user->inRole(['admin']) || $this->username == UserInfo::inst()->userLogin))
 		{
 			$url = Yii::app()->controller->createUrl('comment/delete',['id'=>$this->id]);
 			return '<button onclick="deleteComment(' . $this->id . ', \'' . $url . '\');" class="btn btn-default" title="Удалить"><i class="icon-trash"></i></button>';
 		}
+		*/
 	}
 	
 	/**
 	 * @todo Where use?
 	 * @return string
+	 * @deprecated
 	 */
 	public function getButtonUpdate()
 	{
+	    throw new CHttpException(410);
+	    /*
 		if ((Yii::app()->user->inRole(['admin']) || $this->username == UserInfo::inst()->userLogin))
 		{
 			$url = Yii::app()->controller->createUrl('comment/update',['id'=>$this->id]);			
 			return '<button onclick="updateComment(\'' . $url . '\');" class="btn btn-default" title="Изменить" data-toggle="modal" data-target="#modal-comment"><i class="icon-pencil"></i></button>';
 		}
+		*/
 	}
 	
 	

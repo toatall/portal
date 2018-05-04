@@ -13,6 +13,7 @@
  *
  * The followings are the available model relations:
  * @property ReestrSvt $idReestr
+ * @deprecated
  */
 class ReestrSvtMessage extends CActiveRecord
 {

@@ -33,16 +33,14 @@ class Ifns extends CActiveRecord
             array('sort', 'numerical', 'integerOnly'=>true),
             array('code', 'unique', 'attributeName'=>'code', 'className'=>'Ifns'),
 			array('code', 'length', 'max'=>4),
-			array('name', 'length', 'max'=>250),
-			array('date_create, date_modification, enabled', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			array('name', 'length', 'max'=>250),			
 			array('code, name, date_create, date_modification, enabled, sort', 'safe', 'on'=>'search'),
 		);
 	}
 
 	/**
 	 * @return array relational rules.
+	 * @deprecated
 	 */
 	public function relations()
 	{
@@ -80,9 +78,7 @@ class Ifns extends CActiveRecord
 	 * based on the search/filter conditions.
 	 */
 	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	{		
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('code',$this->code,true);
@@ -110,18 +106,31 @@ class Ifns extends CActiveRecord
 		return parent::model($className);
 	}
     
+	/**
+	 * {@inheritDoc}
+	 * @see CActiveRecord::beforeSave()
+	 */
     protected function beforeSave()
     {        
-        if ($this->isNewRecord)                   
+        if ($this->isNewRecord)
+        {
             $this->date_create = new CDbExpression('getdate()');
-        $this->date_modification = new CDbExpression('getdate()');
+        }
+        else 
+        {
+            $this->date_modification = new CDbExpression('getdate()');
+        }
         return parent::beforeSave();
     }
     
+    /**
+     * {@inheritDoc}
+     * @see CActiveRecord::afterFind()
+     */
     protected function afterFind()
     {
-        $this->date_create = date('d.m.Y H:i:s', strtotime($this->date_create));
-        $this->date_modification = date('d.m.Y H:i:s', strtotime($this->date_modification));
+        $this->date_create = DateHelper::explodeDateTime($this->date_create);
+        $this->date_modification = DateHelper::explodeDateTime($this->date_modification);
         parent::afterFind();
     }
     

@@ -26,12 +26,28 @@
  */
 class User extends CActiveRecord
 {
-	
+	/**
+	 * Имя гостевой учетной записи
+	 * @var string
+	 */
 	const GUEST_NAME = 'Гость';
 	
+	/**
+	 * Организации
+	 * @var array
+	 */
     public $organizations=array();
+    
+    /**
+     * @deprecated
+     * @var unknown
+     */
     public $profile_name;
     
+    /**
+     * @deprecated
+     * @var unknown
+     */
     public $users;
     
 	/**
@@ -57,8 +73,7 @@ class User extends CActiveRecord
 		    array('hash', 'length', 'max'=>32),
 			array('default_organization, current_organization', 'length', 'max'=>5),			
             array('id', 'numerical', 'integerOnly'=>true),
-			array('blocked, role_admin', 'boolean'),			
-			
+			array('blocked, role_admin', 'boolean'),						
 		    // search rule
 			array('id, username, username_windows, date_create, date_edit, date_delete, blocked, 
 				default_organizartion, current_organization, profile_name', 'safe', 'on'=>'search'),
@@ -75,8 +90,7 @@ class User extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(           
 			'organization'=>array(self::MANY_MANY, 'Organization',
-                '{{user_organization}} (id_user, id_organization)'),				
-			//'profile' => array(self::BELONGS_TO, 'Profile', 'id'),
+                '{{user_organization}} (id_user, id_organization)'),			
 		);
 	}
 
@@ -107,6 +121,64 @@ class User extends CActiveRecord
 		);
 	}
 	
+	/**
+	 * Returns the static model of the specified AR class.
+	 * Please note that you should have this exact method in all your CActiveRecord descendants!
+	 * @param string $className active record class name.
+	 * @return User the static model class
+	 */
+	public static function model($className=__CLASS__)
+	{
+	    return parent::model($className);
+	}
+	
+	
+	/**
+	 * {@inheritDoc}
+	 * @see CActiveRecord::beforeSave()
+	 */
+	protected function beforeSave()
+	{
+	    if ($this->isNewRecord)
+	    {
+	        $this->date_create = new CDbExpression('getdate()');
+	    }
+	    else
+	    {
+	        $this->date_edit = new CDbExpression('getdate()');
+	    }
+	    if ($this->date_delete == null)
+	        $date_delete = new CDbExpression('null');
+	        
+	        return parent::beforeSave();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see CActiveRecord::afterSave()
+	 */
+	protected function afterSave()
+	{
+	    Log::insertLog($this);
+	    return parent::afterSave();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see CActiveRecord::afterFind()
+	 */
+	protected function afterFind()
+	{
+	    if (!empty($this->organization)) {
+	        foreach ($this->organization as $val) {
+	            $this->organizations[]=$val->code;
+	        }
+	    }
+	    $this->date_create = DateHelper::explodeDateTime($this->date_create);
+	    $this->date_edit = DateHelper::explodeDateTime($this->date_edit);
+	    $this->date_delete = DateHelper::explodeDateTime($this->date_delete);
+	    parent::afterFind();
+	}
 
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
@@ -121,12 +193,10 @@ class User extends CActiveRecord
 	 * based on the search/filter conditions.
 	 */
 	public function search($users = array(), $no_admin=null)
-	{       
-		// @todo Please modify the following code to remove attributes that should not be searched.
+	{       		
         $users = Yii::app()->request->getParam('users');
         
-		$criteria=new CDbCriteria;
-		//$criteria->with = array('profile');				
+		$criteria=new CDbCriteria;				
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('t.username',$this->username,true);
 		$criteria->compare('t.username_windows',$this->username_windows,true);
@@ -136,9 +206,7 @@ class User extends CActiveRecord
 		$criteria->compare('t.blocked',$this->blocked);
 		$criteria->compare('role_admin',$this->role_admin);    
         $criteria->compare('t.default_organization', isset(Yii::app()->session['organization'])
-        	? Yii::app()->session['organization'] : $this->default_organization);
-        //$criteria->compare('profile.name',$this->profile_name,true);
-        
+        	? Yii::app()->session['organization'] : $this->default_organization);        
         if ($no_admin == null) { $no_admin = Yii::app()->request->getParam('no_admin'); }        
         $criteria->compare('t.folder_path',$this->folder_path,true);
         $criteria->addNotInCondition('t.id',$users);
@@ -151,14 +219,16 @@ class User extends CActiveRecord
 		));
 	}
 	
-    
+    /**
+     * Поиск для структуры
+     * @param array $users
+     * @return CActiveDataProvider
+     */
     public function searchForTree($users = array())
     {
         $users = Yii::app()->request->getParam('users');
         
         $criteria=new CDbCriteria;
-        
-        //$criteria->with = array('profile');
         
         $criteria->compare('id',$this->id);
 		$criteria->compare('fio',$this->fio,true);	
@@ -166,8 +236,7 @@ class User extends CActiveRecord
         $criteria->compare('date_create',$this->date_create,true);
 		$criteria->compare('date_edit',$this->date_edit,true);
 		$criteria->compare('blocked',$this->blocked);
-        $criteria->compare('current_organization',$this->current_organization);  
-        //$criteria->compare('t.folder_path',$this->folder_path,true);
+        $criteria->compare('current_organization',$this->current_organization);          
         if (Yii::app()->user->admin)
         {
             $criteria->compare('default_organization',$this->default_organization);
@@ -175,12 +244,8 @@ class User extends CActiveRecord
         else
         {
             $criteria->compare('default_organization',Yii::app()->session['organization']);   
-        }
-        
-        //$criteria->compare('profile.name',$this->profile_name,true);
-        //$criteria->addNotInCondition('t.id',$users);
+        }        
         $criteria->addNotInCondition('t.id',explode(',', $this->users));
-        
         
         return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -189,88 +254,18 @@ class User extends CActiveRecord
             ),
 		));        
     }
-
-	/**
-	 * Returns the static model of the specified AR class.
-	 * Please note that you should have this exact method in all your CActiveRecord descendants!
-	 * @param string $className active record class name.
-	 * @return User the static model class
-	 */
-	public static function model($className=__CLASS__)
-	{
-		return parent::model($className);
-	}            
-    
-	
-	/**
-	 * <EVENTS>
-	 */
-	
-	/**
-	 * {@inheritDoc}
-	 * @see CActiveRecord::beforeSave()
-	 */
-    protected function beforeSave()
-    {        
-        if ($this->isNewRecord)                   
-            $this->date_create = new CDbExpression('getdate()');                   
-        $this->date_edit = new CDbExpression('getdate()');                
-        if ($this->date_delete == null)
-        	$date_delete = new CDbExpression('null'); 
-        
-        return parent::beforeSave();
-    }   
-    
-    /**
-     * {@inheritDoc}
-     * @see CActiveRecord::afterSave()
-     */
-    protected function afterSave()
-    {
-    	Log::insertLog($this);
-    	return parent::afterSave();
-    }
-    
-    /**
-     * {@inheritDoc}
-     * @see CActiveRecord::afterFind()
-     */
-    protected function afterFind()
-    {
-        if (!empty($this->organization)) {
-            foreach ($this->organization as $val) {
-                $this->organizations[]=$val->code;
-            }
-        }
-        
-        $this->date_create = ConvertDate::find($this->date_create);
-        $this->date_edit = ConvertDate::find($this->date_edit);
-        $this->date_delete = ConvertDate::find($this->date_delete);        
-        
-        parent::afterFind();
-    }
-    
-    /**
-     * </EVENTS>
-     */
-    
-    
         
     /**
      * Сохранение связи пользователя со структурой организации
-     * 
-     * @param $orgs array
-     * @param $user_id int
-     * @param $role_admin boolean
-     * 
-     * @author oleg
-     * @version 21.02.2017 - refactoring
+     * @param $orgs array организации
+     * @param $user_id int идентификатор польззователя
+     * @param $role_admin boolean роль администратора
+     * @uses self::saveWindowsUser()
      */ 
     public function saveRelationOrganizations($orgs, $user_id, $role_admin)
     {                
         $command = Yii::app()->db->createCommand();
         $command->delete('{{user_organization}}', 'id_user=:id', array(':id'=>$user_id));
-        
         if (!empty($orgs) && !$role_admin)
         {
             foreach ($orgs as $val)
@@ -284,10 +279,11 @@ class User extends CActiveRecord
             }
         }
     }
-      
-        
     
-    
+    /**
+     * Список пользователей
+     * @return array
+     */
     public function getDropDownList()
     {
         $result_array = array();
@@ -301,19 +297,16 @@ class User extends CActiveRecord
         }
         return $result_array;
     }
-        
     
     /**
      * Проверка имеет ли доступ пользователь к требуемой орагнизации
-     * 
-     * @param string $organization
-     * @return boolean
-     * @author oleg
-     * @version 17.05.2016
+     * @param string $organization код организации
+     * @return boolean    
+     * @uses Organization::loadCurrentOrganization()
      */
     public static function checkRightOrganization($organization)
     {
-    	if ($organization===null) return false;
+    	if ($organization===null) return false;  
     	
         if (Yii::app()->user->admin) return true;
         
@@ -322,12 +315,10 @@ class User extends CActiveRecord
         	->exists('organization.code=:code', array(':code'=>$organization));
     }
     
-    
     /**
      * Изменение орагнищации для текущей сессии ['organization']
-     * 
-     * @author oleg
-     * @version 17.05.2016
+     * @param string $organization код организации
+     * @uses Organization::loadCurrentOrganization()
      */
     public static function changeOrganization($organization)
     {        
@@ -342,16 +333,12 @@ class User extends CActiveRecord
         return false;        
     }
     
-    
     /**
      * Созхранение информации о текущей организации в данных у пользователя
-     * 
-     * @param integer $idUser
-     * @param string $codeOrganization
-     * @return integer
-     * 
-     * @author oleg
-     * @version 17.05.2016
+     * @param int $idUser идентификатор пользователя
+     * @param string $codeOrganization код организации
+     * @return integer     
+     * @uses self::changeOrganization()
      */
     private function saveCurrentOrganiztion($idUser, $codeOrganization)
     {
@@ -362,34 +349,29 @@ class User extends CActiveRecord
     		'id=:id', array(':id'=>$idUser));
     }
     
-    
     /**
      * Список организаций доступных пользователю
-     * 
-     * @return Organization
-     * 
-     * @author oleg
-     * @version 17.05.2016
+     * @see User
+     * @return Organization[]
      */
     public static function userOrganizations()
     {
-    	$criteria = new CDbCriteria;
-    	
+    	$criteria = new CDbCriteria;    	
     	if (!Yii::app()->user->admin)
     	{    		
-    		$userModel = User::model()->with('organization')->findByPk(Yii::app()->user->id);
-    		
+    		$userModel = User::model()->with('organization')->findByPk(Yii::app()->user->id);    		
     		$org = isset($userModel->organization) ? 
-    			CHtml::listData($userModel->organization, 'code', 'code') : array();
-    		
+    			CHtml::listData($userModel->organization, 'code', 'code') : array();    		
     		$criteria->addInCondition('code', $org);
-    	}
-    		    	
+    	}    		    	
     	return Organization::model()->findAll($criteria);    	    	
     }
     
-    
-    // @todo delete function
+    /**
+     * Список пользователей текущей организации Yii::app()->session['organization']
+     * @see CActiveDataProvider
+     * @return CActiveDataProvider
+     */
     public function getListUserForPermission()
     {
         $criteria = new CDbCriteria;       
@@ -399,26 +381,17 @@ class User extends CActiveRecord
             $criteria->params = array(':home_no'=>Yii::app()->session['organization']);
         }
         $criteria->order = 'last_name, first_name, middle_name';
-                
         return new CActiveDataProvider(User::model()->find($criteria));                
     }
     
-    
-    
-    
     /**
      * Сохранение нового пользователя в БД
-     * 
-     * @param string $username
+     * @param string $username логин пользователя
      * @return User
-     * 
-     * @author oleg
-     * @version 16.05.2016 - create
-     * 			21.02.2017 - refactoring
+     * @uses self::findCreatePerson()
      */
     public static function saveWindowsUser($username)
-    {
-    	
+    {    	
     	$modelOrganization = Organization::codeOrganizationByUsernameWindows($username);
     	$org = ($modelOrganization !== null) ? $modelOrganization->code : new CDbExpression('null');
     	
@@ -434,24 +407,15 @@ class User extends CActiveRecord
     	{
     		if ($modelOrganization !== null)
     		{
-    			$model->saveRelationOrganizations(
-    				array($modelOrganization->code => $modelOrganization->code),
-    				$model->id, 
-    				$model->role_admin
-    			);
+    			$model->saveRelationOrganizations(array($modelOrganization->code => $modelOrganization->code), $model->id, $model->role_admin);
     		}
-    		
-    		// сохранение профиля
-    		Profile::findSaveProfile($model);    		
-    		
     		return $model;    		
     	}
     	return null;
     }
     
-    
     /**
-     * Учетная запись пользователя с его ФИО
+     * Учетная запись пользователя с ФИО
      * @return string
      */
     public function getConcatened()
@@ -460,52 +424,50 @@ class User extends CActiveRecord
     	   . ' (' . $this->fio . ')';
     }
     
-    
     /**
      * Приведение логина из REGIONS\UserLogin в UserLogin 
-     * @param string $username
-     * @return string|NULL
-     * @author oleg
+     * @param string $username логин пользователя
+     * @return string|null
      */
     public static function extractLogin($username)
     {
     	$u = explode("\\", $username);
-    	    	
     	if (count($u)>1)
     	{
     		return $u[1];
     	}
-    	
    		return null;
     }
     
-    
     /**
      * Поиск пользователя в БД, если не найден то создается новый
-     * @param string $username
+     * @param string $username логин пользователя
      * @return User
      * @author oleg
      */
     public static function findCreatePerson($username)
     {    	
-    	if ($username===null) return null; // если не удалось извлечь имени пользователя
+        // если не удалось извлечь имени пользователя
+    	if ($username===null) return null;
     	
     	// пытаемся найти пользователя
     	$model = self::model()->find(
     		'username_windows=:username', array(
     			':username' => $username,
-    	));
-    	
+    	));    	
     	// если нет такого пользователя, то создаем его
     	if ($model === null)
     	{
     		$model = self::saveWindowsUser($username);
-    	}
-    	
+    	}    	
     	return $model;
     }
     
-    
+    /**
+     * Профиль пользователя
+     * @param string $login логин пользователя
+     * @return string
+     */
     public static function profileByLogin($login)
     {
     	$username = $login;

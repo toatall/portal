@@ -29,14 +29,14 @@ class AccessModuleGroup extends CActiveRecord
 			array('id_group, module_name, date_create', 'required'),
 			array('id_group', 'numerical', 'integerOnly'=>true),
 			array('module_name', 'length', 'max'=>50),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			// The following rule is used by search().			
 			array('id_group, module_name, date_create', 'safe', 'on'=>'search'),
 		);
 	}
 
 	/**
 	 * @return array relational rules.
+	 * @deprecated
 	 */
 	public function relations()
 	{
@@ -48,6 +48,7 @@ class AccessModuleGroup extends CActiveRecord
 
 	/**
 	 * @return array customized attribute labels (name=>label)
+	 * @deprecated
 	 */
 	public function attributeLabels()
 	{
@@ -71,9 +72,7 @@ class AccessModuleGroup extends CActiveRecord
 	 * based on the search/filter conditions.
 	 */
 	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	{		
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id_group',$this->id_group);

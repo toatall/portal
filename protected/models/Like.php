@@ -36,8 +36,7 @@ class Like extends CActiveRecord
 			array('username', 'length', 'max'=>250),
 			array('ip_address', 'length', 'max'=>50),
 			array('date_create', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			// The following rule is used by search().			
 			array('id, id_parent, username, ip_address, date_create', 'safe', 'on'=>'search'),
 		);
 	}
@@ -56,6 +55,7 @@ class Like extends CActiveRecord
 
 	/**
 	 * @return array customized attribute labels (name=>label)
+	 * @deprecated
 	 */
 	public function attributeLabels()
 	{
@@ -81,9 +81,7 @@ class Like extends CActiveRecord
 	 * based on the search/filter conditions.
 	 */
 	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	{		
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
@@ -107,4 +105,5 @@ class Like extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
 }

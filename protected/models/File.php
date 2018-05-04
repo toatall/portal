@@ -30,9 +30,7 @@ class File extends CActiveRecord
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
+	{		
 		return array(
 			array('id_model, file_name', 'required'),
 			array('id_model, file_size, count_download', 'numerical', 'integerOnly'=>true),
@@ -40,15 +38,14 @@ class File extends CActiveRecord
 			array('model', 'length', 'max'=>50),
 		    array('id_organization', 'length', 'max'=>5),
 		    array('full_filename', 'length', 'max'=>500),
-			array('id, count_download, id_organization, full_filename', 'unsafe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			array('id, count_download, id_organization, full_filename', 'unsafe'),			
 			array('id, id_model, file_name, file_size, model, date_create', 'safe', 'on'=>'search'),
 		);
 	}
 
 	/**
 	 * @return array relational rules.
+	 * @deprecated
 	 */
 	public function relations()
 	{
@@ -60,6 +57,7 @@ class File extends CActiveRecord
 
 	/**
 	 * @return array customized attribute labels (name=>label)
+	 * @deprecated
 	 */
 	public function attributeLabels()
 	{
@@ -87,11 +85,10 @@ class File extends CActiveRecord
 	 *
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
+	 * @deprecated
 	 */
 	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	{		
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
@@ -130,9 +127,10 @@ class File extends CActiveRecord
 	
 	
 	/**
-	 * Удаление файла
+	 * Удаление текущего файла ($this)
+	 * @uses beforeDelete()
 	 */
-	public function deleteFile()
+	private function deleteFile()
 	{
 		$path = Yii::app()->params['pathDocumets'];
 		$path = str_replace('{code_no}', $this->id_organization, $path);
@@ -150,15 +148,14 @@ class File extends CActiveRecord
 		else			
 		{
 			return null;
-		}
-		
+		}		
 		return false;
 	}
-	
 	
 	/**
 	 * url к файлу
 	 * @return string
+	 * @deprecated
 	 */
 	public function getUrlFile()
 	{
@@ -169,7 +166,11 @@ class File extends CActiveRecord
 		return $url . $this->file_name;
 	}
 	
-	
+	/**
+	 * Запись информации о пользователе, скачивающий файл
+	 * @see CDbCommand
+	 * @uses FileController::actionDownload()	 
+	 */
 	public function wtiteLog()
 	{
 		Yii::app()->db->createCommand('exec {{pr_file_download}} @id_file=:id_file, @username=:username, @session_id=:session_id')
@@ -179,13 +180,17 @@ class File extends CActiveRecord
 			->execute();
 	}
 	
-	
 	/**
-	 * Получение списка файлов для скачивания
-	 * @param int $model_id - идентификатор модели
-	 * @param string $model_name - наименование модели
+	 * Получение списка файлов 
+	 * Поиск файлаов производится по наименованию модели ($model_name)
+	 * и ее идентификатору ($model_id)
+	 * @param int $model_id идентификатор модели
+	 * @param string $model_name наименование модели
 	 * @return array
 	 * @author oleg
+	 * @uses DepartmentController::showTreeNode()
+	 * @uses DepartmentController::showDepartment()
+	 * @uses NewsController::actionView()
 	 */
 	public static function filesForDownload($model_id, $model_name)
 	{
@@ -197,6 +202,5 @@ class File extends CActiveRecord
 	       ])
 	       ->queryAll();	    
 	}
-	
 	
 }

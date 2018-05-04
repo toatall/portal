@@ -7,33 +7,39 @@
  */
 class ContactForm extends CFormModel
 {
-	public $name;
-	//public $email;
+    /**
+     * @var string
+     */
+	public $name;	
+	
+	/**
+	 * Тема
+	 * @var string
+	 */
 	public $subject;
+	
+	/**
+	 * Текст письма
+	 * @var string
+	 */
 	public $body;
-	//public $verifyCode;
 
 	/**
 	 * Declares the validation rules.
+	 * @return array
 	 */
 	public function rules()
 	{
-		return array(
-			// name, email, subject and body are required
+		return array(			
 			array('subject, body', 'required'),
-			// email has to be a valid email address
-			//array('email', 'email'),
-			// verifyCode needs to be entered correctly
-			//array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements()),
 		);
 	}
-	
-	
 	
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
 	 * the same as its name with the first letter in upper case.
+	 * @return array
 	 */
 	public function attributeLabels()
 	{

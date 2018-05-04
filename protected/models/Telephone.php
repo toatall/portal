@@ -17,8 +17,11 @@
  */
 class Telephone extends CActiveRecord
 {
-    
-    public $useOptionalAccess = true; // флаг отвечающий за дополнительные настройки прав
+    /**
+     * Флаг отвечающий за дополнительные настройки прав
+     * @var bool
+     */
+    public $useOptionalAccess = true;
     
 	/**
 	 * @return string the associated database table name
@@ -42,8 +45,7 @@ class Telephone extends CActiveRecord
 			array('telephone_file, author, dop_text', 'length', 'max'=>250),
 			array('log_change', 'length', 'max'=>5000),
 			array('date_create, count_download', 'unsafe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			// The following rule is used by search().			
 			array('id, id_tree, id_organization, telephone_file, author, dop_text, date_create, 
                 sort, log_change', 'safe', 'on'=>'search'),
 		);
@@ -79,7 +81,31 @@ class Telephone extends CActiveRecord
 			'count_download' => 'Количество загрузок',
 		);
 	}
-
+    
+	/**
+	 * {@inheritDoc}
+	 * @see CActiveRecord::beforeSave()
+	 */
+	protected function beforeSave()
+	{
+	    if ($this->isNewRecord)
+	    {
+	        $this->date_create = new CDbExpression('getdate()');
+	        $this->author = Yii::app()->user->name;
+	    }
+	    return parent::beforeSave();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see CActiveRecord::afterFind()
+	 */
+	protected function afterFind()
+	{
+	    $this->date_create = DateHelper::explodeDateTime($this->date_create);
+	    parent::afterFind();
+	}
+	
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 *
@@ -92,28 +118,18 @@ class Telephone extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search(/*$idTree=null*/)
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	public function search()
+	{		
 		$criteria=new CDbCriteria;
 		
 		$criteria->with = array('org');
 		
 		$criteria->compare('t.id',$this->id);
-        $criteria->compare('t.id_tree',$this->id_tree);        
-		/*if (Yii::app()->user->admin) { 
-			$criteria->compare('id_organization',$this->id_organization,true); 
-		}
-        else {
-        	$criteria->addInCondition('id_organization',
-                CHtml::listData($this->listOrganizations($idTree),'code','code'));
-       	}*/
+        $criteria->compare('t.id_tree',$this->id_tree);        		
 		$criteria->compare('t.telephone_file',$this->telephone_file,true);
 		$criteria->compare('t.author',$this->author,true);
 		$criteria->compare('t.dop_text',$this->dop_text,true);
-		$criteria->compare('t.date_create',$this->date_create,true);
-		//$criteria->compare('sort',$this->sort);
+		$criteria->compare('t.date_create',$this->date_create,true);		
 		$criteria->compare('t.log_change',$this->log_change,true);
         
 		return new CActiveDataProvider($this, array(
@@ -124,7 +140,6 @@ class Telephone extends CActiveRecord
 			),
 		));
 	}
-	
 	
 	/**
 	 * Поиск для адмнистративной зоны
@@ -157,14 +172,13 @@ class Telephone extends CActiveRecord
 		));
 	}
     
-    
 	/**
 	 * Получение списка организаций согласно правам текущего пользователя
 	 * Для размещения телефонных справочников
-	 * 
 	 * @return array
-	 * @author oleg
-	 * @version 05.10.2017
+	 * @author alexeevich	 
+	 * @uses searchAdmin()
+	 * @uses listOrganizations()
 	 */
 	private function accessOrganization($idTree)
 	{
@@ -198,11 +212,11 @@ class Telephone extends CActiveRecord
 	    return $query->queryAll();
 	}
 	
-	
 	/**
 	 * Проверка наличия прав у пользователя на доступ к указанной орагнизации
 	 * @param string $organization
 	 * @return boolean
+	 * @deprecated
 	 */
 	public function checkAccessOrganization()
 	{
@@ -241,7 +255,6 @@ class Telephone extends CActiveRecord
 	    
 	}
 	
-
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
@@ -253,34 +266,25 @@ class Telephone extends CActiveRecord
 		return parent::model($className);
 	}
     
-    
-	// @todo Нужно ли проверять организации?
+	/**
+	 * Список доступных организаций для размещения телефонного справочника
+	 * @param int $idTree идентификатор структуры
+	 * @return Organization[]
+	 */
     public function listOrganizations($idTree)
     {
         if (Yii::app()->user->admin)
         {
             return Organization::model()->findAll();
-        }
-        
+        }        
         return $this->accessOrganization($idTree);
-        
-        /*if (Yii::app()->user->admin)
-        {
-            
-        }
-        else
-        {
-            return Yii::app()->db->createCommand("
-                SELECT code, name FROM {{organization}} WHERE code IN (
-                    SELECT id_organization FROM {{access_telephone}} 
-                        WHERE id_tree=$idTree AND ((id_identity=".Yii::app()->user->id." AND is_group=0)
-                            OR (id_identity IN (SELECT id_group FROM {{group_user}} 
-                                WHERE id_user=".Yii::app()->user->id.") AND is_group=1)))")->queryAll();
-        }*/
     }
     
-    
-    
+    /**
+     * Сохранение файла и удаление старого
+     * @param self $model объект текущего класса
+     * @param string $oldFile имя старого файла
+     */
     public function saveFile($model,$oldFile=null)
     {
         // удаляем старый файл
@@ -294,31 +298,12 @@ class Telephone extends CActiveRecord
         // загружаем файл
         $tempFile=CUploadedFile::getInstance($model, 'telephone_file');
         $tempFile->saveAs(Yii::app()->params['pathTelephones'].'/'
-            .$model->id_organization.'_'.date('Ymd_His').'.'.pathinfo($tempFile->getName(), PATHINFO_EXTENSION));        
-        
+            .$model->id_organization.'_'.date('Ymd_His').'.'.pathinfo($tempFile->getName(), PATHINFO_EXTENSION));
     }
-
-
-    protected function beforeSave()
-    {
-        if ($this->isNewRecord) 
-        {
-            $this->date_create = new CDbExpression('getdate()');        
-            $this->author = Yii::app()->user->name;
-        }
-        return parent::beforeSave();
-    }
-    
-    
-    protected function afterFind()
-    {
-    	$this->date_create = ConvertDate::find($this->date_create);    	
-        parent::afterFind();
-    }
-    
     
     /**
-     * Загрузка справочника и сохранение в лог
+     * Скачивание справочника и сохранение информации в лог
+     * @uses SiteController::actionTelephoneDownload()
      */
     public function downloadFile()
     {
@@ -330,7 +315,6 @@ class Telephone extends CActiveRecord
     			'ip_address'=>UserInfo::inst()->clientIP,
     			'hostname'=>UserInfo::inst()->clientHost,
     	]);
-    	
     	
     	// send file
     	$file = Yii::app()->params["siteRoot"] . '/' . Yii::app()->params["pathTelephones"] . '/' . $this->telephone_file;    
@@ -347,10 +331,13 @@ class Telephone extends CActiveRecord
     	Yii::app()->end();
     }
     
-    
-    
+    /**
+     * @deprecated
+     */
     public function getAccessOrganization()
     {
+        throw new CHttpException(410);
+        /*
         if (Yii::app()->user->admin)
         {
             
@@ -358,7 +345,7 @@ class Telephone extends CActiveRecord
         else
         {
             
-        }
+        }*/
     }
     
     

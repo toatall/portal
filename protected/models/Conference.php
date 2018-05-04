@@ -23,13 +23,30 @@
 class Conference extends CActiveRecord
 {
 		
-	
+	/**
+	 * ВКС с УФНС
+	 * @var integer
+	 */
 	const TYPE_VKS_UFNS = 1;
+	/**
+	 * ВКС с ФНС
+	 * @var integer
+	 */
 	const TYPE_VKS_FNS = 2;
+	/**
+	 * Собрания
+	 * @var integer
+	 */
 	const TYPE_CONFERENCE = 3;
 	
 	private $notifyMailAddress = '8600_notifyVksUfns';
 	
+	/**
+	 * Тип конференции
+	 * @var array
+	 * @uses getTypeName()
+	 * @uses getTypeController()
+	 */
 	private $_typeConference = array(
 		1 => [
 			'name' => 'ВКС с УФНС',
@@ -45,13 +62,28 @@ class Conference extends CActiveRecord
 		],
 	);
 	
-	
-	public $useOptionalAccess = false; // флаг отвечающий за дополнительные настройки прав
+	/**
+	 * Флаг отвечающий за дополнительные настройки прав
+	 * @var boolean
+	 */
+	public $useOptionalAccess = false;
 		
+	/**
+	 * Дата начала конференции
+	 * @var string
+	 */
 	public $_tempDateStart;
+	
+	/**
+	 * Время начала конференции
+	 * @var string
+	 */	
 	public $_tempTimeStart;
 	
-	
+	/**
+	 * Административная часть
+	 * @var string
+	 */
 	public $backendSide = true;
 	
 	/**
@@ -66,9 +98,7 @@ class Conference extends CActiveRecord
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
+	{		
 		return array(
 			array('theme, _tempDateStart, _tempTimeStart', 'required'),
 			array('type_conference, time_start_msk', 'numerical', 'integerOnly'=>true),
@@ -76,9 +106,7 @@ class Conference extends CActiveRecord
 			array('duration', 'length', 'max'=>20),
 			array('place', 'length', 'max'=>100),
 			array('type_conference', 'unsafe'),
-			array('responsible, members_people, members_organization, is_confidential, note', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			array('responsible, members_people, members_organization, is_confidential, note', 'safe'),			
 			array('id, type_conference, theme, responsible, members_people, 
 				members_organization, date_start, duration, is_confidential, 
 				date_create, date_edit, date_delete, place, time_start_msk, note', 'safe', 'on'=>'search'),
@@ -87,17 +115,14 @@ class Conference extends CActiveRecord
 
 	/**
 	 * @return array relational rules.
+	 * @deprecated
 	 */
 	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
+	{		
 		return array(
 			
 		);
 	}
-	
-	
 	
 	/**
 	 * @return array customized attribute labels (name=>label)
@@ -127,6 +152,10 @@ class Conference extends CActiveRecord
 		);
 	}
 		
+	/**
+	 * Дополнительные аттрибуты: для собрания
+	 * @return array
+	 */
 	public function attributeConference()
 	{
 		return array(
@@ -135,6 +164,10 @@ class Conference extends CActiveRecord
 		);
 	}
 	
+	/**
+	 * Дополнительные аттрибуты: для ВКС с ФНС
+	 * @return array
+	 */
 	public function atttributeVksFns()
 	{
 		return array(
@@ -142,13 +175,16 @@ class Conference extends CActiveRecord
 		);
 	}
 	
+	/**
+	 * Дополнительные аттрибуты: для ВКС с УФНС
+	 * @return array
+	 */
 	public function attributeVksUfns()
 	{
 		return array(
 			'responsible',				
 		);
 	}
-	
 	
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
@@ -161,11 +197,11 @@ class Conference extends CActiveRecord
 	 *
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
+	 * @uses getDataArray()
 	 */
 	public function search($typeConference=null)
 	{
 		$criteria=new CDbCriteria;
-		
 		
 		$criteria->compare('id',$this->id);
 		$criteria->compare('type_conference',($typeConference!==null) ? $typeConference : $this->type_conference);
@@ -189,8 +225,7 @@ class Conference extends CActiveRecord
 		else
 		{
 		    $criteria->addCondition('date_delete is null');
-		}
-		//$criteria->order = 'convert(varchar,date_start,112) desc, convert(varchar,date_start,108) asc';
+		}		
 		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -199,8 +234,6 @@ class Conference extends CActiveRecord
 			),
 		));
 	}
-
-	
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -213,26 +246,25 @@ class Conference extends CActiveRecord
 		return parent::model($className);
 	}
 	
-	
-	
 	/**
 	 * {@inheritDoc}
 	 * @see CActiveRecord::beforeSave()
+	 * @see DateHelper
+	 * @see CDbExpression
 	 */
-	public function beforeSave()
+	protected function beforeSave()
 	{
 		$this->date_start = DateHelper::implodeDateTime($this->_tempDateStart, $this->_tempTimeStart);		
 		$this->date_create = new CDbExpression('getdate()');
 		return parent::beforeSave();
 	}
 	
-	
-	
 	/**
 	 * {@inheritDoc}
 	 * @see CActiveRecord::afterFind()
+	 * @see DateHelper
 	 */
-	public function afterFind()
+	protected function afterFind()
 	{
 		$this->date_create = DateHelper::explodeDateTime($this->date_create);
 		$this->date_start = DateHelper::explodeDateTime($this->date_start);
@@ -241,10 +273,9 @@ class Conference extends CActiveRecord
 		return parent::afterFind();
 	}
 	
-	
 	/**
 	 * Наименование вида собрания 
-	 * @return NULL|string[]
+	 * @return string|null
 	 */
 	public function getTypeName()
 	{
@@ -254,7 +285,7 @@ class Conference extends CActiveRecord
 	
 	/**
 	 * Наименование контроллера для текущего собрания
-	 * @return NULL|string
+	 * @return string|null
 	 */
 	public function getTypeController()
 	{
@@ -264,7 +295,7 @@ class Conference extends CActiveRecord
 	
 	/**
 	 * Аттрибуты для предпросмотра модели
-	 * @return string[]|string[][]
+	 * @return array
 	 */
 	public function getAttrForView()
 	{
@@ -311,10 +342,10 @@ class Conference extends CActiveRecord
 		return $arrayAttr;
 	}
 	
-	
 	/**
-	 * ИД дерева
-	 * @return int|NULL
+	 * Идентификатор структуры
+	 * @see Tree
+	 * @return int|null
 	 */
 	public function getTreeId()
 	{
@@ -325,7 +356,6 @@ class Conference extends CActiveRecord
 		}
 		return null;
 	}
-	
 	
 	/**
 	 * Получение данных в виде массива из CActiveDataProvider
@@ -342,24 +372,32 @@ class Conference extends CActiveRecord
 		return array('search' => $resultArray, 'provider'=>$search);
 	}
 	
-	
-	
+	/**
+	 * Для представления
+	 * @see DateHelper
+	 * @return string
+	 * @uses
+	 */
 	public function getDateStartFormat()
 	{
 		return "<time class=\"icon\">".
 			   "<em>".DateHelper::monthByNumber(date('m',strtotime($this->date_start))).' '.date('Y',strtotime($this->date_start))."</em>".
 			   "<strong>".DateHelper::weekByNumber(date('N',strtotime($this->date_start)))."</strong>".
-			   "<span>".intval(date('d',strtotime($this->date_start)))."</span>";								
+			   "<span>".intval(date('d',strtotime($this->date_start)))."</span>";		
 	}
 	
+	/**
+	 * Форматирование даты для представления
+	 * @return string
+	 */
 	public function getTimeStartFormat()
 	{
 		return "<h3>".date('H:i',strtotime($this->date_start))."</h3>";
 	}
 	
-	
 	/**
-	 * Уведомление о создании/изменении мероприятия
+	 * Отправка уведомления по почте
+	 * о создании/изменении мероприятия	
 	 * @param string $to адрес получателя
 	 */
 	public function notifyEmail($to=null)
@@ -378,8 +416,7 @@ class Conference extends CActiveRecord
 	    $headers .= 'Content-Type: text/html; charset=utf-8' . "\r\n";
 	    
 	    mb_language('ru');
-	    mb_send_mail($to, $subject, $message, $headers);
-	    
+	    mb_send_mail($to, $subject, $message, $headers);	    
 	}
 		
 	

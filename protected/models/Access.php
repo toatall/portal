@@ -12,6 +12,7 @@
  * @property string $id_organization
  * @property string $date_create
  * @property string $author
+ * @todo Используется ли как AR или нужно убрать наследование?
  */
 
 class Access extends CActiveRecord
@@ -19,6 +20,7 @@ class Access extends CActiveRecord
 	    
     /**
      * @return string the associated database table name
+     * @deprecated
      */
     public function tableName()
     {
@@ -27,6 +29,7 @@ class Access extends CActiveRecord
     
     /**
      * @return array validation rules for model attributes.
+     * @deprecated
      */
     public function rules()
     {
@@ -40,8 +43,6 @@ class Access extends CActiveRecord
             array('author', 'length', 'max'=>250),
             array('id, access_mode, access_identity, model_name, model_id, id_organization, 
                 date_create, author', 'unsafe'),
-            // The following rule is used by search().
-            // @todo Please remove those attributes that should not be searched.
             array('id, access_mode, access_identity, model_name, model_id, id_organization, 
                 date_create, author', 'safe', 'on'=>'search'),
         );
@@ -49,11 +50,10 @@ class Access extends CActiveRecord
     
     /**
      * @return array relational rules.
+     * @deprecated
      */
     public function relations()
-    {
-        // NOTE: you may need to adjust the relation name and the related
-        // class name for the relations automatically generated below.
+    {       
         return array(
             'groups'=>array(self::BELONGS_TO, 'Group', 'access_identity', 'condition'=>'access_mode=\'group\''),
         );
@@ -61,6 +61,7 @@ class Access extends CActiveRecord
     
     /**
      * @return array customized attribute labels (name=>label)
+     * @deprecated
      */
     public function attributeLabels()
     {
@@ -87,6 +88,7 @@ class Access extends CActiveRecord
      *
      * @return CActiveDataProvider the data provider that can return the models
      * based on the search/filter conditions.
+     * @deprecated
      */
     public function search()
     {
@@ -113,15 +115,39 @@ class Access extends CActiveRecord
      * Please note that you should have this exact method in all your CActiveRecord descendants!
      * @param string $className active record class name.
      * @return Access the static model class
+     * @deprecated
      */
     public static function model($className=__CLASS__)
     {
         return parent::model($className);
     }
-	    
+
+    /**
+     * Проверка прав пользователя для структуры $id_tree
+     * @param integer $id_tree идентификатор струтуры
+     * @author oleg
+     * @uses Menu::getTree()
+     * @uses Menu::getMenuDropDownList()
+     * @uses NewsController::actionCreate()
+     * @uses Tree::getTreeDropDownList()
+     * @uses Tree::getTree()
+     * @uses Tree::getTreeForMain()
+     */
+    public static function checkAccessUserForTree($id_tree)
+    {
+        if (!is_numeric($id_tree))
+            return  false;
+            
+        return Yii::app()->db->createCommand()
+            ->from('{{view_access_tree}}')
+            ->where('id=:id and id_user=:id_user', array(
+                ':id' => $id_tree,
+                ':id_user' => Yii::app()->user->id,
+            ))
+            ->queryScalar();
+    }
+    
 	
-    
-    
     /**
      * Проверка доступа к объекту $model_name->$model_id для пользователя с ИД $user_id
      * @param int $user_id
@@ -131,6 +157,7 @@ class Access extends CActiveRecord
      * @return boolean
      * 
      * @version 03.10.2017 - create
+     * @deprecated
      */    
     public function findAccessObjectUsers($user_id, $model_name, $model_id, $id_organization=null)
     {
@@ -152,8 +179,6 @@ class Access extends CActiveRecord
         return $this->exists($criteria);
     }
 	
-    
-    
     /**
      * Проверка доступа к объекту $model_name->$model_id для групп с ИД $groups_id
      * @param int $groups_id
@@ -163,6 +188,7 @@ class Access extends CActiveRecord
      * @return boolean
      *
      * @version 03.10.2017: create
+     * @deprecated
      */    
     public function findAccessObjecGroups($groups_id, $model_name, $model_id, $id_organization=null)
     {
@@ -195,6 +221,7 @@ class Access extends CActiveRecord
      * @return boolean
      * 
      * @version 03.10.2017: create
+     * @deprecated
      */
     public function findAccessObjectCurrentUserGroup($model_name, $model_id, $id_organization=null)
     {
@@ -203,36 +230,6 @@ class Access extends CActiveRecord
             || ($this->findAccessObjecGroups(Yii::app()->user->userGroupsId, $model_name, $model_id));
     }
     
-    
-    
-   
-    
-    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
 	    
 	    
 	    
@@ -246,7 +243,7 @@ class Access extends CActiveRecord
 		 * 
 		 * @author oleg
 		 * @version 12.08.2016
-		 * 
+		 * @deprecated
 		 **/
 		public static function saveRelationsPermissions($tree_id, $model, $groups, $users)
 		{
@@ -403,7 +400,7 @@ class Access extends CActiveRecord
 		 * 
 		 * @author oleg
 		 * @version 16.08.2016
-		 * 
+		 * @deprecated
 		 **/
 		public static function saveRelationsPermissionsDepartment($model, $groups, $users)
 		{
@@ -462,7 +459,7 @@ class Access extends CActiveRecord
 		 *  
 		 * @author oleg
 		 * @version 12.08.2016
-		 *     
+		 * @deprecated    
 		 */
 		public static function getListGroupUser($id_tree)
 		{
@@ -498,27 +495,8 @@ class Access extends CActiveRecord
 		
 		
 		
-		/**
-		 * Проверка прав пользователя для структуры $id_tree
-		 * @param integer $id_tree
-		 * 
-		 * @author oleg
-		 * @version 12.08.2016
-		 * 
-		 */
-		public static function checkAccessUserForTree($id_tree)
-		{		
-		    if (!is_numeric($id_tree))
-		        return  false;
-		    
-			return Yii::app()->db->createCommand()
-				->from('{{view_access_tree}}')
-				->where('id=:id and id_user=:id_user', array(
-					':id' => $id_tree,
-					':id_user' => Yii::app()->user->id,
-				))
-				->queryScalar();
-		}
+		
+		
 		
 		
 		/**
@@ -530,6 +508,7 @@ class Access extends CActiveRecord
 		 * 
 		 * @author oleg
 		 * @version 16.08.2016
+		 * @deprecated
 		 */
 		public static function accessDepartmentUserById($id)
 		{
@@ -545,7 +524,11 @@ class Access extends CActiveRecord
 		}
 		
 		
-		
+		/**
+		 * @deprecated
+		 * @param unknown $id
+		 * @return array
+		 */
 		public static function accessDepartmentGroupById($id)
 		{		
 			return Yii::app()->db->createCommand()
@@ -564,7 +547,7 @@ class Access extends CActiveRecord
 		 *
 		 * @author oleg
 		 * @version 03.03.2017
-		 *
+		 * @deprecated
 		 **/
 		public static function saveRelationsPermissionModule($model, $groups, $users)
 		{
@@ -606,10 +589,5 @@ class Access extends CActiveRecord
 			}
 		}
 		
-		
-		
-		
-		
-		
-		
+				
 	}

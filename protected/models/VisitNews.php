@@ -38,8 +38,7 @@ class VisitNews extends CActiveRecord
 			array('username', 'length', 'max'=>250),
 			array('ip_address, hostname', 'length', 'max'=>50),
 			array('session_id', 'length', 'max'=>100),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			// The following rule is used by search().			
 			array('id, id_parent, username, ip_address, hostname, session_id, date_create', 'safe', 'on'=>'search'),
 		);
 	}
@@ -85,9 +84,7 @@ class VisitNews extends CActiveRecord
 	 * based on the search/filter conditions.
 	 */
 	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	{		
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
@@ -114,11 +111,11 @@ class VisitNews extends CActiveRecord
 		return parent::model($className);
 	}
 	
-		
-	
 	/**
-	 * Сохрание посещения новости
-	 * @param unknown $id_news
+	 * Сохрание информации о пользователе,
+	 * открывшем новость идентификатором $id_news
+	 * @param int $id_news
+	 * @uses NewsController::actionView()
 	 */
 	public static function saveVisit($id_news)
 	{

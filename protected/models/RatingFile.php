@@ -37,8 +37,7 @@ class RatingFile extends CActiveRecord
 			array('file_path', 'length', 'max'=>500),
 			array('author', 'length', 'max'=>250),
 			array('date_create', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			// The following rule is used by search().			
 			array('id, id_rating_data, file_path, date_create, author, count_download', 'safe', 'on'=>'search'),
 		);
 	}
@@ -57,6 +56,7 @@ class RatingFile extends CActiveRecord
 
 	/**
 	 * @return array customized attribute labels (name=>label)
+	 * @deprecated
 	 */
 	public function attributeLabels()
 	{
@@ -83,9 +83,7 @@ class RatingFile extends CActiveRecord
 	 * based on the search/filter conditions.
 	 */
 	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	{		
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
@@ -110,4 +108,5 @@ class RatingFile extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+	
 }

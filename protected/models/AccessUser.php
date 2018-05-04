@@ -14,6 +14,7 @@
  * @property Tree $idTree
  * @property User $idUser
  * @property AccessTelephoneUser[] $accessTelephoneUsers
+ * @deprecated
  */
 class AccessUser extends CActiveRecord
 {

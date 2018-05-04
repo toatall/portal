@@ -14,6 +14,7 @@
  * @property AccessTelephoneGroup[] $accessTelephoneGroups
  * @property Group $idGroup
  * @property Tree $idTree
+ * @deprecated
  */
 class AccessGroup extends CActiveRecord
 {
