@@ -305,6 +305,7 @@ class Department extends CActiveRecord
 	 * с идентификатором $idDepartment
 	 * @param int $idDepartment идентификатор отдела
 	 * @return boolean
+	 * @uses DepartmnetCardController::userDepartmentRight() (admin)
 	 */
 	public static function checkAccessUser($idDepartment)
 	{

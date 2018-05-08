@@ -1,11 +1,16 @@
 <?php
 
+/**
+ * Главные страницы
+ * @author alexeevich
+ */
 class SiteController extends Controller
 {
 	
 	/**
 	 * {@inheritDoc}
 	 * @see CController::filters()
+	 * @return array
 	 */
 	public function filters()
 	{
@@ -14,16 +19,16 @@ class SiteController extends Controller
 		);
 	}
 	
-	
 	/**
 	 * {@inheritDoc}
 	 * @see CController::accessRules()
+	 * @return array
 	 */
 	public function accessRules()
 	{
 		return array(
 			array('allow',
-				'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'hallFame', 'contact', 'captcha', 'error', 'virus'),
+				'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'hallFame', 'contact', 'captcha', 'error'),
 				'users' => array('@'),
 			),
 			array(
@@ -34,9 +39,9 @@ class SiteController extends Controller
 		);
 	}
 	
-	
 	/**
 	 * Declares class-based actions.
+	 * @deprecated
 	 */
 	public function actions()
 	{
@@ -53,11 +58,9 @@ class SiteController extends Controller
 			),
 		);
 	}
-	
-	
+		
 	/**
-	 * This is the default 'index' action that is invoked
-	 * when an action is not explicitly requested by users.
+	 * Главная страница портала
 	 */
 	public function actionIndex()
 	{
@@ -65,8 +68,7 @@ class SiteController extends Controller
 	    {
 	        return 'Страница не поддерживает ajax-запрос';
 	    }
-	    
-		//$model = new NewsSearch();
+	    		
 		return $this->render('index', [
 		    'modelUFNS'=>NewsSearch::getFeedNewsDay(),
 		    'modelIFNS'=>NewsSearch::getFeedIfns(),
@@ -75,10 +77,9 @@ class SiteController extends Controller
 		    'modelHumor'=>NewsSearch::feedDopNews('Humor'),
 		]);
 	}
-
 	
 	/**
-	 * This is the action to handle external exceptions.
+	 * Страница, в случае возникновения ошибки
 	 */
 	public function actionError()
 	{
@@ -92,10 +93,10 @@ class SiteController extends Controller
 				$this->render('error', $error);
 		}
 	}
-
 	
 	/**
-	 * Displays the contact page
+	 * Направление обращение по lotus-почте администратору
+	 * @see ContactForm
 	 */	
 	public function actionContact()
 	{
@@ -106,22 +107,20 @@ class SiteController extends Controller
 			$model->name = UserInfo::inst()->userLogin;
 			if($model->validate())
 			{
-				$name='=?UTF-8?B?'.base64_encode($model->name).'?=';
+				$name='=?UTF-8?B?' .base64_encode($model->name).'?=';
 				$subject='=?UTF-8?B?'.base64_encode($model->subject).'?=';
 				$headers="From: $name <portal-contact@u8600-app045.regions.tax.nalog.ru>\r\n".
 					"Reply-To: portal-contact@u8600-app045.regions.tax.nalog.ru\r\n".
 					"MIME-Version: 1.0\r\n".
 					"Content-Type: text/html; charset=UTF-8";
 				
-				mail(Yii::app()->params['adminEmail'],$subject,$model->body,$headers);
-				Yii::app()->user->setFlash('contact','Сообщение успешно отправлено!');
-				//$this->refresh();
+				mail(Yii::app()->params['adminEmail'], $subject, $model->body,$headers);
+				Yii::app()->user->setFlash('contact','Сообщение успешно отправлено!');				
 			}
 		}
 		$this->render('contact',array('model'=>$model));
 	}
 	
-    
     /**
      * Допустимые браузеры
      * @return
@@ -132,10 +131,9 @@ class SiteController extends Controller
         $this->render('browsers');
     }
 	
-    
-    
     /**
      * Список телефонных справочников организаций
+     * @see Telephone
      */
     public function actionTelephones()
     {
@@ -143,12 +141,12 @@ class SiteController extends Controller
         $model = new Telephone('search');        
         $this->render('telephones', array('model'=>$model));
     }          
-       
-   
+    
     /**
      * Скачивание телефонного справочника 
-     * @param int $id
+     * @param int $id идентификатор телефонного справочника
      * @throws CHttpException
+     * @see Telephone
      */
 	public function actionTelephoneDownload($id)
    	{
@@ -159,11 +157,10 @@ class SiteController extends Controller
    			throw new CHttpException(404,'Страница не найдена.');
    	}
    	
-   	
    	/**
    	 * Доска почета
+   	 * @see HallFame
    	 * @param $year string год
-   	 * @author oleg
    	 */
    	public function actionHallFame($year=null)
    	{
@@ -177,22 +174,5 @@ class SiteController extends Controller
    	    ]);   	    
    	}   	
    	
-   	
-   	/**
-   	 * Запись информации от вируса-банера
-   	 * @param string $login
-   	 */
-   	public function actionVirus($login)
-   	{
-   	    if (empty($login))
-   	        return;
-   	    Yii::app()->db->createCommand()
-   	        ->insert('{{virusBanner}}', [
-   	            'login_name'=>$login,
-   	        ]);
-   	}
-   
-   	
-    
 	
 }

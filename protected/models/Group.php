@@ -17,8 +17,9 @@
 class Group extends CActiveRecord
 {    
 	/**
-	 * Группы не участвующие в поиске
+	 * Группы участвующие в поиске
 	 * @var array
+	 * @uses TreeController::actionGetListGroup() (admin)
 	 */
 	public $groups;
 	
@@ -203,6 +204,7 @@ class Group extends CActiveRecord
     /**
      * Список пользователей в текущей группе
      * @return array
+     * @uses in file 'modules/admin/views/group/_form.php'
      */
     public function getListGroupUsers()
     {

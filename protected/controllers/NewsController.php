@@ -1,11 +1,17 @@
 <?php
 
+/**
+ * Управление новостями
+ * @author alexeevich
+ * @see News
+ */
 class NewsController extends Controller
 {
 	
 	/**
 	 * {@inheritDoc}
 	 * @see CController::accessRules()
+	 * @return array
 	 */
     public function accessRules()
 	{
@@ -16,33 +22,34 @@ class NewsController extends Controller
 		);
 	}
     
-	
-	
 	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
+	 * Вывод новости для просмотра
+	 * @param integer $id идентификатор новости	
+	 * @see VisitNews
 	 */
 	public function actionView($id)
 	{
-        
-	    $model = $this->loadModel($id);
-	    //$modelTree = $this->loadModelTree($model['id_tree']);
+        $model = $this->loadModel($id);
 	    
+        // каталог для изображений
 	    $dirImage = str_replace('{code_no}', $model['id_organization'],
 				Yii::app()->params['pathImages']);
 		$dirImage = str_replace('{module}', $model['module'], $dirImage);
 		$dirImage = str_replace('{id}', $id, $dirImage);
 		
+		// каталог для файлов
 		$dirFile = str_replace('{code_no}', $model['id_organization'],
 				Yii::app()->params['pathDocumets']);
 		$dirFile = str_replace('{module}', $model['module'], $dirFile);
 		$dirFile = str_replace('{id}', $id, $dirFile);
-				
-				
+			
+		// заголовок страницы
 		$this->pageTitle = $model['title'];
 		
+		// сохранение информации о визите пользователя
 		VisitNews::saveVisit($id);		
 		
+		// если ajax-запрос, то возвращаем в виде json-формата
 		if (Yii::app()->request->isAjaxRequest)
 		{
 		    echo CJSON::encode([
@@ -57,7 +64,8 @@ class NewsController extends Controller
             ]);
 		    Yii::app()->end();
 		}
-    		
+
+		// результат в обычном html-формате
 		return $this->render('view',array(
 		    'model'=>$model,
 		    'dirImage'=>$dirImage,
@@ -66,42 +74,38 @@ class NewsController extends Controller
 		    'images'=>Image::imagesForDownload($id, 'news'),
 		));
 	}
-
-	
-	
+    
 	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * Создание новости
+	 * В случае успешного сохранения выполняется переадресация на дейтвие 'view'
+	 * @see Tree
+	 * @see News
+	 * @see LogChange
+	 * @throws CHttpException
 	 */
 	public function actionCreate($idTree)
 	{        
-        
         $modelTree = Tree::model()->find('id=:id AND module=:module AND organization=:organization', 
             array(':id'=>$idTree,':module'=>'news',':organization'=>Yii::app()->session['code_no']));
        
         if ($modelTree===null)
             throw new CHttpException(404,'Страница не найдена.');
 		
-        if (!(Yii::app()->user->admin || Access::model()->checkAccessUserForTree($idTree)))
+        if (!(Yii::app()->user->admin || Access::checkAccessUserForTree($idTree)))
             throw new CHttpException(403,'Доступ запрещен.');
             
         $model=new News;
-        
         $model->id_tree = $idTree;
         $model->flag_enable = true;
         $model->date_start_pub = date('d.m.Y');
         $model->date_end_pub = date('01.m.Y', PHP_INT_MAX);
         $model->author = Yii::app()->user->name;
         $model->general_page=0; 
-        
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
+        		
 		if(isset($_POST['News']))
 		{
 			$model->attributes=$_POST['News'];
-            $model->log_change = LogChange::setLog($model->log_change, 'создание');
-                                    
+            $model->log_change = Log::setLog($model->log_change, 'создание');                                    
 			if($model->save()) {
 			    
                 // сохраняем файлы                
@@ -111,8 +115,7 @@ class NewsController extends Controller
                 // сохраняем миниатюра изображения
                 $model->saveThumbailForNews($model);
                 
-                $this->redirect(array('view','id'=>$model->id, 'idTree'=>$idTree));  
-                              
+                $this->redirect(array('view','id'=>$model->id, 'idTree'=>$idTree));                             
 			}				
 		}
 
@@ -121,32 +124,37 @@ class NewsController extends Controller
             'idTree'=>$idTree,
 		));
 	}
-
-	
-
+    
 	/**
 	 * Список новостей (материалов)
 	 * Условия:
-	 *  1 если не указан код организации, не имя раздела, то вывести новости всех инспекций
-	 *  2 если указан код организации, но не указан раздел, то вывести список всех новостей организации
-	 *  3 если указан раздел, но не указан код организации, то вывести список материалов раздела по всем организациям
-	 *  4 если указан раздел и код организации, то вывести список материалов данной организации
-	 * @author tvog17
+	 *  1. если не указан код организации, не имя раздела, то вывести новости всех инспекций
+	 *  2. если указан код организации, но не указан раздел, то вывести список всех новостей организации
+	 *  3. если указан раздел, но не указан код организации, то вывести список материалов раздела по всем организациям
+	 *  4. если указан раздел и код организации, то вывести список материалов данной организации
+	 * @param string $organization код организации
+	 * @param string $section раздел
+	 * @see NewsSearch
+	 * @throws CHttpException
+	 * @author alexeevich
+	 * @todo удалить меню, добавить хэш-теги
 	 */
-	public function actionIndex($organization=null, $section=null, $s=null)
+	public function actionIndex($organization=null, $section=null)
 	{
-		
+	    
 		$organizationModel = null;		
+	    
 	    // проверка организации
-		if ($organization!==null && !$organizationModel = Yii::app()->db->createCommand()->from('{{organization}}')->where('code=:code', [':code'=>$organization])->query()->read())
+		if ($organization!==null 
+            && !$organizationModel = Yii::app()->db->createCommand()->from('{{organization}}')->where('code=:code', [':code'=>$organization])->query()->read())
 		{
 			throw new CHttpException(404,'Страница не найдена.');
 		}
-		
 				
 		$treeModel = null;
 		// проверка раздела
-		if ($section!==null && ($treeModel=Yii::app()->db->createCommand()->from('{{tree}}')
+		if ($section!==null 
+		    && ($treeModel=Yii::app()->db->createCommand()->from('{{tree}}')
 		      ->where('module=:module and param1=:param1',[':module'=>'news', ':param1'=>$section])->query()->read()) === null)
 		{
 			throw new CHttpException(404,'Страница не найдена.');
@@ -171,19 +179,15 @@ class NewsController extends Controller
 			$this->pageTitle = ($organizationModel === null ? '' : $organizationModel['name'] . ': ') . 'Новости';
 		}
 		
-		
 		$model=new NewsSearch('search');
-		$model->unsetAttributes();  // clear any default values
-		
+		$model->unsetAttributes();  // clear any default values		
 		$model->id_organization = $organization;
 		$model->param1 = $section;
-		
 			
 		if(isset($_GET['News']))
 			$model->attributes=$_GET['News'];
         
-
-		// левое меню (дополнительное)		
+		// левое меню (дополнительное)
 		$menu = [
 			['name'=>'Новости', 'link'=>['news/index']],
 			['name'=>'Пресс клуб', 'link'=>['news/index', 'section'=>'PressClub']],
@@ -198,10 +202,6 @@ class NewsController extends Controller
 		];
 		Menu::$leftMenuAdd = array_merge(Menu::$leftMenuAdd, $menu);
 		
-		
-		
-		
-		
 		$this->render('index',array(
 			'model'=>$model->searchPublic(),            
             'organization'=>$organization,			
@@ -211,9 +211,12 @@ class NewsController extends Controller
 		
 	}
 	
-	
 	/**
-	 * Новость дня
+	 * Новости УФНС (новость дня)
+	 * Если $id == 0, то выводятся последние 5 материалов
+	 * Если $id <> 0, то выводятся последние материалы, идентификатор у которых < $id 
+	 * @param int $id идентификатор матерала
+	 * @see NewsSearch
 	 * @return string
 	 */
 	public function actionNewsDay($id=0)
@@ -230,21 +233,16 @@ class NewsController extends Controller
 	            'name'=>'Все новости',
 	        ],
 	    ]);
-	    /*return CJSON::encode([
-	        'title'=>$model['title'],
-	        'content'=>$this->renderPartial('/site/index/_news', [
-    	        'urlAjax'=>Yii::app()->controller->createUrl('news/newsDay', ['id'=>$lastId]),
-    	        'type'=>'news_day',
-    	        'model'=> $model,
-    	        'lastId'=>$lastId,
-    	        'btnUrl' => [
-    	            'url'=>$this->createUrl('news/index', array('organization'=>'8600')),
-    	            'name'=>'Все новости',
-    	        ],
-            ], true)
-	    ]);*/
 	}
 	
+	/**
+	 * Новости ИФНС
+	 * Если $id == 0, то выводятся последние 5 материалов
+	 * Если $id <> 0, то выводятся последние материалы, идентификатор у которых < $id 
+	 * @param int $id идентификатор материала
+	 * @see NewsSearch
+	 * @return string
+	 */
 	public function actionNewsIfns($id=0)
 	{
 	    $model = NewsSearch::getFeedIfns($id);
@@ -261,6 +259,14 @@ class NewsController extends Controller
 	    ]);
 	}
 	
+	/**
+	 * Раздел "Юмор налоговиков"
+	 * Если $id == 0, то выводятся последние 5 материалов
+	 * Если $id <> 0, то выводятся последние материалы, идентификатор у которых < $id 
+	 * @param int $id идентификатор материала
+	 * @see NewsSearch
+	 * @return string
+	 */
 	public function actionHumor($id=0)
 	{
 	    $model = NewsSearch::feedDopNews('Humor', $id);
@@ -281,6 +287,7 @@ class NewsController extends Controller
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @uses actionView()
 	 */
 	public function loadModel($id)
 	{	   
@@ -317,6 +324,7 @@ class NewsController extends Controller
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{

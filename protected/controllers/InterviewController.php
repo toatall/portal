@@ -1,11 +1,17 @@
 <?php
 
+/**
+ * Управление проведением голосования
+ * @author alexeevich
+ * @see Interview
+ */
 class InterviewController extends Controller
 {
 
 	/**
 	 * {@inheritDoc}
 	 * @see CController::accessRules()
+	 * @return array
 	 */
 	public function accessRules()
 	{
@@ -16,13 +22,11 @@ class InterviewController extends Controller
 		);
 	}
 	
-	
-	
 	/**
 	 * Информация о текущем голосовании и список вопросов для голосования
-	 * @param int $id
-	 * @author oleg
-	 * @version 06.10.2017
+	 * @param int $id идентификатор голосования
+	 * @throws CHttpException
+	 * @see Interview	 
 	 */
 	public function actionView($id)
 	{
@@ -48,8 +52,7 @@ class InterviewController extends Controller
 	       ])
 	       ->queryAll();
 	    
-	       
-	    // view
+	    // return view
 	    $this->renderPartial('view', [
 	        'modelInterview'=>$modelInterview,
 	        'modelInterviewQuestion'=>$modelInterviewQuestion,
@@ -58,32 +61,26 @@ class InterviewController extends Controller
 	    ]);
 	}
 	
-	
 	/**
-	 * Голосование
-	 * @param int $id
-	 * @param int $idInterview
+	 * Кнопка для голосования
+	 * В случае, если голосование окончено, либо пользователь уже голосовал,
+	 * то вместо кнопки выводится соответствующая надпись
+	 * @param int $id идентификатор вопроса
+	 * @param int $idInterview идентификатор голосования
+	 * @return string
+	 * @todo перенсти часть с html в view
 	 */
 	public function actionLike($id, $idInterview)
-	{	   
-	    
+	{	   	    
 	    // голосование уже окончено
 	    $modelInterview = Interview::model()->findByPk($idInterview);
 	    if ($modelInterview===null)
-	    {
-	        /*echo CJSON::encode([
-	            'status'=>'error',
-	            'message'=>'Голосование с ИД ' . $idInterview . ' не найдено',
-	        ]);*/
+	    {	        
 	        echo '<span class="alert-error">Голосование с ИД ' . $idInterview . ' не найдено</span>';
 	        Yii::app()->end();
 	    }	    
 	    if ($modelInterview->isExpiried) 
-	    {
-	        /*echo CJSON::encode([
-	            'status'=>'error',
-	            'message'=>'Голосование уже окончено',
-	        ]);*/
+	    {	        
 	        echo '<span class="alert-error">Голосование уже окончено</span>';
 	        Yii::app()->end();
 	    }
@@ -93,12 +90,9 @@ class InterviewController extends Controller
 	       ->from('{{interview_question}}')
 	       ->where('id=:id', [':id'=>$id])
 	       ->query();
+	    
 	    if ($model === null)
-	    {
-	        /*echo CJSON::encode([
-	            'status'=>'error',
-	            'message'=>'Не найдена запись с ИД ' . $id,
-	        ]);*/
+	    {	       
 	        echo '<span class="alert-error">Не найдена запись с ИД ' . $id . '</span>';
 	        Yii::app()->end();
 	    }
@@ -115,22 +109,14 @@ class InterviewController extends Controller
             ])->queryAll(), 'id_interview_question', 'id_interview_question');
 	    	   
         if (isset($interviewLike[$id]))
-        {
-            /*echo CJSON::encode([
-	            'status'=>'error',
-	            'message'=>'Вы уже голосовали',
-	        ]);*/
+        {            
             echo '<span class="alert-error">Вы уже голосовали</span>';
 	        Yii::app()->end();
         }
         
         // узнать количество голосов, если больше указанного в настройках, то ошибка
         if (count($interviewLike) >= $modelInterview->count_like)
-        {
-            /*echo CJSON::encode([
-	            'status'=>'error',
-	            'message'=>'Количество голосов превышено!',
-	        ]);*/
+        {            
             echo '<span class="alert-error">Количество голосов превышено!</span>';
 	        Yii::app()->end();
         }
@@ -139,65 +125,35 @@ class InterviewController extends Controller
         $inertLike = Yii::app()->db->createCommand('exec p_pr_like_interview @username=:username, @id_interview_question=:id')
             ->bindValue(':username', UserInfo::inst()->userLogin)
             ->bindValue(':id', $id)
-            ->execute();		
+            ->execute();
+        
         $modelCountLike = Yii::app()->db->createCommand()
             ->select('count(*)')
             ->from('{{interview_like}}')
             ->where('id_interview_question=:id', [':id'=>$id])
             ->queryScalar();
-            
-        echo '<span class="ic-like"></span> Голосовать <span class="badge" style="background: #3d6899;">' . $modelCountLike .'</span>';	    
+        
+        echo '<span class="ic-like"></span> Голосовать <span class="badge" style="background: #3d6899;">' . $modelCountLike .'</span>';
+        
 	    Yii::app()->end();
-	    
 	}
 	
-	
-	
 	/**
-	 * Добавление лайка (или) удаление
-	 * @param int $id
+	 * Голосование
+	 * @param int $id идентификатор вопроса
+	 * @deprecated
 	 */
 	public function actionAdd($id)
 	{		
+	    /*
 		Yii::app()->db->createCommand('exec p_pr_like_news @username=:username, @ip_address=:ip_address, @id_parent=:id')
 			->bindValue(':username', UserInfo::inst()->userLogin)
 			->bindValue(':ip_address', UserInfo::inst()->clientIP)
 			->bindValue(':id', $id)
-			->execute();		
-		
+			->execute();				
 		echo $this->loadCountLike($id);
+		*/
+	    throw new CHttpException(410); // resource delete
 	}
 	
-	
-	/**
-	 * Получение количества лайков
-	 * @param int $id
-	 */
-	/*
-	public function actionCount($id)
-	{
-		echo $this->loadCountLike($id);
-	}
-	
-	
-	private function loadCountLike($id)
-	{
-		$count = Yii::app()->db->createCommand()
-			->select('count(*) count')
-			->from('{{like}}')
-			->where('id_parent=:id_news',array(':id_news'=>$id))
-			->queryScalar();
-		
-		$countByUser = Yii::app()->db->createCommand()
-			->select('count(*) count')
-			->from('{{like}}')
-			->where('id_parent=:id_news',array(':id_news'=>$id))
-			->andWhere('username=:username',array(':username'=>UserInfo::inst()->userLogin))
-			->queryScalar();
-		
-		return '<span class="ic-like'.($countByUser>0 ? '' : '-not').'"></span> Мне нравится <span class="badge" style="background: #3d6899;">'.($count>0 ? $count : '').'</span>';
-	}
-
-    */
-
 }

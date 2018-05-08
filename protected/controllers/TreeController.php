@@ -1,11 +1,17 @@
 <?php
 
+/**
+ * Управление структурой
+ * @author alexeevich
+ * @see Tree
+ */
 class TreeController extends Controller
 {
 	
 	/**
 	 * {@inheritDoc}
 	 * @see CController::accessRules()
+	 * @return array
 	 */
     public function accessRules()
 	{
@@ -16,12 +22,13 @@ class TreeController extends Controller
 		);
 	}
     
-	
-	
-	
+	/**
+	 * Просмотр структуры
+	 * @param int $id идентификатор структуры
+	 * @throws CHttpException
+	 */
 	public function actionView($id)
-	{
-	    // find id tree or http.error 404
+	{	   
 	    $model = $this->loadModelTree($id);
 	    $module = $model['module'];
 	    
@@ -39,13 +46,12 @@ class TreeController extends Controller
 
 	}
 	
-	
 	/**
-	 * Find tree row
-	 * @param int $id
+	 * Поиск записи по идентификатору
+	 * @param int $id идентификатор структуры
 	 * @throws CHttpException
 	 * @return mixed
-	 * @author oleg
+	 * @uses actionView()
 	 */
 	private function loadModelTree($id)
 	{
@@ -58,9 +64,5 @@ class TreeController extends Controller
 	        throw new CHttpException(404,'Страница не найдена.');        
         return $model;
 	}
-	
-	
-	
-	
 	
 }

@@ -216,7 +216,7 @@ class Telephone extends CActiveRecord
 	 * Проверка наличия прав у пользователя на доступ к указанной орагнизации
 	 * @param string $organization
 	 * @return boolean
-	 * @deprecated
+	 * @uses TelephoneController::loadModel() (admin)
 	 */
 	public function checkAccessOrganization()
 	{

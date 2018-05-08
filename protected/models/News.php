@@ -93,7 +93,7 @@ class News extends CActiveRecord
             array('thumbail_text', 'length', 'max'=>1000),
 			array('message1, message2, date_create, date_edit, date_delete, 
                 flag_enable, general_page, _thumbail_image', 'safe'),
-			array('id, id_tree, id_organization, count_like, count_comment, count_visit', 'unsafe'),
+			array('id_tree, id_organization, count_like, count_comment, count_visit', 'unsafe'),
 			// search	
 			array('id, id_tree, id_organization, title, message1, message2, author, date_start_pub, date_end_pub, date_create,
                 date_edit, date_delete, flag_enable, thumbail_image, general_page, param1', 'safe', 'on'=>'search'),
@@ -191,26 +191,25 @@ class News extends CActiveRecord
         $this->date_start_pub   = DateHelper::explodeDateTime($this->date_start_pub, true);
         $this->date_end_pub     = DateHelper::explodeDateTime($this->date_end_pub, true);        
     }
-        
     
-    /** Удаление файлов и изображений из новости
-     *  Параметры:
-     *      $id - УН новости
-     *      $delFile - массив УН файлов для удаления
-     *      $delImage - масств УН изображений для удаления 
-     * @param unknown $id
-     * @param unknown $delFile
-     * @param unknown $delImage
-     * @param unknown $idTree
-     * @deprecated
-     * @todo move to FileHelper
+    /**
+     * Удаление файлов и изображений из новости 
+     * @param integer $id идентификатор новости
+     * @param array $delFile массив файлов
+     * @param array $delImage массив изображений
+     * @param integer $idTree идентификатор структуры
+     * @uses DepartmentDataController::actionUpdate()(admin)
+     * @uses DepartmentDataController::actionDelete() (admin)
+     * @uses NewsController::actionUpdate() (admin)
+     * @uses NewsController::actionDelete() (admin)
+     * @uses PageController::actionUpdate() (admin)
+     * @uses PageController::actionDelete() (admin)
      */
     public function deleteFilesImages($id, $delFile, $delImage, $idTree)
     {    	
-        // удаляем файлы помеченные для удаления
+        // удаление файлов
         if (count($delFile) > 0) 
-        {
-            
+        {           
             $dir = str_replace('{code_no}', Yii::app()->session['organization'],
                 Yii::app()->params['pathDocumets']);
             $dir = str_replace('{module}', 'news', $dir);
@@ -218,7 +217,6 @@ class News extends CActiveRecord
 			
             $dir = $_SERVER['DOCUMENT_ROOT'] . $dir;
             
-             
             foreach ($delFile as $file) 
             {                
             	$record = Yii::app()->db->createCommand()
@@ -228,19 +226,15 @@ class News extends CActiveRecord
 	            	->queryRow();
             	
             	if ($record !== null)
-            	{            		
-            		
-            		$fileName = iconv('UTF-8', 'windows-1251', $record['file_name']);
-            		
+            	{            		            		
+            		$fileName = iconv('UTF-8', 'windows-1251', $record['file_name']);            		
                     // удаляем файл
                     $flagDel=false;
-					//echo $dir . $fileName . "\n";
                     if (file_exists($dir . $fileName))
                     {                    
                         if (@unlink($dir . $fileName)) 
                         {                           
-                        	$flagDel=true;          
-                        	
+                        	$flagDel=true;                        	
                         	// если каталог пустой, то удаляем его
                         	if (!count(glob($dir . '*'))) 
                         		@rmdir($dir);
@@ -250,7 +244,8 @@ class News extends CActiveRecord
                     {
                         $flagDel=true;
                     }
-                                        
+                    
+                    // если удаление файла из каталога прошло успешно
                     if ($flagDel) 
                     {
                     	
@@ -265,7 +260,7 @@ class News extends CActiveRecord
             }
         }
         
-        // удаляем изображения помеченные для удаления
+        // удаление изображений
         if (count($delImage) > 0) 
         {
             
@@ -275,8 +270,7 @@ class News extends CActiveRecord
         	$dir = str_replace('{id}', $id, $dir);
         	
         	$dir = $_SERVER['DOCUMENT_ROOT'] . $dir;
-        	                                 
-            
+        	
             foreach ($delImage as $file)
             {
             	$record = Yii::app()->db->createCommand()
@@ -287,16 +281,12 @@ class News extends CActiveRecord
             		              
                 if ($record !== null) 
                 {
-                    
-                    // удаляем файл
-                    $flagDel=false;
-					                                       
+                    $flagDel=false;					                                       
                     $fileName = iconv('UTF-8', 'windows-1251', $record['image_name']);
                     $fileNameThumb = iconv('UTF-8', 'windows-1251', $record['image_name_thumbs']);
                     
                     if (file_exists($dir . $fileName))
                     {
-                    	
                         if (@unlink($dir . $fileName)) 
                         {
                             if ($fileName!=$fileNameThumb)
@@ -313,7 +303,8 @@ class News extends CActiveRecord
                     {
                         $flagDel=true;                        
                     }
-
+                    
+                    // если удаление файла из каталога прошло успешно
                     if ($flagDel) 
                     {                              	
                         Yii::app()->db->createCommand()->delete(
@@ -364,6 +355,12 @@ class News extends CActiveRecord
      * @param int $idTree идентификатор структуры
      * @see Tree
      * @uses NewsController::actionCreate()
+     * @uses DepartmentDataController::actionCreate() (admin)
+     * @uses DepartmentDataController::actionUpdate() (admin)
+     * @uses NewsController::actionCreate() (admin)
+     * @uses NewsController::actionUpdate() (admin)
+     * @uses PageController::actionCreate() (admin)
+     * @uses PageController::actionUpdate() (admin)
      * @todo Если используется только как вызов от текущей модели, то убрать параметры, и использовать их от $this
      */
     public function saveFiles($id, $idTree)
@@ -406,6 +403,12 @@ class News extends CActiveRecord
      * @param int $idTree идентификатор структуры
      * @see Tree
      * @see ImageHelper
+     * @uses DepartmentDataController::actionCreate() (admin)
+     * @uses DepartmentDataController::actionUpdate() (admin)
+     * @uses NewsController::actionCreate() (admin)
+     * @uses NewsController::actionUpdate() (admin)
+     * @uses PageController::actionCreate() (admin)
+     * @uses PageController::actionUpdate() (admin)
      * @todo Если используется только как вызов от текущей модели, то убрать параметры, и использовать их от $this
      */
     public function saveImages($id, $idTree)
@@ -476,6 +479,8 @@ class News extends CActiveRecord
      * @param string $oldImageName
      * @see ImageHelper
      * @see Tree
+     * @uses NewsController::actionCreate() (admin)
+     * @uses NewsController::actionUpdate() (admin)
      * @todo Если используется только как вызов от текущей модели, то убрать параметры, и использовать их от $this
      */
     public function saveThumbailForNews($model,$oldImageName='')
@@ -566,6 +571,7 @@ class News extends CActiveRecord
      * @return void|string[]|string
      * @deprecated
      * @todo перенести в File
+     * @uses in file 'modules/admin/views/departmentData/view.php'
      */
     public function listFiles($id, $idTree, $getRecords=false)
     {
@@ -627,7 +633,8 @@ class News extends CActiveRecord
      * @return void|string[]|string
      * @author tvog17
      * @deprecated
-     * @tood перенести в Image
+     * @todo перенести в Image
+     * @uses in file 'modules/admin/views/departmentData/view.php'
      */
     public function getListImages($id, $idTree, $getRecords=false)
     {       
@@ -718,6 +725,15 @@ class News extends CActiveRecord
 	public function treeAction($treeModel)
 	{
 	    
+	}
+	
+	/**
+	 * Журнал изменений (адаптированный для простомтра) 
+	 * @return string
+	 */
+	public function getLogChangeText()
+	{
+	    return Log::getLog($this->log_change);
 	}
 	
 	

@@ -1,26 +1,38 @@
 <?php
 
+/**
+ * Комментарии к материалам 
+ * @author alexeevich
+ * @see Comment
+ */
 class CommentController extends Controller
 {
 
 	/**
+	 * Установка прав доступа к действиям
 	 * {@inheritDoc}
 	 * @see CController::accessRules()
 	 */
 	public function accessRules()
 	{
-		return array(
-			 array('allow',
-		 		'users'=>array('@'),
-			 ),
+		return array(		    
+			array('allow',
+		 	    'users'=>array('@'),
+			),
 		);
 	}
-	
-	
-	
+		
 	/**
-	 * Удаление коментария
+	 * Удаление коментария по идентификатору  
+	 * В действительности происходит установка признака (дата удаления), что комментарий удален
+	 * В случае успешного сохранения возвращается текст "OK" или текст с ошибкой
+	 * Доступ предоставляется только для автора и администратора
 	 * @param int $id
+	 * @return string|CHttpException
+	 * @see Comment	
+	 * @see UserInfo
+	 * @see CDbExpression
+	 * @throws CHttpException
 	 */
 	public function actionDelete($id)
 	{
@@ -41,7 +53,13 @@ class CommentController extends Controller
 		}
 	}
 	
-	
+	/**
+	 * Форма для добавления комментария
+	 * @param int $id
+	 * @return string
+	 * @see Comment
+	 * @see UserInfo	 
+	 */
 	public function actionForm($id)
 	{
 		// для проверки наличия новости
@@ -70,7 +88,12 @@ class CommentController extends Controller
 		]);
 	}
 	
-	
+	/**
+	 * Отображение комментариев,
+	 * которые привязаны к странице с идетификатором $id
+	 * @param int $id	 
+	 * @return string
+	 */
 	public function actionIndex($id)
 	{		
 		return $this->renderPartial('comments',array(	
@@ -79,8 +102,14 @@ class CommentController extends Controller
 		));
 	}
 	
-	
-	
+	/**
+	 * Изменение комментария
+	 * Изменить комментарий может только администратор и автор
+	 * @param int $id идентификатор комментария
+	 * @throws CHttpException	 
+	 * @see UserInfo
+	 * @return string
+	 */
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
@@ -119,24 +148,34 @@ class CommentController extends Controller
 		}
 	}
 	
-	
+	/**
+	 * Поиск комментария по идентификатору
+	 * @param int $id идентификатор комментария
+	 * @throws CHttpException
+	 * @see Comment
+	 * @return Comment
+	 * @uses actionDelete()
+	 * @uses actionUpdate()
+	 */
 	private function loadModel($id)
 	{
-	    $model = Comment::model()->findByPk($id);
-	    /*$model = Yii::app()->db->createCommand()
-	       ->from('{{comment}}')
-	       ->where('id=:id', [':id'=>$id])
-	       ->queryRow();
-	    */
+	    $model = Comment::model()->findByPk($id);	    
 		if ($model===null)
-			throw new CHttpException(404,'Страница не найдена!');
+			throw new CHttpException(404);
 		return $model;
 	}
 		
-	
+	/**
+	 * Поиск комментариев по родительскому идентификатору
+	 * @param int $id идентификатор комментария
+	 * @throws CHttpException
+	 * @return array
+	 * @uses actionForm()
+	 * @uses actionIndex()
+	 * @uses actionUpdate()
+	 */
 	private function loadModels($id)
-	{
-		//$model = Comment::model()->findAll(array('condition'=>'id_parent=:id_parent','params'=>array(':id_parent'=>$id),'order'=>'date_create asc'));
+	{		
 		$model = Yii::app()->db->createCommand()
 		  ->from('{{comment}}')
 		  ->where('id_parent=:id_parent and date_delete is null', [':id_parent'=>$id])

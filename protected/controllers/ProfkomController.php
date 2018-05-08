@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * 
+ * @author 8600-90331
+ * @deprecated
+ */
 class ProfkomController extends Structure
 {
     

@@ -14,7 +14,6 @@
  * @property Tree $idTree
  * @property User $idUser
  * @property AccessTelephoneUser[] $accessTelephoneUsers
- * @deprecated
  */
 class AccessUser extends CActiveRecord
 {
@@ -38,7 +37,6 @@ class AccessUser extends CActiveRecord
 			array('id_tree, id_user', 'numerical', 'integerOnly'=>true),
 			array('id_organization', 'length', 'max'=>5),
 			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
 			array('id, id_tree, id_user, id_organization, date_create', 'safe', 'on'=>'search'),
 		);
 	}
@@ -84,9 +82,7 @@ class AccessUser extends CActiveRecord
 	 * based on the search/filter conditions.
 	 */
 	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	{		
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);

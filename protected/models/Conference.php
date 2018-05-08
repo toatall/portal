@@ -19,6 +19,7 @@
  * @property string $date_edit
  * @property string $date_delete
  * @property bool $time_start_msk
+ * @property string $log_change
  */
 class Conference extends CActiveRecord
 {
@@ -254,6 +255,14 @@ class Conference extends CActiveRecord
 	 */
 	protected function beforeSave()
 	{
+	    if ($this->isNewRecord)
+	        $action = 'создание';
+	    elseif ($this->date_delete != null)
+	       $action = 'удаление';
+	    else 
+	       $action = 'изменение';
+	        
+	    Log::setLog($this->log_change, $action);
 		$this->date_start = DateHelper::implodeDateTime($this->_tempDateStart, $this->_tempTimeStart);		
 		$this->date_create = new CDbExpression('getdate()');
 		return parent::beforeSave();
@@ -399,6 +408,8 @@ class Conference extends CActiveRecord
 	 * Отправка уведомления по почте
 	 * о создании/изменении мероприятия	
 	 * @param string $to адрес получателя
+	 * @uses VksUfnsController::actionCreate()
+	 * @uses VksUfnsController::actionUpdate()
 	 */
 	public function notifyEmail($to=null)
 	{

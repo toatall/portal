@@ -283,6 +283,7 @@ class Tree extends CActiveRecord
      * @param int $id идентификатор структуры
      * @param int $parent_id идентификатор родителя
      * @return array
+     * @uses TreeController::actionAdmin() (admin)
      */
     public function getTree($id=0, $parent_id=0)
     {
@@ -382,6 +383,11 @@ class Tree extends CActiveRecord
      * относительно раздела $idParent
      * @param int $idParent идентификатор родителя
      * @return boolean
+     * @uses NewsController::loadModel() (admin)
+     * @uses PageController::loadModel() (admin)
+     * @uses PageController::loadModelTree() (admin)
+     * @uses TelephoneController::loadModel() (admin)
+     * @uses TreeController::loadModel() (admin)
      */
     public function checkParentRight($idParent)
     {
@@ -417,7 +423,7 @@ class Tree extends CActiveRecord
 	 * Check correct using tree organization
 	 * @param int $id
 	 * @return boolean
-	 * @deprecated
+	 * @uses RatingDataController::actionViewRating()
 	 */
 	public static function checkTreeNode($id)
 	{
@@ -449,6 +455,15 @@ class Tree extends CActiveRecord
         	        ':organization' => Yii::app()->session['organization'],
         	    ))
         	    ->queryScalar();	    
+	}
+	
+	/**
+	 * Журнал изменений (адаптированый для просмотра)
+	 * @return string
+	 */
+	public function getLogChangeText()
+	{
+	    return Log::getLog($model->log_change);
 	}
 	
 }

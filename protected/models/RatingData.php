@@ -223,6 +223,8 @@ class RatingData extends CActiveRecord
 	/**
 	 * Сохранение файлов рейтинга
 	 * @return boolean
+	 * @uses RatingDataController::actionCreateRating()
+	 * @uses RatingDataController::actionUpdateRating()
 	 */
 	public function saveFiles()
 	{		
@@ -272,6 +274,7 @@ class RatingData extends CActiveRecord
 	 * @param array $listFiles - список файлов [id=>name,...]
 	 * @param bool $all - признак удаления всех файлов // 
 	 * @todo move to FileHelper
+	 * @uses RatingDataController::actionUpdateRating()
 	 */
 	public function deleteFiles($listFiles, $all=false)
 	{

@@ -173,7 +173,7 @@ class DepartmentCard extends CActiveRecord
 	 * @param DepartmentCard $model
 	 * @see CUploadedFile
 	 * @see ImageHelper
-	 * @version 01.09.2016
+	 * @uses DepartmentCardController::actionCreate() (admin)
 	 */
 	public function loadFilePhoto($model)
 	{		

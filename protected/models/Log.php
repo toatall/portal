@@ -207,7 +207,8 @@ class Log extends CActiveRecord
 	 * Функция преобразует лог из БД к читаемому виду
 	 * @param string $record
 	 * @return string
-	 * @deprecated
+	 * @uses DepartmentDataController::actionView() (admin)
+	 * @uses Module::getLogChangeText()
 	 */
 	public static function getLog($record)
 	{
@@ -235,6 +236,20 @@ class Log extends CActiveRecord
 	 * @return string
 	 * @uses NewsController::actionCreate()
 	 * @uses Tree::beforeSave()
+	 * @uses DepartmentDataController::actionCreate() (admin)
+	 * @uses DepartmentDataController::actionUpdate() (admin)
+	 * @uses DepartmentDataController::actionDelete() (admin)
+	 * @uses Module::beforeSave()
+	 * @uses NewsController::actionCreate() (admin)
+	 * @uses NewsController::actionUpdate() (admin)
+	 * @uses NewsController::actionDelete() (admin)
+	 * @uses NewsController::actionRestore() (admin)
+	 * @uses PageController::actionCreate() (admin)
+	 * @uses PageController::actionUpdate() (admin)
+	 * @uses PageController::actionDelete() (admin)
+	 * @uses TelephoneController::actionCreate() (admin)
+	 * @uses TelephoneController::actionUpdate() (admin)
+	 * @uses Conference::beforeSave()
 	 */
 	public static function setLog($lastRecord, $operation)
 	{

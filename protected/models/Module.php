@@ -102,9 +102,7 @@ class Module extends CActiveRecord
 	 * based on the search/filter conditions.
 	 */
 	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
+	{		
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('name',$this->name,true);
@@ -145,30 +143,26 @@ class Module extends CActiveRecord
             $this->date_create = new CDbExpression('getdate()');
             $this->author = Yii::app()->user->name;
         }
-        $this->log_change = LogChange::setLog($this->log_change, 
+        $this->log_change = Log::setLog($this->log_change, 
             ($this->isNewRecord ? 'создание' : 'изменение'));            
         
         return parent::beforeSave();        
     }
     
-
     /**
      * Event after find
      * {@inheritDoc}
      * @see CActiveRecord::afterFind()
+     * @see DateHelper
      */
     protected function afterFind()
     {
-        $this->date_create = date('d.m.Y H:i:s', strtotime($this->date_create));
+        $this->date_create = DateHelper::explodeDateTime($this->date_create);
         parent::afterFind();
     }
     
-    
     /**
-     * Получение групп, имеющих доступ к модулю
-     * 
-     * @return array
-     * @author oleg
+     * Получение групп, имеющих доступ к модулю    
      */
     public function getRightGroup()
     {
@@ -186,9 +180,6 @@ class Module extends CActiveRecord
     
     /**
      * Получение пользователей, имеющих доступ к модулю
-     * 
-     * @return array
-     * @author oleg
      */
     public function getRightUser()
     {
@@ -196,19 +187,18 @@ class Module extends CActiveRecord
     		return array();
     	
     	return CHtml::listData(Yii::app()->db->createCommand()
-    				->select("[user].[id], case when [user].[username_windows] <> '' or [user].[username_windows] is not null then [user].[username_windows] else [username] end"
-    					." + '(' + [profile].[name] + ')' [concatened]")
+    				->select("[user].[id], ([user].[username_windows] + [user].[fio]) concatened")
     				->from('{{access_module_user}} t')
     				->join('{{user}} user', '[t].[id_user] = [user].[id]')
-    				->leftJoin('{{profile}} profile', '[user].[id]=[profile].[id]')
     				->where('module_name=:name', [':name'=>$this->name])
     				->queryAll(), 'id', 'concatened');
     }
     
-    
     /**
      * Получение списка модулей в соотвествии с правами пользователя
      * @return NULL|Module
+     * @todo Подумать нужено ли вообще создавать ограничение доступа пользователю к модулям, 
+     * т.к. при создании узла структуры им не представялется возможность выбрать модуль 
      */
     public static function listCurrentUser()
     {
@@ -228,6 +218,15 @@ class Module extends CActiveRecord
     		->where('[user].[id_user] = ' . Yii::app()->user->id . ' or [gp].[id_user]=' . Yii::app()->user->id)
     		->queryAll();
         */
+    }
+    
+    /**
+     * Журнал изменений (адаптированный для просмотра)
+     * @return string
+     */
+    public function getLogChangeText()
+    {
+        return Log::getLog($this->log_change);
     }
     
 }

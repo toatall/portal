@@ -1,11 +1,17 @@
 <?php
 
+/**
+ * Управление лайками
+ * @author alexeevich
+ * @see Like
+ */
 class LikeController extends Controller
 {
 
 	/**
 	 * {@inheritDoc}
 	 * @see CController::accessRules()
+	 * @return array
 	 */
 	public function accessRules()
 	{
@@ -35,14 +41,20 @@ class LikeController extends Controller
 	
 	/**
 	 * Получение количества лайков
-	 * @param int $id
+	 * @param int $id идентификатор лайка
 	 */
 	public function actionCount($id)
 	{
 		echo $this->loadCountLike($id);
 	}
 	
-	
+	/**
+	 * Загрузка количества лайков
+	 * @param int $id идентификатор лайка
+	 * @see UserInfo
+	 * @return string
+	 * @uses actionCount()
+	 */
 	private function loadCountLike($id)
 	{
 		$count = Yii::app()->db->createCommand()

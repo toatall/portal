@@ -35,7 +35,7 @@ class NewsSearch extends News
 	public function search($idTree=null)
 	{
 		$criteria=new CDbCriteria;
-	
+		
 		$criteria->compare('id',$this->id);
 		if ($idTree===null)
 		{

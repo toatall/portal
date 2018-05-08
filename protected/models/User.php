@@ -45,8 +45,10 @@ class User extends CActiveRecord
     public $profile_name;
     
     /**
-     * @deprecated
-     * @var unknown
+     * Пользователи 
+     * Используется при поиске пользователей
+     * @var array
+     * @uses TreeController::actionGetListUser() (admin)
      */
     public $users;
     
@@ -197,8 +199,7 @@ class User extends CActiveRecord
         $users = Yii::app()->request->getParam('users');
         
 		$criteria=new CDbCriteria;				
-		$criteria->compare('t.id',$this->id);
-		$criteria->compare('t.username',$this->username,true);
+		$criteria->compare('t.id',$this->id);		
 		$criteria->compare('t.username_windows',$this->username_windows,true);
         $criteria->compare('t.date_create',$this->date_create,true);
 		$criteria->compare('t.date_edit',$this->date_edit,true);		
@@ -214,7 +215,7 @@ class User extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
             'sort'=>array(
-                'defaultOrder'=>'t.default_organization asc, t.username asc',
+                'defaultOrder'=>'t.default_organization asc',
             ),
 		));
 	}
@@ -261,6 +262,8 @@ class User extends CActiveRecord
      * @param $user_id int идентификатор польззователя
      * @param $role_admin boolean роль администратора
      * @uses self::saveWindowsUser()
+     * @uses UserController::actionCreate() (admin)
+     * @uses UserController::actionUpdate() (admin)
      */ 
     public function saveRelationOrganizations($orgs, $user_id, $role_admin)
     {                
@@ -303,6 +306,7 @@ class User extends CActiveRecord
      * @param string $organization код организации
      * @return boolean    
      * @uses Organization::loadCurrentOrganization()
+     * @uses DefaultController::actionChangeCode() (admin)
      */
     public static function checkRightOrganization($organization)
     {
@@ -319,6 +323,7 @@ class User extends CActiveRecord
      * Изменение орагнищации для текущей сессии ['organization']
      * @param string $organization код организации
      * @uses Organization::loadCurrentOrganization()
+     * @uses DefaultControlelr::actionChangeCode() (admin)
      */
     public static function changeOrganization($organization)
     {        
