@@ -93,6 +93,7 @@ class DateHelper extends CComponent
 	 * @uses Telephone::afterFind()
 	 * @uses Tree::afterFind()
 	 * @uses User::afterFind()
+	 * @uses Module::afterFind()
 	 */
 	public static function explodeDateTime($date)
 	{

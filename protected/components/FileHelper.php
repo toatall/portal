@@ -65,6 +65,7 @@ class FileHelper extends CComponent
 	 *     )
 	 * @return string[]
 	 * @uses RatingMain::afterSave()
+	 * @uses RatingDataController::actionCreate()
 	 */
 	public static function filesUpload($name, $pathFile, $modelOptions = array())
 	{	    
@@ -130,17 +131,14 @@ class FileHelper extends CComponent
 	
 	/**
 	 * Вывод списка уже загруженных файлов, с checkbox, для возможности их удаления
-	 * 
 	 * Если список файлов, указанный в массиве $array пуст, то выполняется запрос к БД
 	 * для получения файлов (но только в случае указания $modelName и $modelId, в 
 	 * противном случае возвращается null)
-	 * 	 
-	 * 
 	 * @param array $files
 	 * @param string $modelName
 	 * @param string $modelId
 	 * @return NULL|mixed
-	 * @deprecated
+	 * @uses in file 'modules/admin/views/page/_form.php'
 	 */
 	public static function showFilesUpload($files, $modelName=null, $modelId=null)
 	{
@@ -177,9 +175,8 @@ class FileHelper extends CComponent
 	 *     [postName] string - имя post-формы, по-умолчанию - deleteFiles
 	 *     [modelName] string - имя модели
 	 *     [modelId] string - ИД модели
-	 *     
 	 *     [all] bool - true/false, в случае необходимости удаления всех файлов (например, в котроллере delete)	     
-	 * @deprecated
+	 * @uses RatingDataController::actionUpdate()
 	 */
 	public static function postDeleteFiles($options = array())
 	{
