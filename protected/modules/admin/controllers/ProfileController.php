@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @deprecated
+ * @author 8600-90331
+ *
+ */
 class ProfileController extends AdminController
 {
 	
@@ -40,6 +45,7 @@ class ProfileController extends AdminController
 	 */
 	public function actionCreate($id)
 	{
+	    throw  new CHttpException(410);
 		$model=new Profile();
 		
 		if (Profile::model()->findByPK($id))
@@ -96,6 +102,7 @@ class ProfileController extends AdminController
 	 */
 	public function actionUpdate($id)
 	{
+	    throw new CHttpException(410);
 		$model=Profile::model()->findByPk($id);
 		if ($model === null)
 			$this->redirect(array('create', 'id'=>$id));
@@ -131,6 +138,7 @@ class ProfileController extends AdminController
 	 */
 	private function saveProfileImage($model, $onlyDeleteImage=false)
 	{		
+	    throw new CHttpException(410);
 		$folder = $_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['urlProfiles'];
 		
 		if (!file_exists($folder))
@@ -180,6 +188,7 @@ class ProfileController extends AdminController
 	 */
 	public function loadModel($id)
 	{
+	    throw new CHttpException(410);
 		$model=Profile::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');

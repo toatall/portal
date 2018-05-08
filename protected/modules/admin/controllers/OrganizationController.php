@@ -1,12 +1,17 @@
 <?php
 
+/**
+ * Organizations manage
+ * @author alexeevich
+ * @see AdminController
+ * @see Organization
+ */
 class OrganizationController extends AdminController
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
-	 */
-	//public $layout='//layouts/column2';
+	 */	
 
 	/**
 	 * @return array action filters
@@ -39,7 +44,7 @@ class OrganizationController extends AdminController
 
 	/**
 	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
+	 * @param string $code the ID of the model to be displayed
 	 */
 	public function actionView($code)
 	{
@@ -51,21 +56,19 @@ class OrganizationController extends AdminController
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @see Organization
 	 */
 	public function actionCreate()
 	{
 		$model=new Organization;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
+		
 		if(isset($_POST['Organization']))
 		{
 			$model->attributes=$_POST['Organization'];
 			if($model->save())
 				$this->redirect(array('view','code'=>$model->code));
 		}
-
+		
 		$this->render('create',array(
 			'model'=>$model,
 		));
@@ -79,17 +82,14 @@ class OrganizationController extends AdminController
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
+		
 		if(isset($_POST['Organization']))
 		{
 			$model->attributes=$_POST['Organization'];
 			if($model->save())
 				$this->redirect(array('view','code'=>$model->code));
 		}
-
+		
 		$this->render('update',array(
 			'model'=>$model,
 		));
@@ -99,6 +99,7 @@ class OrganizationController extends AdminController
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
+	 * @throws CHttpException
 	 */
 	public function actionDelete($id)
 	{
@@ -117,6 +118,7 @@ class OrganizationController extends AdminController
 
 	/**
 	 * Lists all models.
+	 * @return CActiveDataProvider
 	 */
 	public function actionIndex()
 	{
@@ -128,6 +130,7 @@ class OrganizationController extends AdminController
 
 	/**
 	 * Manages all models.
+	 * @see Organization
 	 */
 	public function actionAdmin()
 	{
@@ -144,7 +147,13 @@ class OrganizationController extends AdminController
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
-	 * @param integer the ID of the model to be loaded
+	 * @param string $code the ID of the model to be loaded
+	 * @see Organization
+	 * @throws CHttpException
+	 * @return Organization
+	 * @uses self::actionView()
+	 * @uses self::actionUpdate()
+	 * @uses self::actionDelete()
 	 */
 	public function loadModel($code)
 	{
@@ -157,6 +166,7 @@ class OrganizationController extends AdminController
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{

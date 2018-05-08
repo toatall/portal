@@ -36,12 +36,6 @@ $this->menu=array(
 		'author',
 		'dop_text',
 		'date_create',
-		'sort',
-        /*array(
-            'name'=>'log_change',
-            'value'=>LogChange::getLog($model->log_change),
-            'type'=>'raw',
-        ),*/
-		//'actions_log',
+		'sort',       
 	),
 )); ?>

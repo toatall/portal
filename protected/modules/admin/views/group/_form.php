@@ -19,7 +19,6 @@
 	<?php echo $form->textAreaRow($model,'description',
 			array('class'=>'span5','maxlength'=>500,'style'=>'height:100px;')); ?>	
 
-    
     <div class="well"> 
         
         <?php echo $form->dropDownListRow($model, 'groupUsers', 

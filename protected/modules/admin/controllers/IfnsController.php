@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @deprecated
+ * @author 8600-90331
+ *
+ */
 class IfnsController extends AdminController
 {
 	/**
@@ -35,6 +40,7 @@ class IfnsController extends AdminController
 	 */
 	public function actionView($id)
 	{
+	    throw new CHttpException(410);
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
 		));
@@ -46,6 +52,7 @@ class IfnsController extends AdminController
 	 */
 	public function actionCreate()
 	{
+	    throw new CHttpException(410);
 		$model=new Ifns;
 
 		// Uncomment the following line if AJAX validation is needed
@@ -70,6 +77,7 @@ class IfnsController extends AdminController
 	 */
 	public function actionUpdate($id)
 	{
+	    throw new CHttpException(410);
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -94,6 +102,7 @@ class IfnsController extends AdminController
 	 */
 	public function actionDelete($id)
 	{
+	    throw new CHttpException(410);
 		if(Yii::app()->request->isPostRequest)
 		{
 			// we only allow deletion via POST request
@@ -112,6 +121,7 @@ class IfnsController extends AdminController
 	 */
 	public function actionIndex()
 	{
+	    throw new CHttpException(410);
 		$dataProvider=new CActiveDataProvider('Ifns');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
@@ -123,6 +133,7 @@ class IfnsController extends AdminController
 	 */
 	public function actionAdmin()
 	{
+	    throw new CHttpException(410);
 		$model=new Ifns('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Ifns']))
@@ -140,6 +151,7 @@ class IfnsController extends AdminController
 	 */
 	public function loadModel($id)
 	{
+	    throw new CHttpException(410);
 		$model=Ifns::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');

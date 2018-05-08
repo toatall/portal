@@ -26,16 +26,7 @@ $this->menu=array(
 	'attributes'=>array(
 		'id',
 		'username',
-		'username_windows',
-		/*
-        array(
-            'label'=>$model->getAttributeLabel('date_create'),
-            'value'=>$model->date_create,        
-        ),
-        array(
-            'label'=>$model->getAttributeLabel('date_modification'),
-            'value'=>$model->date_modification,        
-        ),*/
+		'username_windows',		
 		'date_create',	
 		'date_edit',
 		array(
@@ -87,7 +78,7 @@ $this->menu=array(
 
     foreach ($orgs as $value)
     {
-        echo $value->code.' - '.$value->name.'<br />';
+        echo $value->code . ' - ' . $value->name . '<br />';
     }
 ?>
 </div>

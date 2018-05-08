@@ -1,8 +1,16 @@
 <?php
 
+/**
+ * Manage telephone glossary
+ * @author alexeevich
+ * @see AdminController
+ */
 class TelephoneController extends AdminController
 {
-	
+	/**
+	 * Default action
+	 * @var string
+	 */
 	public $defaultAction = 'admin';
 
 
@@ -37,6 +45,7 @@ class TelephoneController extends AdminController
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
+	 * @param integer $idTree идентификатор структуры
 	 */
 	public function actionView($id, $idTree)
 	{
@@ -49,10 +58,14 @@ class TelephoneController extends AdminController
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $idTree идентификатор структуры
+	 * @see Tree
+	 * @see Access
+	 * @see Telephone
+	 * @throws CHttpException
 	 */
 	public function actionCreate($idTree)
-	{
-	           
+	{   
         if (!Tree::model()->exists('id=:id AND module=:module', array(':id'=>$idTree,'module'=>'telephone')))
             throw new CHttpException(404,'Страница не найдена.');
 		
@@ -63,17 +76,12 @@ class TelephoneController extends AdminController
         $model->id_tree = $idTree;
         $model->author = Yii::app()->user->name;
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Telephone']))
-		{
+		if(isset($_POST['Telephone'])) {
 			$model->attributes=$_POST['Telephone'];
-			//$model->log_change = LogChange::setLog($model->log_change, 'создание');
+			$model->log_change = Log::setLog($model->log_change, 'создание');
             
-            $tempFile=CUploadedFile::getInstance($model, 'tel_file');
-            if ($tempFile!=null)
-            {
+            $tempFile = CUploadedFile::getInstance($model, 'tel_file');
+            if ($tempFile!=null) {
                 $file_name = $model->id_organization.'_'.date('Ymd_His').'.'.pathinfo($tempFile->getName(), PATHINFO_EXTENSION);
                 $model->telephone_file = $file_name;
                 $tempFile->saveAs($_SERVER['DOCUMENT_ROOT'].Yii::app()->params['pathTelephones'].'/'.$file_name);
@@ -94,40 +102,37 @@ class TelephoneController extends AdminController
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
+	 * @param integer $idTree идентификатор структуры
 	 */
 	public function actionUpdate($id, $idTree)
 	{
-	           
 		$model=$this->loadModel($id, $idTree);
         $model->id_tree = $idTree;
         $model->author = Yii::app()->user->name;                
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
 		if(isset($_POST['Telephone']))
 		{
             $model->attributes=$_POST['Telephone'];
-            $model->log_change = LogChange::setLog($model->log_change, 'изменение');
+            $model->log_change = Log::setLog($model->log_change, 'изменение');
             
-            $tempFile=CUploadedFile::getInstance($model, 'tel_file');
+            $tempFile = CUploadedFile::getInstance($model, 'tel_file');
             if ($tempFile!=null)
             {                
                 try {
-                    if (file_exists($_SERVER['DOCUMENT_ROOT'].Yii::app()->params['pathTelephones'].'/'.$model->telephone_file))
-						unlink($_SERVER['DOCUMENT_ROOT'].Yii::app()->params['pathTelephones'].'/'.$model->telephone_file);
+                    if (file_exists($_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['pathTelephones'] . '/' . $model->telephone_file))
+						@unlink($_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['pathTelephones'] . '/' . $model->telephone_file);
                 } catch (exception $e) {}
                 
-                $file_name = $model->id_organization.'_'.date('Ymd_His').'.'.pathinfo($tempFile->getName(), PATHINFO_EXTENSION);
+                $file_name = $model->id_organization . '_' . date('Ymd_His') . '.' . pathinfo($tempFile->getName(), PATHINFO_EXTENSION);
                 $model->telephone_file = $file_name;
-                $tempFile->saveAs($_SERVER['DOCUMENT_ROOT'].Yii::app()->params['pathTelephones'].'/'.$file_name);                
+                $tempFile->saveAs($_SERVER['DOCUMENT_ROOT'] . Yii::app()->params['pathTelephones'] . '/' . $file_name);                
             }
 			
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id,'idTree'=>$idTree));
+				$this->redirect(array('view', 'id'=>$model->id, 'idTree'=>$idTree));
 		}
 
-		$this->render('update',array(
+		$this->render('update', array(
 			'model'=>$model,
             'idTree'=>$idTree,
 		));
@@ -137,15 +142,15 @@ class TelephoneController extends AdminController
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
+	 * @param integer $idTree идентификатор структуры
 	 */
 	public function actionDelete($id, $idTree)
 	{
         $model=$this->loadModel($id, $idTree);
         try {
-            if ($model->telephone_file!='' && file_exists(Yii::app()->params['pathTelephones'].'/'.$model->telephone_file))
-                unlink(Yii::app()->params['pathTelephones'].'/'.$model->telephone_file);
-        } catch (exception $e) {}
-		//$this->loadModel($id, $idTree)->delete();
+            if ($model->telephone_file!='' && file_exists(Yii::app()->params['pathTelephones'] . '/' . $model->telephone_file))
+                @unlink(Yii::app()->params['pathTelephones'] . '/' . $model->telephone_file);
+        } catch (exception $e) {}		
         $model->delete();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -153,13 +158,15 @@ class TelephoneController extends AdminController
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin', 'idTree'=>$idTree));
 	}
 
-
 	/**
 	 * Manages all models.
+	 * @param integer $idTree идентификатор структуры
+	 * @see Tree
+	 * @see Access
+	 * @throws CHttpException
 	 */
 	public function actionAdmin($idTree)
-	{
-	                
+	{	     
         if (!Tree::model()->exists('id=:id AND module=:module', array(':id'=>$idTree,'module'=>'telephone')))
             throw new CHttpException(404,'Страница не найдена.');
         
@@ -168,8 +175,10 @@ class TelephoneController extends AdminController
             
 		$model=new Telephone('search');
 		$model->unsetAttributes();  // clear any default values
+		
 		if(isset($_GET['Telephone']))
 			$model->attributes=$_GET['Telephone'];
+		
 		$model->id_tree = $idTree;
 
 		$this->render('admin',array(
@@ -182,8 +191,12 @@ class TelephoneController extends AdminController
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
+	 * @see Telephone
 	 * @return Telephone the loaded model
 	 * @throws CHttpException
+	 * @uses self::actionView()
+	 * @uses self::actionUpdate()
+	 * @uses self::actionDelete()
 	 */
 	public function loadModel($id, $idTree)
 	{
@@ -209,15 +222,18 @@ class TelephoneController extends AdminController
     /**
      * Получение checkBoxList со списком групп или пользователей 
      * (которые подключены к текущей ветке Tree)
-     * @param int $id
-     * @param int $identity
-     * @param bool $is_group
+     * Используется для настройки дополнительных прав
+     * @param int $id идентификатор структуры
+     * @param int $identity идентификатор группы или пользователя
+     * @param bool $is_group флаг показывающий, что в качестве $identity передается идентификатор группы
+     * @see Group
+     * @see User
+     * @return string
      */
     public function actionAjaxTreeAccess($id, $identity, $is_group)
     {
-        if (/*!Yii::app()->request->isAjaxRequest
-            || */!isset($id) || !isset($identity) || !isset($is_group) || !Yii::app()->user->admin) return;            
-                
+        if (/*!Yii::app()->request->isAjaxRequest || */
+            !isset($id) || !isset($identity) || !isset($is_group) || !Yii::app()->user->admin) return;            
         
         $record = ($is_group) ? Group::model()->findByPk($identity)
             : User::model()->findByPk($identity);
@@ -272,16 +288,21 @@ class TelephoneController extends AdminController
                         });                                           
                     });                                      
                 });                
-            </script>';
-        
+            </script>';        
     }
     
-    
-    
     // разделить на 2 части приватные и отсюда управлять
+    /**
+     * Обновление прав для телефонного справочника
+     * @see Group
+     * @see User
+     * @see Organization
+     * @see AccessGroup
+     * @see AccessUser
+     * @return string
+     */
     public function actionAjaxUpdateTreeAccess()
     {
-        
         if (!Yii::app()->request->isAjaxRequest 
             || !isset($_POST['id']) || !isset($_POST['org']) || !isset($_POST['check'])
             || !isset($_POST['is_group']) || !isset($_POST['identity']) 
@@ -295,7 +316,6 @@ class TelephoneController extends AdminController
         if (Organization::model()->exists('code=:code', array(':code'=>$_POST['org'])) && 
             Tree::model()->exists('id=:id', array(':id'=>$_POST['id'])) && $identity!==null) 
         {
-            
             if ($_POST['is_group'])
             {
                 $modelAccess = AccessGroup::model()->find('id_tree=:id_tree and id_group=:id_group and id_organization=:id_organization', array(
@@ -355,11 +375,11 @@ class TelephoneController extends AdminController
                 {
                     Yii::app()->db->createCommand()->delete('{{access_organization_user}}',
                         'id_access_user=:id_access_user AND id_organization=:id_organization',
-                        array(
+                        [
                             'id_access_user'=>$modelAccess->id,                            
-                            'id_organization'=>$_POST['org'],                            
-                        )
-                        );
+                            'id_organization'=>$_POST['org'],
+                        ]
+                    );
                 }
             }
         }
@@ -369,13 +389,14 @@ class TelephoneController extends AdminController
         }
     }
     
-    
 	/**
 	 * Performs the AJAX validation.
 	 * @param Telephone $model the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{
+	    throw new CHttpException(410);
 		if(isset($_POST['ajax']) && $_POST['ajax']==='telephone-form')
 		{
 			echo CActiveForm::validate($model);

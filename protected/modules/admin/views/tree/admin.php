@@ -12,10 +12,7 @@ $this->menu=array(
 
 <h1>Структура сайта</h1>
 
-
-<?php 
-    
-    
+<?php     
     if (count($tree)) 
     {
         $this->widget('CTreeView', array(
@@ -28,6 +25,5 @@ $this->menu=array(
     <h4 class="well">Нет данных</h4>
 <?php   
     }
-      
 ?>
 

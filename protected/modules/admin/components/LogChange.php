@@ -1,16 +1,17 @@
 ﻿<?php
 /**
- * Компонент проверки прав пользователей
- * 
- * Дата создания: 07.08.2014
- * Дата изменения: 08.08.2014
- * 
+ * Приведение лога для чтения и записи в БД
+ * @author alexeevich
+ * @deprecated 
  **/
- 
-class LogChange extends CComponent
+class LogChange 
 {
 
-    
+    /**
+     * Функция преобразует лог из БД к читаемому виду
+     * @param string $record
+     * @return string
+     */
     public static function getLog($record)
     {
         $explode_array = explode('$',$record);
@@ -29,12 +30,15 @@ class LogChange extends CComponent
             true
         );
     }
-    
-    
-    
+        
     /**
      * Функция возвращает запись для лога
-     * **/
+     * @param string $lastRecord текущий лог
+     * @param string $operation выполняемая в данный момент операция
+     * @return string
+     * @uses
+     * @see NewsController::actionCreate()
+     */
     public static function setLog($lastRecord, $operation)
     {
         return $lastRecord.'$'.date('d.m.Y H:i:s').'|'.$operation.'|'

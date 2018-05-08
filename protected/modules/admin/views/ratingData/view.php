@@ -23,8 +23,7 @@ $this->menu=array(
 <?php $this->widget('bootstrap.widgets.TbDetailView',array(
 	'data'=>$model,
 	'attributes'=>array(
-		'id',
-		//'id_department',
+		'id',		
 		'name',
 		'order_asc',
 		'date_create',

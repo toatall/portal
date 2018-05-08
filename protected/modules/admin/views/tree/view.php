@@ -43,16 +43,7 @@ $this->menu=array(
         array(
             'name'=>'log_change',
             'type'=>'raw',
-            'value'=>LogChange::getLog($model->log_change),
+            'value'=>$model->logСhangeText,
         ),       
 	),
 )); ?>
-
-<?php /*if ($model->use_organization): ?>
-<div class="well" style="background-color: white;">
-<?php $this->widget('CTreeView', array(
-    'data'=>$model->getListOrganization(0, $model->id, true),
-));
-?>
-<?php endif;*/ ?>
-<!--/div-->

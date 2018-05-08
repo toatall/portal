@@ -20,7 +20,6 @@ $this->menu=array(
 	
 	array('label'=>'<hr />','type'=>'raw'),
 	array('label'=>'Настройка отдела','url'=>array('options', 'id'=>$modelDepartment->id, 'idTree'=>$model->id_tree), 'icon'=>'cog'),
-		
 );
 
 if ($modelDepartment->use_card):
@@ -33,23 +32,21 @@ endif;
 
 <h1>Просмотр страницы #<?php echo $model->id; ?></h1>
 
-<?php 
-    
+<?php     
     // скрипты для просмотра изображений //    
     Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/extension/fancybox/lib/jquery.mousewheel-3.0.6.pack.js');
     Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/extension/fancybox/jquery.fancybox.js?v=2.1.5');            
     Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/extension/fancybox/helpers/jquery.fancybox-buttons.js?v=1.0.5');
     Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/extension/fancybox/helpers/jquery.fancybox-thumbs.js?v=1.0.7');
     Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/extension/fancybox/helpers/jquery.fancybox-media.js?v=1.0.6');
-    Yii::app()->getClientScript()->registerCssFile(Yii::app()->baseUrl.'/extension/fancybox/jquery.fancybox.css?v=2.1.5');
-                   
+    Yii::app()->getClientScript()->registerCssFile(Yii::app()->baseUrl.'/extension/fancybox/jquery.fancybox.css?v=2.1.5');                  
 ?>
 
 
 <?php if (!$model->isNewRecord && ($model->date_delete!='') && Yii::app()->user->admin): ?>    
     <div class="alert in alert-block fade alert-error">        
         <strong>Данная запись была удалена 
-            <?php echo date('d.m.Y H:i:s', strtotime($model->date_delete)); ?>
+            <?php echo DateHelper::explodeDateTime($model->date_delete); ?>
         </strong>&nbsp;&nbsp;
         <?php 
             $this->widget('bootstrap.widgets.TbButton', array(
@@ -80,13 +77,12 @@ endif;
 
 
 <?php $this->widget('bootstrap.widgets.TbDetailView',array(
-	'data'=>$model,
-    //'htmlOptions'=>array('style'=>'color:red;'),
+	'data'=>$model,    
 	'attributes'=>array(        
 		'id',
         array(
-            'name'=>'id_tree',
-            'value'=>Tree::model()->findByPk($model->id_tree)->name,
+            'name'=>'id_tree',            
+            'value'=>$model->tree->name,
         ),
         'title',
 		'author',
@@ -113,9 +109,8 @@ endif;
         array(
             'name'=>'log_change',
             'type'=>'raw',
-            'value'=>LogChange::getLog($model->log_change),
-        ),   
-        
+            'value'=>$logChange,
+        ),        
 	),
 )); ?>
 

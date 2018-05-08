@@ -39,8 +39,7 @@
             'weekStart':0            
         });         
     </script>
-    
-    
+        
     <?php echo Chtml::activeLabel($model,'_tempTimeStart'); ?>
     <?php
         $this->widget('CMaskedTextField', array(
@@ -53,8 +52,6 @@
             ),
         ));
     ?>
-    
-    
     
     <?php if ($model->type_conference !== Conference::TYPE_VKS_FNS): ?>
     <?php echo Chtml::activeLabel($model,'duration'); ?>
@@ -83,8 +80,7 @@
 	
 	<?= $form->textAreaRow($model,'note',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
 	
-	<div class="form-actions">
-    
+	<div class="form-actions">    
 		<?php $this->widget('bootstrap.widgets.TbButton', array(
 			'buttonType'=>'submit',
 			'type'=>'primary',
@@ -92,11 +88,9 @@
 		)); ?>
         
         <?php $this->widget('bootstrap.widgets.TbButton', array(
-			'url'=>array_merge(array('admin')),
-			//'type'=>'primary',
+			'url'=>array_merge(array('admin')),			
 			'label'=>'Отмена',
-		)); ?>
-        
+		)); ?>        
 	</div>
 
 <?php $this->endWidget(); ?>

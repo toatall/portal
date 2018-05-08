@@ -1,8 +1,18 @@
 <?php
 
+/**
+ * Manage Groups
+ * @author alexeevich
+ * @see AdminController
+ * @see Group
+ */
 class GroupController extends AdminController
 {	
 
+    /**
+     * Default action
+     * @var string
+     */
 	public $defaultAction = 'admin';
 	
 	/**
@@ -42,19 +52,16 @@ class GroupController extends AdminController
 			'model'=>$this->loadModel($id),
 		));
 	}
-
 	
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @see Group
 	 */
 	public function actionCreate()
 	{
 		$model=new Group;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
+		
 		if(isset($_POST['Group']))
 		{		  
 			$model->attributes=$_POST['Group'];  
@@ -69,7 +76,6 @@ class GroupController extends AdminController
 		));
 	}
 	
-
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
@@ -78,9 +84,7 @@ class GroupController extends AdminController
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		
 		if(isset($_POST['Group']))
 		{
 			$model->attributes=$_POST['Group'];
@@ -99,6 +103,7 @@ class GroupController extends AdminController
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
+	 * @throws CHttpException
 	 */
 	public function actionDelete($id)
 	{
@@ -107,28 +112,16 @@ class GroupController extends AdminController
 			// we only allow deletion via POST request
 			$this->loadModel($id)->delete();
 
-			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
 				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 		}
 		else
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
-
-	/**
-	 * Lists all models.
-	 */
-	/*
-	public function actionIndex()
-	{
-		$dataProvider=new CActiveDataProvider('Group');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
-	}
-	*/
+	
 	/**
 	 * Manages all models.
+	 * @see Group
 	 */
 	public function actionAdmin()
 	{
@@ -142,10 +135,15 @@ class GroupController extends AdminController
 		));
 	}
     
-    
+    /**
+     * Получение списка пользователей
+     * @deprecated
+     */
     public function actionGetListUsers()
     {           
-        if (!Yii::app()->request->isAjaxRequest) return;
+        throw new CHttpException(410);
+        if (!Yii::app()->request->isAjaxRequest) 
+            return;
         $model = new User('search');
         $model->unsetAttributes();  // clear any default values
         if(isset($_GET['User']))
@@ -153,14 +151,16 @@ class GroupController extends AdminController
             
         $this->renderPartial('_ajaxGridViewUsers', array(
             'model'=>$model,     
-        ), false, true);
-             
+        ), false, true);            
     }
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @uses self::actionView()
+	 * @uses self::actionUpdate()
+	 * @uses self::actionDelete()
 	 */
 	public function loadModel($id)
 	{
@@ -173,6 +173,7 @@ class GroupController extends AdminController
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{

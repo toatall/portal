@@ -17,12 +17,9 @@ $this->menu = array_merge($this->menu, array(
 		array('label'=>'Структура отдела','url'=>array('department/updateStructure', 'id'=>$model->id), 'icon'=>'list-alt'),
 ));
 endif;
-
 ?>
 
 <h1>Настройки отдела <?= $model->concatened; ?></h1>
-
-
 <?php 
 	$this->widget('bootstrap.widgets.TbAlert', array('block'=>true));
 ?>
@@ -63,12 +60,12 @@ endif;
 	});
 </script>	
 	
-	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'=>'submit',
-			'type'=>'primary',
-			'label'=>'Сохранить',
-		)); ?>
-	</div>
+    <div class="form-actions">
+    	<?php $this->widget('bootstrap.widgets.TbButton', array(
+    		'buttonType'=>'submit',
+    		'type'=>'primary',
+    		'label'=>'Сохранить',
+    	)); ?>
+    </div>
 
 <?php $this->endWidget(); ?>

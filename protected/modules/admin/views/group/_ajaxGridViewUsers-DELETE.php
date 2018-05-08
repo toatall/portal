@@ -1,5 +1,5 @@
 <?php 
-
+throw new CHttpException(410, 'Будет удалено!');
      $this->widget('bootstrap.widgets.TbGridView',array(
         'id'=>'groupUsersGrid',
         'dataProvider'=>$model->search(array(),true),

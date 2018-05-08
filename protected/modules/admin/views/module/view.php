@@ -28,7 +28,7 @@ $this->menu=array(
 		'description',		
         array(
             'name'=>'date_create',
-            'value'=>date('d.m.Y H:i:s', strtotime($model->date_create)),
+            'value'=>DateHelper::explodeDateTime($model->date_create),
         ),
 		'author',
         array(
@@ -38,9 +38,8 @@ $this->menu=array(
         array(
             'name'=>'log_change',
             'type'=>'raw',
-            'value'=>LogChange::getLog($model->log_change),//Module::model()->readLog($model->log_change),
-        ),
-        
+            'value'=>$model->logChangeText,
+        ),        
 	),
 )); ?>
 

@@ -1,4 +1,5 @@
 <?php
+
 $this->breadcrumbs=array(
 	'Рейтинги'=>array('admin','idTree'=>$model->id_tree),
 	$model->name=>array('view','id'=>$model->id),

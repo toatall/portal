@@ -24,6 +24,6 @@
             $('#detail-log-change').removeClass('icon-circle-arrow-down').addClass('icon-circle-arrow-up');
         } else {
             $('#detail-log-change').removeClass('icon-circle-arrow-up').addClass('icon-circle-arrow-down');
-        }      
+        }
     });
 </script>

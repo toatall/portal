@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Manage sectins 
+ * @author alexeevich
+ * @see AdminController
+ * @todo WTF
+ * @deprecated
+ */
 class SectionController extends AdminController
 {
 	/**
@@ -30,16 +37,22 @@ class SectionController extends AdminController
 	}
     
     /** выражение, для проверки доступа пользователя к разделу */
+	/**
+	 * Функция для определения доступа пользователя
+	 * @throws CHttpException
+	 * @return boolean
+	 */
     public static function allowSection()
     {
+        throw new CHttpException(410);
         if (!isset($_GET['id_tree']))
             throw new CHttpException(400, "Неверный запрос. Не указан id_tree-параметр!");
         if (!is_numeric($_GET['id_tree']))
-            throw new CHttpException(400, "Неверный запрос. Ошибочное значение id_tree-параметра!");        
+            throw new CHttpException(400, "Неверный запрос. Ошибочное значение id_tree-параметра!");
         $id = $_GET['id_tree'];
         if (!Tree::model()->exists('id=:id', array(':id'=>$id)))
             throw new CHttpException(400, "Неверный запрос. Раздел с ИД $id не найден!");
-        return (($model = Yii::app()->db->createCommand("select count(*) as res_access from p_func_tree_node_access($id,".Yii::app()->user->id.")")->queryAll())
+        return (($model = Yii::app()->db->createCommand("select count(*) as res_access from p_func_tree_node_access($id," . Yii::app()->user->id . ")")->queryAll())
             && $model[0]['res_access']);
     } 
 

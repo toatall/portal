@@ -1,8 +1,16 @@
 <?php
 
+/**
+ * Manage rating data
+ * @author alexeevich
+ * @see AdminController
+ */
 class RatingDataController extends AdminController
 {
-	
+	/**
+	 * Default action
+	 * @var string
+	 */
 	public $defaultAction = 'admin';
 
 	/**
@@ -46,14 +54,14 @@ class RatingDataController extends AdminController
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $idTree идентификатор структуры
+	 * @see FileHelper
+	 * @see RatingData
 	 */
 	public function actionCreate($idTree)
 	{
 		$model=new RatingMain;
 		$modelTree = $this->loadModelTree($idTree);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['RatingMain']))
 		{
@@ -77,6 +85,7 @@ class RatingDataController extends AdminController
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
+	 * @see FileHelper
 	 */
 	public function actionUpdate($id)
 	{
@@ -106,6 +115,8 @@ class RatingDataController extends AdminController
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
+	 * @see FileHelper
+	 * @throws CHttpException
 	 */
 	public function actionDelete($id)
 	{
@@ -131,9 +142,10 @@ class RatingDataController extends AdminController
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
-
 	/**
 	 * Manages all models.
+	 * @param integer $idTree идентификатор структуры
+	 * @see RatingMain
 	 */
 	public function actionAdmin($idTree)
 	{
@@ -149,9 +161,11 @@ class RatingDataController extends AdminController
 		));
 	}
 	
-	
-	
-	
+	/**
+	 * Управление данными рейтинга
+	 * @param integer $id идентификатор рейтинга
+	 * @see RatingData
+	 */
 	public function actionAdminRating($id)
 	{
 		$modelRatingMain = $this->loadModelRatingMain($id);
@@ -159,6 +173,7 @@ class RatingDataController extends AdminController
 		$model=new RatingData('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->id_rating_main = $id;
+		
 		if(isset($_GET['RatingData']))
 		{	
 			$model->attributes=$_GET['RatingData'];
@@ -170,8 +185,11 @@ class RatingDataController extends AdminController
 		));
 	}
 	
-	
-	
+	/**
+	 * Создание документа рейтинга
+	 * @param integer $id идентификатор рейтинга
+	 * @see RatingData
+	 */
 	public function actionCreateRating($id)
 	{		
 		$model=new RatingData;
@@ -180,30 +198,23 @@ class RatingDataController extends AdminController
 		$model->rating_year = date('Y');
 		$model->rating_period = date('m') . '_1_mes';
 		
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-		
-		if(isset($_POST['RatingData']))
-		{
+		if(isset($_POST['RatingData'])) {
 			$model->attributes=$_POST['RatingData'];
 			$model->id_rating_main = $modelRatingMain->id;
 				
-			if($model->save())
-			{
-				$model->saveFiles(); // @todo if not save files?
+			if($model->save()) {
+				$model->saveFiles(); 
 				$this->redirect(array('viewRating','id'=>$model->id));
 			}
 		}
 		
-		if (Yii::app()->request->isAjaxRequest)
-		{
+		if (Yii::app()->request->isAjaxRequest) {
 		    $this->renderPartial('createRating',array(
 		        'model'=>$model,
 		        'modelRatingMain'=>$modelRatingMain,
 		    ),false,true);
 		}
-		else
-		{
+		else {
 		    $this->render('createRating',array(
 		        'model'=>$model,
 		        'modelRatingMain'=>$modelRatingMain,
@@ -211,16 +222,15 @@ class RatingDataController extends AdminController
 		}
 	}
 	
-	
-		
+	/**
+	 * Изменение документа рейтинга
+	 * @param integer $id идентификатор документа рейтинга
+	 */	
 	public function actionUpdateRating($id)
 	{
 		$model=$this->loadModelRatingData($id);
 		$this->loadModelTree($model->ratingMain->id_tree);  // check access user
-	
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-	
+			
 		if(isset($_POST['RatingData']))
 		{
 			$model->attributes=$_POST['RatingData'];
@@ -240,17 +250,18 @@ class RatingDataController extends AdminController
 				$model->deleteFiles($delFile);
 				
 				$this->redirect(array('viewRating','id'=>$model->id));
-			}			
+			}
 		}
-	
+		
 		$this->render('updateRating',array(
 			'model'=>$model,
 		));
 	}
 	
-	
-	
-	
+	/**
+	 * Просмотр документа рейтинга
+	 * @param integer $id идентификатор рейтинга
+	 */
 	public function actionViewRating($id)
 	{
 	    $model = $this->loadModelRatingData($id);
@@ -260,8 +271,11 @@ class RatingDataController extends AdminController
 		));
 	}
 	
-	
-	
+	/**
+	 * Удаление документа рейтинга
+	 * @param integer $id идентификатор документа рейтинга
+	 * @throws CHttpException
+	 */
 	public function actionDeleteRating($id)
 	{
 		if(Yii::app()->request->isPostRequest)
@@ -280,13 +294,13 @@ class RatingDataController extends AdminController
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 	
-	
-	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
 	 * @return RatingMain
+	 * @uses self::actionView()
+	 * @uses self::actionUpdate()
 	 */
 	public function loadModel($id)
 	{
@@ -296,12 +310,18 @@ class RatingDataController extends AdminController
 		return $model;
 	}
 	
-	
 	/**
-	 * Load model for Tree
-	 * @param int $id
+	 * Поиск структуры по идентификатору
+	 * @param int $id идентификатор структруы
 	 * @throws CHttpException
 	 * @return NULL|Tree
+	 * @uses self::actionCreate()
+	 * @uses self::actionUpdate()
+	 * @uses self::actionAdmin()
+	 * @uses self::actionAdminRating()
+	 * @uses self::actionUpdateRating()
+	 * @uses self::actionViewRating()
+	 * @uses self::actionDeleteRating()
 	 */
 	public function loadModelTree($id)
 	{
@@ -313,10 +333,12 @@ class RatingDataController extends AdminController
 		return $model;
 	}
 	
-	
 	/**
-	 * Load model for RatingData
-	 * @param int $id
+	 * Поиск рейтинга по идентификатору
+	 * @param int $id идентификатор рейтинга
+	 * @return RatingData
+	 * @uses self::actionAdminRating()
+	 * @uses self::actionCreateRating()
 	 */
 	public function loadModelRatingMain($id)
 	{
@@ -326,7 +348,17 @@ class RatingDataController extends AdminController
 		return $model;
 	}
 	
-	
+	/**
+	 * Поиск документа рейтинга по идентификатору
+	 * @param integer $id идентификатор документа рейтинга
+	 * @throws CHttpException
+	 * @see RatingData
+	 * @see Tree
+	 * @return RatingData
+	 * @uses self::actionUpdateRating()
+	 * @uses self::actionViewRating()
+	 * @uses self::actionDeleteRating()
+	 */
 	public function loadModelRatingData($id)
 	{		
 		$model=RatingData::model()->findByPk($id);
@@ -336,14 +368,15 @@ class RatingDataController extends AdminController
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
 	}
-	
-	
+		
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{
+	    throw new CHttpException(410);
 		if(isset($_POST['ajax']) && $_POST['ajax']==='rating-main-form')
 		{
 			echo CActiveForm::validate($model);

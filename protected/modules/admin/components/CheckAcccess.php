@@ -4,9 +4,12 @@
  * 
  * Дата создания: 07.08.2014
  * Дата изменения: 08.08.2014
- * 
  **/
- 
+/**
+ * 
+ * @author 8600-90331
+ * @deprecated
+ */
 class CheckAcccess extends CComponent
 {
     
@@ -23,8 +26,8 @@ class CheckAcccess extends CComponent
                 {,actions=array('index'|,'admin'|,'create'|,'edit'|,'delete')}
                 ,users=>array('имя текущего пользователя')
             )
+       @deprecated
     **/         
-         
     public static function getAccessRight($section_id, $org_id=0)
     {               
         if (Yii::app()->user->role_admin) return array('allow', 'users'=>array(Yii::app()->user->name));

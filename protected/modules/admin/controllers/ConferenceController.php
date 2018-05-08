@@ -1,9 +1,17 @@
 <?php
 
-
+/**
+ * Управление мероприятиями
+ * @author alexeevich
+ * @see AdminController
+ * @see Conference
+ */
 class ConferenceController extends AdminController
 {
-    
+    /**
+     * Default action
+     * @var string
+     */
     public $defaultAction = 'admin';
 
 	/**
@@ -47,6 +55,7 @@ class ConferenceController extends AdminController
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @see Conference
 	 */
 	public function actionCreate()
 	{		
@@ -56,9 +65,6 @@ class ConferenceController extends AdminController
         $model->duration = '01:00';
         $model->type_conference = Conference::TYPE_CONFERENCE;
         $this->checkAccess($model);
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
         
 		if(isset($_POST['Conference']))
 		{
@@ -66,11 +72,10 @@ class ConferenceController extends AdminController
 			if($model->save())
 				$this->redirect(array('view', 'id'=>$model->id));
 		}
-
+		
 		$this->render('/conference/create',array(
 			'model'=>$model,
-		));
-		
+		));		
 	}
 
 	/**
@@ -82,14 +87,10 @@ class ConferenceController extends AdminController
 	{
 		$model=$this->loadModel($id);
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
 		if(isset($_POST['Conference']))
 		{
-			$model->attributes=$_POST['Conference'];
-            //$model->action_log = $model->writeLog($model->action_log, 'изменение');
-			if($model->save())
+			$model->attributes=$_POST['Conference'];            
+			if ($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
 
@@ -109,10 +110,8 @@ class ConferenceController extends AdminController
 		{
 			if (!Yii::app()->user->admin)
             {
-                $model = $this->loadModel($id);
-                
-                $model->date_delete = new CDbExpression('getdate()');
-                //$model->action_log = $model->writeLog($model->action_log, 'удаление');
+                $model = $this->loadModel($id);                
+                $model->date_delete = new CDbExpression('getdate()');                
                 $model->save();                
             }
             else		  
@@ -129,10 +128,11 @@ class ConferenceController extends AdminController
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 	
-	
 	/**
 	 * Проверка прав пользователя
 	 * @throws CHttpException
+	 * @uses self::actionCreate()
+	 * @uses self::actionAdmin()
 	 */
 	private function checkAccess($model)
 	{
@@ -142,7 +142,8 @@ class ConferenceController extends AdminController
 	}
 
 	/**
-	 * Manages all models.
+	 * Управление мероприятиями
+	 * @see Conference
 	 */
 	public function actionAdmin()
 	{
@@ -150,9 +151,10 @@ class ConferenceController extends AdminController
 		$model->unsetAttributes();  // clear any default values
 		$model->type_conference = Conference::TYPE_CONFERENCE;
 		$this->checkAccess($model);
+		
 		if(isset($_GET['Conference']))
 			$model->attributes=$_GET['Conference'];
-
+		
 		$this->render('/conference/admin',array(
 			'model'=>$model,			
 		));
@@ -162,6 +164,8 @@ class ConferenceController extends AdminController
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @uses self::actionUpdate()
+	 * @uses self::actionDelete()
 	 */
 	public function loadModel($id)
 	{  
@@ -175,6 +179,7 @@ class ConferenceController extends AdminController
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{

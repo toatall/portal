@@ -5,8 +5,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(	
-	array('label'=>'Создать','url'=>array('create', 'idTree'=>$model->id_tree), 'icon'=>'asterisk'),
-	
+	array('label'=>'Создать','url'=>array('create', 'idTree'=>$model->id_tree), 'icon'=>'asterisk'),	
 	array('label'=>'<hr />','type'=>'raw'),
 	array('label'=>'Настройка отдела','url'=>array('options', 'id'=>$modelDepartment->id, 'idTree'=>$model->id_tree), 'icon'=>'cog'),
 );
@@ -17,15 +16,10 @@ if ($modelDepartment->use_card):
 		array('label'=>'Структура отдела','url'=>array('department/updateStructure', 'id'=>$modelDepartment->id), 'icon'=>'list-alt'),
 	));
 endif;
-
-
 ?>
 
 <h1>Страницы (<?= $modelDepartment->concatened ?>)</h1>
-
 <p>
-
-
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'department-news-grid',
 	'dataProvider'=>$model->search(),

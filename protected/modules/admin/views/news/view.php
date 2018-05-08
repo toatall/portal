@@ -70,7 +70,6 @@ $this->menu=array(
 
 <?php $this->widget('bootstrap.widgets.TbDetailView',array(
 	'data'=>$model,
-    //'htmlOptions'=>array('style'=>'color:red;'),
 	'attributes'=>array(        
 		'id',
         array(
@@ -108,7 +107,7 @@ $this->menu=array(
         array(
             'name'=>'log_change',
             'type'=>'raw',
-            'value'=>LogChange::getLog($model->log_change),
+            'value'=>$model->logChangeText,
         ),   
         
 	),

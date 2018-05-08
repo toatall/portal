@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @deprecated
+ */
 class JornalRequestController extends AdminController
 {
 	
@@ -36,6 +39,7 @@ class JornalRequestController extends AdminController
 	 */
 	public function actionView($id,$idTree)
 	{
+	    throw new CHttpException(410);
 		$this->render('view',array(
 			'model'=>$this->loadModel($id,$idTree),
             'idTree'=>$idTree,
@@ -48,7 +52,7 @@ class JornalRequestController extends AdminController
 	 */
 	public function actionCreate($idTree)
 	{
-		
+		throw new CHttpException(410);
         if (!Tree::model()->exists('id=:id AND module=:module', array(':id'=>$idTree,'module'=>'jornalRequest')))
             throw new CHttpException(404,'Страница не найдена.');
         
@@ -80,6 +84,7 @@ class JornalRequestController extends AdminController
 	 */
 	public function actionUpdate($id,$idTree)
 	{
+	    throw new CHttpException(410);
 		$model=$this->loadModel($id,$idTree);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -105,6 +110,7 @@ class JornalRequestController extends AdminController
 	 */
 	public function actionDelete($id)
 	{
+	    throw new CHttpException(410);
 		if(Yii::app()->request->isPostRequest)
 		{
 			// we only allow deletion via POST request
@@ -124,7 +130,7 @@ class JornalRequestController extends AdminController
 	 */
 	public function actionAdmin($idTree)
 	{
-	   
+        throw new CHttpException(410);
         if (!Tree::model()->exists('id=:id AND module=:module', array(':id'=>$idTree,'module'=>'jornalRequest')))
             throw new CHttpException(404,'Страница не найдена.');
         
@@ -149,7 +155,8 @@ class JornalRequestController extends AdminController
 	 */
 	public function loadModel($id,$idTree)
 	{
-		if (!Tree::model()->exists('id=:id AND module=:module', array(':id'=>$idTree,'module'=>'jornalRequest')))
+		throw new CHttpException(410);
+	    if (!Tree::model()->exists('id=:id AND module=:module', array(':id'=>$idTree,'module'=>'jornalRequest')))
             throw new CHttpException(404,'Страница не найдена.');
         
         if (!(Yii::app()->user->admin || Access::model()->checkAccessUserForTree($idTree)))
@@ -164,6 +171,7 @@ class JornalRequestController extends AdminController
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{

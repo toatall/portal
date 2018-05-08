@@ -8,14 +8,11 @@
 	'htmlOptions'=>array('enctype'=>'multipart/form-data'),
 )); 
 ?>
-
 	<p class="help-block">Поля обозначенные <span class="required">*</span> обязательны для заполнения.</p>
 
 	<?php echo $form->errorSummary($model); ?>
 	
 	<?php echo $form->hiddenField($model,'id_department'); ?>	
-	
-	<?php //echo $form->textFieldRow($model,'id_user',array('class'=>'span5')); ?>
 
 	<?php echo $form->textFieldRow($model,'user_fio',array('class'=>'span5','maxlength'=>500)); ?>
 
@@ -39,7 +36,4 @@
 		)); ?>
 	</div>
 
-
-
-	
 <?php $this->endWidget(); ?>

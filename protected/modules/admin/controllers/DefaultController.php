@@ -1,15 +1,26 @@
 <?php
 
+/**
+ * Default controller
+ * @author alexeevich
+ */
 class DefaultController extends AdminController
 {            
-    
+    /**
+     * Perform access control for CRUD operations
+     */
     public function filters()
 	{
 		return array(
-			'accessControl', // perform access control for CRUD operations
+			'accessControl',
 		);
 	}
-        
+      
+	/**
+	 * Specifies the access control rules.
+	 * This method is used by the 'accessControl' filter.
+	 * @return array access control rules
+	 */
     public function accessRules()
 	{
 		return array(
@@ -23,12 +34,10 @@ class DefaultController extends AdminController
             ),
 			array('deny',  // deny all users
 				'users'=>array('*'),
-			),				    
-				
+			),
 		);
 	}
-    
-       
+           
 	/**
 	 * Страница по-умолчанию (главная страница)
 	 */
@@ -36,14 +45,15 @@ class DefaultController extends AdminController
 	{	        
 		$this->render('index');		
 	}
-    
-	
+    	
     /**
 	 * Аутентефикация пользователя
+	 * @param string $url
+	 * @see User
+	 * @see UserIdentity
 	 */
 	public function actionLogin($url=null)
-	{
-				
+	{			
 		$username = null;
 		
 		if (isset($_SERVER['AUTH_USER']) && !empty($_SERVER['AUTH_USER']))
@@ -55,8 +65,6 @@ class DefaultController extends AdminController
 			$username = User::GUEST_NAME;
 				
 		$identity = new UserIdentity($username,'');
-		
-		
 		
 		if ($identity->authenticate())
 		{
@@ -74,31 +82,7 @@ class DefaultController extends AdminController
 		else
 		{
 			$this->render('error_login');
-		}
-		
-		
-		// @todo переадресация на страницу ошибки аутентефикации		
-		
-		
-		/*		
-		$model=new LoginForm;
-		
-		if (!isset($_SESSION['auth_login']) || empty($_SESSION['auth_login']) || ($_SESSION['auth_login'] == 'guest'))
-		{
-			$this->render('error_login');
-			Yii::app()->end();
-		}
-		
-		$model->username = $_SESSION['auth_login'];
-		if ($model->login())
-		{
-			$url = ($url!==null) ? $url : ['/admin/default/index'];
-			$this->redirect($url);
-		}
-		
-		$this->render('error_login');
-		*/
-		
+		}			
 	}
     
     /**
@@ -110,7 +94,9 @@ class DefaultController extends AdminController
 		$this->redirect(array('/admin/default/login'));
 	}
     
-	
+	/**
+	 * Страница вывода информации об ошибке
+	 */
     public function actionError()
 	{
 		if($error=Yii::app()->errorHandler->error)
@@ -122,10 +108,10 @@ class DefaultController extends AdminController
 		}
 	}
     
-    
     /** 
      * Изменение кода НО и редирект на прошлую страницу
-     * @param code string - код НО
+     * @param code string код организации
+     * @throws CHttpException
      */ 
     public function actionChangeCode($code) 
     {
@@ -136,62 +122,20 @@ class DefaultController extends AdminController
             throw new CHttpException(400, "Неверный запрос. Указан не существующий код налогового органа!");         
         
         if (!User::checkRightOrganization($code))
-        {
-            //throw new CHttpException(403, "Вам запрещен доступ к данному налоговому органу!");
+        {           
             $this->render('default/error_login');
             Yii::app()->end();
-        }
-        
-        User::changeOrganization($code);
-        
-        DefaultController::redirect(Yii::app()->request->urlReferrer);
+        }        
+        User::changeOrganization($code);        
+        self::redirect(Yii::app()->request->urlReferrer);
     }
     
-    
-    
-    
-    /** ФНКЦИИ ДЛЯ ГЛАВНОЙ СТРАНИЦЫ **/
-    /*
-    public function treeGeneralPage($id_parent=0)
-    {        
-        $data = array();
-        $orgData = Tree::model()->findAll(array(
-            'order'=>'sort ASC, name ASC',
-            'condition'=>'id_parent=:id_parent AND id<>:id', 
-            'params'=>array(':id_parent'=>$parent_id, ':id'=>$id)            
-        ));
-        foreach ($orgData as $value)
-        {                             
-            $data[] = array(
-                'id'=>$value->id, 
-                'text'=>'<i class="icon-folder-open"></i>&nbsp;'
-                    .$value->name.'&nbsp'
-                    .CHtml::link('<i class="icon-eye-open"></i>', 
-                        array('view', 'id'=>$value->id),
-                        array('class'=>'view', 'data-original-title'=>'Просмотреть', 'rel'=>'tooltip')).'&nbsp'
-                    .CHtml::link('<i class="icon-pencil"></i>', 
-                        array('update', 'id'=>$value->id),
-                        array('class'=>'update', 'data-original-title'=>'Редактировать', 'rel'=>'tooltip')).'&nbsp'
-                    .CHtml::link('<i class="icon-trash"></i>', 
-                        '#', 
-                        array(
-                            'submit'=>array('delete', 'id'=>$value->id),
-                            'confirm'=>'Вы уверены что хотите удалить "'.$value->name.'"? Все дочерние подразделы будут удалены!',
-                            'class'=>'delete',
-                            'data-original-title'=>'Удалить',
-                            'rel'=>'tooltip',
-                        )
-                    ),
-                'children'=>$this->getTree($id, $value->id),
-            );
-        }
-        return $data;
-        
-    }            */
-    
-    
+    /**
+     * @deprecated что это?
+     */
     public function actionAjaxSections()
     {
+        throw new CHttpException(410);
         if (!isset($_POST['org'])) {
             echo 'Нет параметра org!';
         }
@@ -200,8 +144,9 @@ class DefaultController extends AdminController
         }
     }
     
-    
-    
+    /**
+     * Справка
+     */
     public function actionHelp()
     {
         $this->render('help');

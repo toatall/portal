@@ -8,10 +8,8 @@ $this->breadcrumbs=array(
 
 
 $this->menu=array(
-	array('label'=>'Список','url'=>array('index'), 'icon'=>'list'),
 	array('label'=>'Создать','url'=>array('create'), 'icon'=>'asterisk'),
 	array('label'=>'Просмотр','url'=>array('view','id'=>$model->id), 'icon'=>'eye-open'),
-	array('label'=>'Изменить профиль','url'=>array('profile/update','id'=>$model->id), 'icon'=>'pencil'),
 	array('label'=>'Управление','url'=>array('admin'), 'icon'=>'user'),
 );
 ?>

@@ -1,8 +1,17 @@
 <?php
 
+/**
+ * Управление сотрудниками отдела
+ * @author alexeevich
+ * @see AdminController
+ * @see DepartmentCard
+ */
 class DepartmentCardController extends AdminController
 {
-	
+	/**
+	 * Default action
+	 * @var string
+	 */
 	public $defaultAction = 'admin';
 
 	/**
@@ -46,33 +55,29 @@ class DepartmentCardController extends AdminController
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @param int $idDepartment идентификатор отдела
+	 * @see DepartmentCard
 	 */
 	public function actionCreate($idDepartment)
 	{
-	    
-	    $this->loadModelByUser($idDepartment);
+	    $this->userDepartmentRight($idDepartment);	    
 	    
 		$model=new DepartmentCard;
 		$model->id_department = $idDepartment;		
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
 		if(isset($_POST['DepartmentCard']))
-		{
-		    
+		{		    
 			$model->attributes=$_POST['DepartmentCard'];
 			if($model->save())
 			{				
 				$model->loadFilePhoto($model);
 				$this->redirect(array('department/updateStructure','id'=>$model->id_department));
 			}			
-		}
+		}		
 		
 		$this->render('create',array(
 			'model'=>$model,
-		));
-		
+		));		
 	}
 
 	/**
@@ -81,15 +86,10 @@ class DepartmentCardController extends AdminController
 	 * @param integer $id the ID of the model to be updated
 	 */
 	public function actionUpdate($id)
-	{
-	    
-		$model=$this->loadModel($id);
-        
-		$this->loadModelByUser($model->id_department);
+	{	    
+		$model=$this->loadModel($id);        
+		$this->userDepartmentRight($model->id_department);
 		
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
 		if(isset($_POST['DepartmentCard']))
 		{
 			$model->attributes=$_POST['DepartmentCard'];
@@ -99,7 +99,7 @@ class DepartmentCardController extends AdminController
 				$this->redirect(array('department/updateStructure','id'=>$model->id_department));
 			}
 		}
-
+		
 		$this->render('update',array(
 			'model'=>$model,
 		));
@@ -113,14 +113,13 @@ class DepartmentCardController extends AdminController
 	public function actionDelete($id)
 	{
 	    if (!Yii::app()->user->inRole('admin'))
-	        throw new CHttpException(403,'У вас недостаточно прав для выполнения указанного действия.');
+	        throw new CHttpException(403, 'У вас недостаточно прав для выполнения указанного действия.');
 	    
 		if(Yii::app()->request->isPostRequest)
 		{
 		    $model = $this->loadModel($id);		    
 			// we only allow deletion via POST request
 			$model->delete();
-
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
 				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
@@ -131,9 +130,11 @@ class DepartmentCardController extends AdminController
 
 	/**
 	 * Lists all models.
+	 * @deprecated
 	 */
 	public function actionIndex()
 	{
+	    throw new CHttpException(410);
 		$dataProvider=new CActiveDataProvider('DepartmentCard');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
@@ -142,6 +143,7 @@ class DepartmentCardController extends AdminController
 
 	/**
 	 * Manages all models.
+	 * @see DepartmentCard
 	 */
 	public function actionAdmin()
 	{
@@ -159,6 +161,9 @@ class DepartmentCardController extends AdminController
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @uses self::actionView()
+	 * @uses self::actionUpdate()
+	 * @uses self::actionDelete()
 	 */
 	public function loadModel($id)
 	{
@@ -172,6 +177,7 @@ class DepartmentCardController extends AdminController
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{
@@ -182,11 +188,17 @@ class DepartmentCardController extends AdminController
 		}
 	}
 	
-	
-	private function loadModelByUser($id)
+	/**
+	 * Проверка прав пользователя к отделу с идентфиикатором $id
+	 * @param int $id идентификатор отдела
+	 * @throws CHttpException
+	 * @uses self::actionCreate()
+	 * @uses self::actionUpdate()
+	 */
+	private function userDepartmentRight($id)
 	{
 	    if (!Department::checkAccessUser($id))
-	        throw new CHttpException(403,'У вас недостаточно прав для выполнения указанного действия.');	        
+	        throw new CHttpException(403,'У вас недостаточно прав для выполнения указанного действия.');
 	}
 	
 	

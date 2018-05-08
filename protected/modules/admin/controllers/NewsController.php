@@ -1,8 +1,17 @@
 <?php
 
+/**
+ * Manager news
+ * @author alexeevich
+ * @see AdminController
+ * @see News
+ */
 class NewsController extends AdminController
 {
-	
+	/**
+	 * Default action
+	 * @var string
+	 */
 	public $defaultAction = 'admin';
 	
 	/**
@@ -35,6 +44,7 @@ class NewsController extends AdminController
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
+	 * @param integer $idTree идентификатор структуры
 	 */
 	public function actionView($id, $idTree)
 	{
@@ -47,17 +57,18 @@ class NewsController extends AdminController
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $idTree идентификатор структуры
+	 * @throws CHttpException
+	 * @see News
 	 */
 	public function actionCreate($idTree)
 	{        
-        
 		$modelTree=$this->loadModelTree($idTree);
 		
         if (!(Yii::app()->user->admin || Access::checkAccessUserForTree($idTree)))
             throw new CHttpException(403,'Доступ запрещен.');
             
-        $model=new News;
-        
+        $model=new News;        
         $model->id_tree = $idTree;
         $model->flag_enable = true;
         $model->date_start_pub = date('d.m.Y');
@@ -72,17 +83,14 @@ class NewsController extends AdminController
         {
         	$model->on_general_page = 0;
         }
-        
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['News']))
 		{
 			$model->attributes=$_POST['News'];
-            $model->log_change = LogChange::setLog($model->log_change, 'создание');
+            $model->log_change = Log::setLog($model->log_change, 'создание');
                                     
-			if($model->save()) {
-			    
+			if($model->save()) 
+			{			    
                 // сохраняем файлы                
                 $model->saveFiles($model->id, $idTree);
                 // сохраняем изображения
@@ -90,9 +98,8 @@ class NewsController extends AdminController
                 // сохраняем миниатюра изображения
                 $model->saveThumbailForNews($model);
                 
-                $this->redirect(array('view','id'=>$model->id, 'idTree'=>$idTree));  
-                              
-			}				
+                $this->redirect(array('view','id'=>$model->id, 'idTree'=>$idTree));
+			}
 		}
 
 		$this->render('create',array(
@@ -105,27 +112,26 @@ class NewsController extends AdminController
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
+	 * @param integer $idTree идентификатор структуры
+	 * @see Log
 	 */
 	public function actionUpdate($id, $idTree)
-	{
- 
+	{ 
 		$model=$this->loadModel($id, $idTree);
 		$modelTree=$this->loadModelTree($idTree);
-        $model->id_tree = $idTree;
+        
+		$model->id_tree = $idTree;
         $model->author = Yii::app()->user->name;
         if ($modelTree->use_tape) $model->general_page=0;
         $oldImageName = $model->thumbail_image;                
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
 		if(isset($_POST['News']))
 		{
 			$model->attributes=$_POST['News'];            
-            $model->log_change = LogChange::setLog($model->log_change, 'изменение');
+            $model->log_change = Log::setLog($model->log_change, 'изменение');
             
-			if($model->save()) {
-                
+			if($model->save()) 
+			{                
                 // файлы для удаления
                 if (isset($_POST['News']['deleteFile']))
                     { $delFile = $_POST['News']['deleteFile']; }
@@ -147,10 +153,8 @@ class NewsController extends AdminController
                 $model->saveThumbailForNews($model,$oldImageName);
                 
 			    $this->redirect(array('view','id'=>$model->id, 'idTree'=>$idTree));
-            }
-            /*print_r($model->attributes);*/
+            }         
 		}
-
 		$this->render('update',array(
 			'model'=>$model,
 			'modelTree'=>$modelTree,
@@ -161,6 +165,10 @@ class NewsController extends AdminController
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
+	 * @param integer $idTree идентификатор структуры
+	 * @see Log
+	 * @see News
+	 * @throws CHttpException
 	 */
 	public function actionDelete($id, $idTree)
 	{
@@ -170,7 +178,7 @@ class NewsController extends AdminController
             {
                 $model = $this->loadModel($id, $idTree);                
                 $model->date_delete = new CDbExpression('getdate()');
-                $model->log_change = LogChange::setLog($model->log_change,'удаление');
+                $model->log_change = Log::setLog($model->log_change,'удаление');
                 $model->save();                
             }
             else		  
@@ -179,7 +187,8 @@ class NewsController extends AdminController
     			$this->loadModel($id, $idTree)->delete();
                 
                 // удаляем все файлы и изображения
-                News::model()->DeleteFilesImages($id,
+                $model = News::model();
+                $model->deleteFilesImages($id,
                     CHtml::listData(Yii::app()->db->createCommand(array(
                             'select'=>'id',
                             'from'=>'{{file}}',
@@ -197,7 +206,7 @@ class NewsController extends AdminController
                     $idTree
                 );    			
             }
-
+            
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
 				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin', 'idTree'=>$idTree));
@@ -209,10 +218,15 @@ class NewsController extends AdminController
 
 	/**
 	 * Manages all models.
+	 * @param integer $idTree идентификатор структуры
+	 * @see Tree
+	 * @see NewsSearch
+	 * @see Access
+	 * @throws CHttpException
 	 */
 	public function actionAdmin($idTree)
-	{
-	   
+	{	   
+	    // проверка существования узла структуры
         if (!Tree::model()->exists('id=:id AND module=:module and '
         		. '(id_organization=:organization1 or id_organization=:organization2)', 
             array(
@@ -221,15 +235,16 @@ class NewsController extends AdminController
             	':organization1'=>Yii::app()->session['organization'],
             	':organization2'=>'0000',            		
             )))
-            throw new CHttpException(404,'Страница не найдена.');		
+            throw new CHttpException(404,'Страница не найдена.');
         
+        // проверка прав доступа к узлу
         if (!(Yii::app()->user->admin || Access::checkAccessUserForTree($idTree)))
             throw new CHttpException(403,'Доступ запрещен.');
             
         $model=new NewsSearch('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['News']))
-			$model->attributes=$_GET['News'];
+		if(isset($_GET['NewsSearch']))
+			$model->attributes=$_GET['NewsSearch'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -241,10 +256,17 @@ class NewsController extends AdminController
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @param integer $idTree идентификатор структуры
+	 * @see Access
+	 * @see News
+	 * @see Tree
+	 * @throws CHttpException
+	 * @uses self::actionView()
+	 * @uses self::actionUpdate()
+	 * @uses self::actionDelete()
 	 */
 	public function loadModel($id, $idTree)
-	{
-		    
+	{		    
         if (!(Yii::app()->user->admin || Access::checkAccessUserForTree($idTree))
             || !Tree::model()->checkParentRight($idTree))
             throw new CHttpException(403,'Доступ запрещен.');
@@ -258,14 +280,15 @@ class NewsController extends AdminController
 			throw new CHttpException(404,'Страница не найдена.');
 		return $model;		
 	}
-	
-	
+		
 	/**
 	 * Поиск данных Tree модели
 	 * Если данные не найдены возникает HTTP исключение 404
-	 * @param int $idTree
+	 * @param int $idTree идентификатор структуры
 	 * @throws CHttpException
 	 * @return Tree
+	 * @uses self::actionCreate()
+	 * @uses self::actionUpdate()
 	 */
 	public function loadModelTree($idTree)
 	{
@@ -277,18 +300,22 @@ class NewsController extends AdminController
 				,':organization2'=>'0000'
 			));
 	    if ($modelTree === null)
-                throw new CHttpException(404,'Страница не найдена.');
-	    
+                throw new CHttpException(404,'Страница не найдена.');	    
 	    return $modelTree;
 	}
-    
-    /** Восстановление записи **/
+       
+	/**
+	 * Восстановление удаленной записи
+	 * @param integer $id идентификатор новости
+	 * @param integer $idTree идентификатор структуры
+	 * @see Log
+	 */
     public function actionRestore($id, $idTree)
     {
         if (!Yii::app()->user->admin) return;
         $model=$this->loadModel($id, $idTree);
         $model->date_delete = new CDbExpression('null');
-        $model->log_change = LogChange::setLog($model->log_change,'восстановление');
+        $model->log_change = Log::setLog($model->log_change,'восстановление');
         $model->save();
         $this->redirect(array('view','id'=>$model->id, 'idTree'=>$idTree));     
     }    
@@ -296,6 +323,7 @@ class NewsController extends AdminController
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{
@@ -305,4 +333,5 @@ class NewsController extends AdminController
 			Yii::app()->end();
 		}
 	}
+	
 }

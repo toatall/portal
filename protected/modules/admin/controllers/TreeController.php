@@ -1,8 +1,16 @@
 <?php
 
+/**
+ * Manage tree
+ * @author alexeevich
+ * @see AdminController
+ */
 class TreeController extends AdminController
 {
-    
+    /**
+     * Default action
+     * @var string
+     */
     public $defaultAction = 'admin';
     
 	/**
@@ -44,12 +52,13 @@ class TreeController extends AdminController
 	}
 
 	/**
-	 * Создание нового раздела
-	 * 
+	 * Создание нового узла
+	 * @desc
 	 * Параметры доступные только для пользователя с ролью администратор
 	 * $allOrganization - для свех налоговых органов (для остальных пользователей = 0)
 	 * $module - модуль (для остальных пользователей news)
-	 * 
+	 * @see Tree
+	 * @see Access
 	 */
 	public function actionCreate()
 	{
@@ -60,7 +69,6 @@ class TreeController extends AdminController
 		if(isset($_POST['Tree']))
 		{            
 			$model->attributes=$_POST['Tree'];
-			
 			
 			if (!Yii::app()->user->admin)
 			{
@@ -81,15 +89,14 @@ class TreeController extends AdminController
                 $permissionUsers = (isset($_POST['Tree']['permissionUser'])) 
                     ? $_POST['Tree']['permissionUser'] : array();
                 
-                Access::saveRelationsPermissions($model->id, $model,
-                    $permissionGroups, $permissionUsers);
+                Access::saveRelationsPermissions($model->id, $model, $permissionGroups, $permissionUsers);
                 
                 /* дополнительные настройки прав */
                 $flagDopAccessModel=false;
                 if (($model->module != null) && (class_exists($model->module, false)) && (Yii::app()->user->admin))
                 {
                     $dopAccessModel = new $model->module;
-                    if ($dopAccessModel) $flagDopAccessModel=true;                    
+                    if ($dopAccessModel) $flagDopAccessModel=true;
                 }
                 
                 if ($flagDopAccessModel)
@@ -101,7 +108,7 @@ class TreeController extends AdminController
                     $this->redirect(array('view','id'=>$model->id));
                 }
             }
-		} // end save model
+		}
 
 		$this->render('create',array(
 			'model'=>$model,
@@ -112,14 +119,12 @@ class TreeController extends AdminController
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
+	 * @see Access
 	 */
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-        
+		
 		if(isset($_POST['Tree']))
 		{	
 			$model->attributes=$_POST['Tree'];
@@ -139,8 +144,7 @@ class TreeController extends AdminController
                     $permissionUsers = (isset($_POST['Tree']['permissionUser'])) 
                         ? $_POST['Tree']['permissionUser'] : array();
                     
-                    Access::saveRelationsPermissions($model->id, $model,
-                        $permissionGroups, $permissionUsers);
+                    Access::saveRelationsPermissions($model->id, $model, $permissionGroups, $permissionUsers);
                     
                     /* дополнительные настройки прав */
                     $flagDopAccessModel=false;
@@ -153,18 +157,15 @@ class TreeController extends AdminController
                             if ($dopAccessModel->hasProperty('useOptionalAccess') && $dopAccessModel->useOptionalAccess) 
                                 $flagDopAccessModel = true;
                             if (property_exists($model->module, 'useOptionalAccess'))
-                                $flagDopAccessModel = true;
-                            
+                                $flagDopAccessModel = true;                            
                         }                    
                     }
                     
                     if ($flagDopAccessModel)
                     {
                         return $this->redirect(array('access','id'=>$model->id));
-                    }
-                    
-                }
-                
+                    }                    
+                }                
                 return $this->redirect(array('view','id'=>$model->id));                                 
             }
 		}
@@ -173,20 +174,16 @@ class TreeController extends AdminController
 			'model'=>$model,
 		));
 	}
-    
-    
+        
 	/**
-	 * Действие для дополнительных настроек прав доступа,
-	 * например, для определенного списка инспекций
-	 * @param int $id
-	 * @throws CHttpException
-	 * @author oleg
+	 * Дополнительные настройки доступа (например, настройка доступа к организациям)
+	 * @param int $id идентификатор узла структуры
+	 * @throws CHttpException	
 	 */
     public function actionAccess($id)
     {
         if (!Yii::app()->user->admin)
             throw new CHttpException(403,'У вас недостаточно прав для выполнения указанного действия.');
-        
         
         $model=$this->loadModel($id);
         
@@ -203,7 +200,7 @@ class TreeController extends AdminController
         
             if ($flagAccess)
             {
-                return $this->render('../'.$model->module.'/access', array(
+                return $this->render('../' . $model->module . '/access', array(
             		'model'=>$model,
                     'module'=>$moduleClass,
                 ));
@@ -212,11 +209,11 @@ class TreeController extends AdminController
        	return $this->redirect(array('view','id'=>$id));                
     }
     
-    
 	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
+	 * @throws CHttpException
 	 */
 	public function actionDelete($id)
 	{
@@ -243,9 +240,10 @@ class TreeController extends AdminController
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 	
-
 	/**
 	 * Manages all models.
+	 * @see Tree
+	 * @throws CHttpException
 	 */
 	public function actionAdmin()
 	{
@@ -269,18 +267,21 @@ class TreeController extends AdminController
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @see Access
+	 * @see Tree
+	 * @uses self::actionView()
+	 * @uses self::actionUpdate()
+	 * @uses self::actionAccess()
+	 * @uses self::actionDelete()
 	 */
 	public function loadModel($id)
-	{ 
-		//$model=Tree::model()->findByPk($id);
+	{ 		
         $model=Tree::model()->find(array(
-            //'condition'=>'id=:id AND id_organization=:organization'.
         	'condition'=>'id=:id'
                 // дополнительное условие для проверки прав пользователя
-            	.(!Yii::app()->user->admin && !Access::checkAccessUserForTree($id) ? ' and 1<>1' : ''),
+            	. (!Yii::app()->user->admin && !Access::checkAccessUserForTree($id) ? ' and 1<>1' : ''),
             'params'=>array(
             	':id'=>$id, 
-            	//':organization'=>Yii::app()->session['organization'],         	
             )
         ));        
 		if ($model===null || (!Tree::model()->checkParentRight($model->id_parent)))
@@ -292,9 +293,11 @@ class TreeController extends AdminController
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{
+	    throw new CHttpException(410);
 		if(isset($_POST['ajax']) && $_POST['ajax']==='Tree-form')
 		{
 			echo CActiveForm::validate($model);
@@ -302,14 +305,12 @@ class TreeController extends AdminController
 		}
 	}
     
-        
-    
-    
     /** Информация по пользователям для предоставления доступа
-        Если пользователь не имеет прав администратора, то 
-            отображаются только пользователи с кодом НО, 
-            который установлен у текущего пользователя (User.home_no)    
-     **/
+     * @desc Если пользователь не имеет прав администратора, то
+     * отображаются только пользователи с кодом НО,
+     * который установлен у текущего пользователя (User.home_no)
+     * @see User    
+     **/	
     public function actionGetListUser()
     {
         if (!Yii::app()->request->isAjaxRequest) return;                 
@@ -334,9 +335,10 @@ class TreeController extends AdminController
     
     
     /** Информация по группам для предоставления доступа
-        Если текущий пользователь не имеет прав администратора, то 
-            отображаются только группы с кодом НО, 
-            который установлен у текущего пользователя (User.home_no)        
+     * @desc Если текущий пользователь не имеет прав администратора, то 
+     * отображаются только группы с кодом НО,
+     * который установлен у текущего пользователя (User.home_no)
+     * @see Group 
      **/
     public function actionGetListGroup()
     {            	
@@ -358,14 +360,16 @@ class TreeController extends AdminController
             'model'=>$model,
             'is_group'=>true,
         ), false, true);
-        
-               
-        
     }
     
-    
+    /**
+     * @deprecated
+     * @param unknown $module
+     */
     public function actionGetTreeRight($module)
     {
+        throw new CHttpException(410);
+        
         if (!Yii::app()->request->isAjaxRequest) return;
         
         $model = Module::model()->findByPk($module);       

@@ -58,10 +58,7 @@ $('.search-form form').submit(function(){
     'rowCssClassExpression' => '$data["date_delete"] == "" ? "" : "delete-row"',
 	'columns'=>array(
 		'id',
-        array(
-            'name'=>'title',
-            'value'=>$model->title,
-        ),
+        'title',
         'date_create',
         'date_start_pub',
         'date_end_pub',
@@ -70,16 +67,9 @@ $('.search-form form').submit(function(){
             'value'=>'$data->flag_enable?"Да":"Нет"',
             'filter'=>array('0'=>'Нет', '1'=>'Да'),
         ),
-        'author',
-        /*'htmlOptions'=>array(
-            'style'=>'color: '.function($data) {
-                if ($data->date_delete=='') { return 'red'; } else { return 'black'; }
-            },
-        ), */       
+        'author',        
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
-            //'htmlOptions' => array('width' => 200),
-            //'template'=>'{update} {view} {delete}',
             'buttons'=>array(
                 'view'=>array(
                     'url'=>'Yii::app()->createUrl("admin/news/view", array("id"=>$data->id,"idTree"=>$data->id_tree))',                    

@@ -11,12 +11,8 @@ $this->menu=array(
 );
 ?>
 
-
 <h1>Права доступа на организации</h1>
 <div class="well" style="background-color: white;">
-
-
-
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 	'id'=>'user-form',
@@ -48,8 +44,6 @@ $this->menu=array(
     ));
 ?>
     
-
-
     <div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.TbButton', array(
 			'buttonType'=>'link',

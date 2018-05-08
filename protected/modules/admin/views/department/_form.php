@@ -1,14 +1,16 @@
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
-	'id'=>'department-form',
-	'enableAjaxValidation'=>false,
-    'enableClientValidation'=>true,
-    'clientOptions'=>array(
-        'validateOnSubmit'=>true,
-    ),
-	'htmlOptions'=>array(
-		'onsubmit'=>'selectGroupUser();',
-	),
-)); ?>
+<?php 
+    $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+    	'id'=>'department-form',
+    	'enableAjaxValidation'=>false,
+        'enableClientValidation'=>true,
+        'clientOptions'=>array(
+            'validateOnSubmit'=>true,
+        ),
+    	'htmlOptions'=>array(
+    		'onsubmit'=>'selectGroupUser();',
+    	),
+    )); 
+?>
 
 	<p class="help-block">Поля обозначенные <span class="required">*</span> обязательны для заполнения.</p>
 
@@ -21,7 +23,7 @@
 	<?php echo $form->textFieldRow($model,'department_name',array('class'=>'span5','maxlength'=>250)); ?>
 
 	<script type="text/javascript">
-
+	
     	function listGroups()
     	{
     		var ls = [];
@@ -82,8 +84,8 @@
         {
             $('#<?php echo CHtml::activeId($model, 'permissionGroup'); ?> option').prop('selected', true);
             $('#<?php echo CHtml::activeId($model, 'permissionUser'); ?> option').prop('selected', true);
-        }                
-                        
+        }   
+                                            
     </script>  
     
     
@@ -91,10 +93,8 @@
         <h5 style="background-color: white;" class="well">Доступ</h5>        
         <table style="border: 0;" id="table_group_user">
         <tr><td>
-            <?php   
-            
-            // ГРУППЫ //  
-            
+            <?php               
+            // ГРУППЫ //              
             echo $form->dropDownListRow($model, 'permissionGroup',                             
             	CHtml::listData(Access::accessDepartmentGroupById($model->id),'id','name'),
                 array(
@@ -124,8 +124,7 @@
         <td>
            <?php 
             
-            // ПОЛЬЗОВАТЕЛИ //
-            
+            // ПОЛЬЗОВАТЕЛИ //            
             echo $form->dropDownListRow($model, 'permissionUser',                 
             	CHtml::listData(Access::accessDepartmentUserById($model->id),'id','concatened'),
                 array(
@@ -154,8 +153,7 @@
         </td></tr>
         <tr><td colspan="2" style="padding-top: 20px;" id="ajaxTree"></td></tr>
         </table>
-        
-    
+       
         <?php $this->beginWidget('bootstrap.widgets.TbModal', array(
             'id'=>'userGroupModal',
             'htmlOptions'=>array('style'=>'width:800px; margin-left:-400px;'),

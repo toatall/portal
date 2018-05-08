@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @deprecated
+ */
 class ContentController extends AdminController
 {	
 
@@ -120,10 +123,12 @@ class ContentController extends AdminController
 	}*/
 
 	/**
-	 * Manages all models.
+	 * Manages all models.\
+	 * @deprecated
 	 */
 	public function actionAdmin($id)
 	{        
+	    throw new CHttpException(410);
         $modelTree=Tree::model()->findByPk($id);
         // ��������� ������� id � Tree
 	    if ($modelTree==null)

@@ -79,11 +79,8 @@
         {
             $('#<?php echo CHtml::activeId($model, 'permissionGroup'); ?> option').prop('selected', true);
             $('#<?php echo CHtml::activeId($model, 'permissionUser'); ?> option').prop('selected', true);
-        }                
-                        
+        }
     </script>           
-    
-        
     
     <div id="content_permission" class="well">  
         <h5 style="background-color: white;" class="well">Доступ</h5>        
@@ -91,14 +88,12 @@
         <tr><td>
             <?php   
             
-            // ГРУППЫ //  
-            
+            // ГРУППЫ //              
             echo $form->dropDownListRow($model, 'permissionGroup', $model->rightGroup,
 	            array(
 	            	'multiple'=>true,
 	            	'style'=>'width: 300px; height: 200px;',
-	            ));
-                       
+	            ));                       
             ?>
             <br />
             <?php $this->widget('bootstrap.widgets.TbButton', array(
@@ -123,8 +118,7 @@
         <td>
            <?php 
             
-            // ПОЛЬЗОВАТЕЛИ //
-            
+           // ПОЛЬЗОВАТЕЛИ //
            echo $form->dropDownListRow($model, 'permissionUser', $model->rightUser,
            		array(
            			'multiple'=>true,
@@ -153,7 +147,6 @@
         </td></tr>
         <tr><td colspan="2" style="padding-top: 20px;" id="ajaxTree"></td></tr>
         </table>
-        
     
         <?php $this->beginWidget('bootstrap.widgets.TbModal', array(
             'id'=>'userGroupModal',
@@ -173,12 +166,9 @@
                 'url'=>'#',
                 'htmlOptions'=>array('data-dismiss'=>'modal'),
             )); ?>
-        </div>
-        
-        <?php $this->endWidget(); ?>
-                                                 
+        </div>        
+        <?php $this->endWidget(); ?>                                                
     </div>
-    
     
 	<div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.TbButton', array(

@@ -16,13 +16,12 @@
     
     <?php $array_parent = Yii::app()->user->admin ? array(0=>'Родитель') : array(); ?>        
     
-    
 	<?php if ($model->isNewRecord): ?>    
     <?php echo $form->dropDownListRow($model,'id_parent',$array_parent
-        +Tree::model()->getTreeDropDownList()); ?>
+        + Tree::model()->getTreeDropDownList()); ?>
     <?php else: ?>    
     <?php echo $form->dropDownListRow($model,'id_parent',$array_parent
-        +Tree::model()->getTreeDropDownList($model->id)); ?>        
+        + Tree::model()->getTreeDropDownList($model->id)); ?>        
     <?php endif; ?>
 
 
@@ -39,7 +38,9 @@
     <?php echo $form->checkBoxRow($model,'use_material'); ?>
      
     <script type="text/javascript">
-        $(document).ready(function() {
+
+    $(document).ready(function() {
+            
                 $('#<?php echo CHtml::activeId($model, 'use_material'); ?>').change(function() {
                     if ($(this).is(':checked')) { $('#content_material').show(); } else { $('#content_material').hide(); }    
                 }); 
@@ -74,8 +75,9 @@
                 { 
                     $('#table_group_user').show(1);
                 }
-                                        
+                                   
             });    
+    
     </script>
     
     <div id="content_material" class="well">   
@@ -91,17 +93,13 @@
                 ));
 	    		echo '</div>';
     		}    		
-        ?>        	
-
-    	<?php echo $form->checkBoxRow($model,'use_tape'); ?>
-    
+        ?>
+    	<?php echo $form->checkBoxRow($model,'use_tape'); ?>    
     </div>
-    
     
     <script type="text/javascript">
 
-
-		function listGroups()
+    	function listGroups()
 		{
 			var ls = [];
             $('#<?php echo CHtml::activeId($model, 'permissionGroup'); ?>').children('option').each(function() {
@@ -169,8 +167,6 @@
                         
     </script>           
     
-    
-    
     <?php if (Yii::app()->user->admin): ?>    
     
     <div id="content_permission" class="well alert alert-info">  
@@ -183,8 +179,7 @@
         <tr><td>
             <?php   
             
-            // ГРУППЫ //  
-            
+            // ГРУППЫ // 
             echo $form->dropDownListRow($model, 'permissionGroup',               
                 CHtml::listData(AccessGroup::model()->with('group')->findAll(array(
                     'order'=>'[t].[id_organization], [group].[name]',
@@ -222,7 +217,6 @@
            <?php 
             
             // ПОЛЬЗОВАТЕЛИ //
-            
             echo $form->dropDownListRow($model, 'permissionUser',                 
             	CHtml::listData(AccessUser::model()->with('user')->findAll(array(
             		'order'=>'[t].[id_organization], [user].[username_windows]',
@@ -284,8 +278,6 @@
                                                  
     </div>
     
-    
-   
     <a href="" id="lnk-params" class="btn btn-primary">Дополнительные параметры</a><br /><br />
     <script type="text/javascript">
 		$('#lnk-params').on('click', function() {
@@ -310,6 +302,5 @@
 			'label'=>$model->isNewRecord ? 'Создать' : 'Сохранить',
 		)); ?>
 	</div>
-            
 
 <?php $this->endWidget(); ?>

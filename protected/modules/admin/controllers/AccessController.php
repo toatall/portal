@@ -1,8 +1,17 @@
 <?php
 
+/**
+ * Управление паравами
+ * @author alexeevich
+ * @see AdminController
+ * @see Access
+ */
 class AccessController extends AdminController
 {
-    
+    /**
+     * Контроллер по умолчанию
+     * @var string
+     */
     public $defaultAction = 'admin';
     
 	/**
@@ -32,17 +41,17 @@ class AccessController extends AdminController
 		);
 	}
 	
-	
 	/**
 	 * Список групп для указанного объекта доступа
-	 * @param string $model_name
-	 * @param int $model_id
-	 * @param string $id_organization
-	 * 
-	 * @version 03.10.2017
+	 * @param string $model_name имя модели 
+	 * @param int $model_id идентификатор модели
+	 * @param string $id_organization код организации
+	 * @see Access
+	 * @deprecated
 	 */
 	public function actionAccessObjectGroup($model_name, $model_id, $id_organization)
 	{
+	    throw new CHttpException(410);
 	    if (!$this->checkAccessCurrentUser($model_name, $model_id, $id_organization))
 	        throw new CHttpException(403,'Доступ запрещен.');
 	    
@@ -57,24 +66,38 @@ class AccessController extends AdminController
 	    
 	    $this->renderPartial('groups', array(
 	        'model'=>$model,	        
-	    ));
-	    
+	    ));	    
 	}
-
 	
-	
+	/**
+	 * @param int $group_id
+	 * @param string $model_name
+	 * @param int $model_id
+	 * @throws CHttpException
+	 * @deprecated
+	 */
 	public function actionGetAccessGroupOrganization($group_id, $model_name, $model_id)
 	{
+	    throw new CHttpException(410);
 	    if (!$this->checkAccessCurrentUser($model_name, $model_id, $id_organization))
 	        throw new CHttpException(403,'Доступ запрещен.');
-	    
 	    // 2 вернуть список организаций 
 	    $this->renderPartial('listOrganization');
 	}
-         
-    
+	
+	/**
+	 * 
+	 * @param unknown $group_id
+	 * @param unknown $model_name
+	 * @param unknown $model_id
+	 * @param unknown $id_organization
+	 * @param unknown $check
+	 * @throws CHttpException
+	 * @deprecated
+	 */
 	public function actionSetAccessGroupOrganization($group_id, $model_name, $model_id, $id_organization, $check)
 	{
+	    throw new CHttpException(410);
 	    if (!$this->checkAccessCurrentUser($model_name, $model_id, $id_organization))
 	        throw new CHttpException(403,'Доступ запрещен.');
 	    
@@ -88,6 +111,9 @@ class AccessController extends AdminController
 	 * @param int $model_id
 	 * @param string $id_organization
 	 * @return boolean
+	 * @uses self::actionSetAccessGroupOrganization()
+	 * @uses self::actionGetAccessGroupOrganization()
+	 * @uses self::actionAccessObjectGroup()
 	 */
 	private function checkAccessCurrentUser($model_name, $model_id, $id_organization)
 	{

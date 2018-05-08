@@ -30,26 +30,11 @@ $this->menu=array(
 		),
 			
 		'id',
-		//'id_tree',
 		'name',
 		'order_asc',
-		'date_create',
-		/*
-		'log_change',		
-		'author',
-		'note',
-		*/
+		'date_create',		
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',			
-			/*'template'=>'{rating} {update} {view} {delete}',
-			'buttons'=>array(
-				'rating'=>array(
-					'url'=> function($data) {
-						return $data->id;
-					},
-				),
-			),*/
-		
 		),
 	),
 )); ?>

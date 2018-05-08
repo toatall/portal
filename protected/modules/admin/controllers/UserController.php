@@ -1,8 +1,16 @@
 <?php
 
+/**
+ * Manage users
+ * @author alexeevich
+ * @see AdminController
+ */
 class UserController extends AdminController
 {
-	
+	/**
+	 * Default action
+	 * @var string
+	 */
 	public $defaultAction = 'admin';
 	
 	/**
@@ -46,14 +54,12 @@ class UserController extends AdminController
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @see User
 	 */
 	public function actionCreate()
 	{
 		$model=new User;
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);                    
-        
 		if(isset($_POST['User']))
 		{
             $model->attributes=$_POST['User'];
@@ -75,7 +81,6 @@ class UserController extends AdminController
 		));
 	}
 	
-	
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
@@ -85,10 +90,6 @@ class UserController extends AdminController
 	{
 		$model=$this->loadModel($id);
         
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
@@ -100,33 +101,8 @@ class UserController extends AdminController
                 $this->redirect(array('view','id'=>$model->id));
             }				
 		}
-		else
-		{
-			$model->_password_old = $model->password;
-		}
-		
-		
 
 		$this->render('update',array(
-			'model'=>$model,
-		));
-	}
-    
-    public function actionUpdatePassword($id)
-	{
-		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['User']))
-		{
-			$model->attributes=$_POST['User'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
-		}
-
-		$this->render('updatePassword',array(
 			'model'=>$model,
 		));
 	}
@@ -135,16 +111,13 @@ class UserController extends AdminController
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
+	 * @throws CHttpException
 	 */
 	public function actionDelete($id)
 	{
 		if(Yii::app()->request->isPostRequest)
-		{
-			// we only allow deletion via POST request
-			//$this->loadModel($id)->delete();
-			$model=$this->loadModel($id);
-			//$model->date_delete = new CDbExpression('getdate()');
-			//$model->save();
+		{			
+			$model=$this->loadModel($id);			
 			$model->delete();
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -155,9 +128,9 @@ class UserController extends AdminController
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
-	
 	/**
 	 * Manages all models.
+	 * @see User
 	 */
 	public function actionAdmin()
 	{	
@@ -175,6 +148,10 @@ class UserController extends AdminController
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @throws CHttpException
+	 * @uses self::actionView()
+	 * @uses self::actionUpdate()
+	 * @uses self::actionDelete()
 	 */
 	public function loadModel($id)
 	{
@@ -184,14 +161,14 @@ class UserController extends AdminController
 		return $model;
 	}
 	
-
-
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{
+	    throw new CHttpException(410);
 		if(isset($_POST['ajax']) && $_POST['ajax']==='user-form')
 		{
 			echo CActiveForm::validate($model);

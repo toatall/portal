@@ -10,9 +10,7 @@ $this->menu=array(
 );
 
 ?>
-
 <h1>Отделы</h1>
-
 
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'department-grid',

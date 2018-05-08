@@ -1,5 +1,5 @@
 <?php        
-    
+
     $columns = (!$is_group) ? 
     	array(
     		'id', 
@@ -28,10 +28,7 @@
         'id'=>'listPermissionGrid',
         'dataProvider'=>$model->searchForTree(array()),
         'enableSorting'=>false,
-        'filter'=>$model,
-        /*'beforeAjaxUpdate' => 'js: function(id, options) {            
-            options.url = getGroupUrlGridViewAjax(options.url);
-        }',*/
+        'filter'=>$model,       
         'columns'=>array_merge(
             $columns,                          
     		array(array(

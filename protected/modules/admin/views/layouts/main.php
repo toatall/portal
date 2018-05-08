@@ -15,12 +15,11 @@
 
 <body>
 
-<?php
-    
+<?php    
 	/**
 	 * отключить прокрутку при открытии диалогового окна
 	 * fix
-	 * @author oleg
+	 * @author alexeevich
 	 * @version 18.05.2016
 	 */ 
 	Yii::app()->clientScript->registerScript('fixScrollOnOpenModal', "
@@ -32,8 +31,6 @@
 	  	  		$('body').css({overflow: ''}); 
 	  		});
 		", CClientScript::POS_END);
-
-	
 ?>
 
 <?php $this->widget('bootstrap.widgets.TbNavbar',array(

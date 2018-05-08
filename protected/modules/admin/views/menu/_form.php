@@ -10,10 +10,10 @@
     <?php $array_parent = Yii::app()->user->admin ? array(0=>'Родитель') : array(); ?>     
     <?php if ($model->isNewRecord): ?>    
     <?php echo $form->dropDownListRow($model,'id_parent',$array_parent
-        +Menu::model()->getMenuDropDownList($model->type_menu)); ?>
+        + Menu::model()->getMenuDropDownList($model->type_menu)); ?>
     <?php else: ?>    
     <?php echo $form->dropDownListRow($model,'id_parent',$array_parent
-        +Menu::model()->getMenuDropDownList($model->type_menu, $model->id)); ?>        
+        + Menu::model()->getMenuDropDownList($model->type_menu, $model->id)); ?>        
     <?php endif; ?>
     
     <p><?php echo $model->getAttributeLabel('type_menu'); ?>: 

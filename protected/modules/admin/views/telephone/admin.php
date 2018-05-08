@@ -27,7 +27,6 @@ $('.search-form form').submit(function(){
 
 <h1>Телефонный справочник</h1>
 
-
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'telephone-grid',
 	'dataProvider'=>$model->searchAdmin($idTree),

@@ -2,9 +2,7 @@
 	'action'=>Yii::app()->createUrl($this->route),
 	'method'=>'get',
 )); ?>
-
-	<?php echo $form->textFieldRow($model,'username',array('class'=>'span5','maxlength'=>250)); ?>
-
+	
 	<?php echo $form->textFieldRow($model,'username_windows',array('class'=>'span5','maxlength'=>250)); ?>
 	
 	<?php echo $form->checkBoxRow($model,'blocked'); ?>

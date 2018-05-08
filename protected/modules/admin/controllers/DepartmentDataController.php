@@ -1,11 +1,22 @@
 <?php
 
+/**
+ * Настройка отдела
+ * @author alexeevich
+ * @see AdminController
+ */
 class DepartmentDataController extends AdminController
 {
-
+    /**
+     * Отдел
+     * @var Department
+     */
 	private $_modelDepartment;
 	
-	// действие по-умолчанию
+	/**
+	 * Default action
+	 * @var string
+	 */
 	public $defaultAction = 'admin';
 
 	/**
@@ -38,12 +49,17 @@ class DepartmentDataController extends AdminController
 	
 	/**
 	 * Проверка существования раздела Tree и прав у пользователя на него
-	 * @param int $idDepartment
+	 * @param int $idDepartment идентификатор отдела
 	 * @throws CHttpException
+	 * @see Department
+	 * @uses self::actionUpdate()
+	 * @uses self::actionDelete()
+	 * @uses self::actionAdmin()
+	 * @uses self::actionOptions()
 	 */
 	private function checkDepartmentRight($idTree)
 	{
-		$this->_modelDepartment = Department::model()->find('id_tree=:id_tree', array(':id_tree'=>$idTree));
+		$this->_modelDepartment = Department::model()->find('id_tree=:id_tree', array(':id_tree'=>$idTree));		
 		if ($this->_modelDepartment == null)
 			throw new CHttpException(404,'Страница не найдена!');
 		
@@ -54,22 +70,26 @@ class DepartmentDataController extends AdminController
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
+	 * @param int $id 
+	 * 
 	 */
 	public function actionView($id, $idTree)
-	{
-		
+	{		
 		$this->checkDepartmentRight($idTree);
+		$model = $this->loadModel($id);
 		
 		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-			'modelDepartment'=>$this->_modelDepartment,
-				
+			'model'=>$model,
+			'modelDepartment'=>$this->_modelDepartment,		
+		    'logChange'=>Log::getLog($model->log_change),
 		));
 	}
 
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @see Log
+	 * @see NewsSearch
 	 */
 	public function actionCreate($idTree)
 	{
@@ -77,14 +97,12 @@ class DepartmentDataController extends AdminController
 		
 		$model=new NewsSearch();
 		$model->date_start_pub = date('d.m.Y');
-		$model->date_end_pub = '01.01.2032';
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$model->date_end_pub = '01.01.2032';		
         
 		if(isset($_POST['NewsSearch']))
 		{
 			$model->attributes=$_POST['NewsSearch'];
-			$model->log_change = LogChange::setLog($model->log_change, 'создание');
+			$model->log_change = Log::setLog($model->log_change, 'создание');
 			$model->id_tree = $idTree;
 			if($model->save())
 			{	
@@ -103,26 +121,22 @@ class DepartmentDataController extends AdminController
 			'modelTree'=>Tree::model()->findByPk($idTree),
 		));
 	}
-
+    
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
+	 * @see Log
 	 */
 	public function actionUpdate($id, $idTree)
-	{
-		
-		$this->checkDepartmentRight($idTree);
-		
+	{		
+		$this->checkDepartmentRight($idTree);		
 		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
+		
 		if(isset($_POST['News']))
 		{
 			$model->attributes=$_POST['News'];
-			$model->log_change = LogChange::setLog($model->log_change, 'изменение');
+			$model->log_change = Log::setLog($model->log_change, 'изменение');
 			if($model->save())
 			{	
 				// файлы для удаления
@@ -153,15 +167,15 @@ class DepartmentDataController extends AdminController
 		));
 	}
 	
-
 	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
+	 * @see Log
+	 * @see News
 	 */
 	public function actionDelete($id, $idTree)
-	{
-		
+	{		
 		$this->checkDepartmentRight($idTree);
 		
 		if(Yii::app()->request->isPostRequest)
@@ -170,7 +184,7 @@ class DepartmentDataController extends AdminController
 			{
 				$model = $this->loadModel($id, $idTree);
 				$model->date_delete = new CDbExpression('getdate()');
-				$model->log_change = LogChange::setLog($model->log_change,'удаление');
+				$model->log_change = Log::setLog($model->log_change,'удаление');
 				$model->save();
 			}
 			else
@@ -179,7 +193,8 @@ class DepartmentDataController extends AdminController
 				$this->loadModel($id, $idTree)->delete();
 		
 				// удаляем все файлы и изображения
-				News::model()->DeleteFilesImages($id,
+				$model = News::model();
+				$model->deleteFilesImages($id,
 						CHtml::listData(Yii::app()->db->createCommand(array(
 								'select'=>'id',
 								'from'=>'{{file}}',
@@ -197,25 +212,23 @@ class DepartmentDataController extends AdminController
 						$idTree
 				);
 			}
-		
+			
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
 				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin', 'idTree'=>$idTree));
 		}
 		else
-			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-				
+			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');			
 	}
-
-
+	
 	/**
 	 * Manages all models.
+	 * @param int $idTree идентификатор структуры
+	 * @see NewsSearch
 	 */
 	public function actionAdmin($idTree)
-	{
-		
+	{		
 		$this->checkDepartmentRight($idTree);
-		
 		
 		$model = new NewsSearch('search');
 		$model->unsetAttributes();  // clear any default values
@@ -230,7 +243,13 @@ class DepartmentDataController extends AdminController
 		));
 	}
 	
-	
+	/**
+	 * Настройка главной страницы отдела
+	 * @param int $id идентификатор отдела
+	 * @param int $idTree идентификатор структуры
+	 * @throws CHttpException
+	 * @see Department
+	 */
 	public function actionOptions($id, $idTree)
 	{
 		$this->checkDepartmentRight($idTree);
@@ -254,14 +273,16 @@ class DepartmentDataController extends AdminController
 		
 		$this->render('options', array(
 			'model'=>$model,
-		));
-		
+		));		
 	}
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @see News
+	 * @uses self::actionUpdate()
+	 * @uses self::actionDelete()
 	 */
 	public function loadModel($id)
 	{
@@ -271,14 +292,27 @@ class DepartmentDataController extends AdminController
 		return $model;
 	}
 	
-	
+	/**
+	 * @deprecated
+	 * @param int $id
+	 * @throws CHttpException
+	 * @return News
+	 */
 	private function loadModelByUser($id)
 	{
+	    throw new CHttpException(410);
 		if (!$this->checkAccessUserByDepartment($id))
 			throw new CHttpException(403,'У вас недостаточно прав для выполнения указанного действия.');
 		return $this->loadModel($id);		
 	}
 	
+	/**
+	 * Проверка прав пользователя к отделу
+	 * @param int $id
+	 * @return boolean|mixed
+	 * @uses self::checkDepartmentRight()
+	 * @uses self::loadModelByUser()
+	 */
 	private function checkAccessUserByDepartment($id)
 	{
 		if (Yii::app()->user->admin) return true;
@@ -296,6 +330,7 @@ class DepartmentDataController extends AdminController
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{

@@ -1,8 +1,16 @@
 <?php
 
+/**
+ * Manage Vks Ufns
+ * @author alexeevich
+ * @see AdminController
+ */
 class VksUfnsController extends AdminController
 {
-    
+    /**
+     * Default action
+     * @var string
+     */
 	public $defaultAction = 'admin';
 	
 	/**
@@ -46,6 +54,7 @@ class VksUfnsController extends AdminController
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @see Conference
 	 */
 	public function actionCreate()
 	{
@@ -54,10 +63,7 @@ class VksUfnsController extends AdminController
 		$model->_tempTimeStart = date('H') . ':00';
 		$model->duration = '01:00';
 		$model->type_conference = Conference::TYPE_VKS_UFNS;
-		$this->checkAccess($model);
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-	
+		$this->checkAccess($model);		
 	
 		if(isset($_POST['Conference']))
 		{
@@ -72,7 +78,6 @@ class VksUfnsController extends AdminController
 		$this->render('/conference/create',array(
 			'model'=>$model,
 		));
-	
 	}
 	
 	/**
@@ -83,14 +88,10 @@ class VksUfnsController extends AdminController
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-	
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-	
+		
 		if(isset($_POST['Conference']))
 		{
-			$model->attributes=$_POST['Conference'];
-			//$model->action_log = $model->writeLog($model->action_log, 'изменение');
+			$model->attributes=$_POST['Conference'];			
 			if($model->save())
 			{
 			    $model->notifyEmail();
@@ -107,6 +108,7 @@ class VksUfnsController extends AdminController
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
+	 * @throws CHttpException
 	 */
 	public function actionDelete($id)
 	{
@@ -131,11 +133,12 @@ class VksUfnsController extends AdminController
 		else
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
-	
-	
+		
 	/**
 	 * Проверка прав пользователя
 	 * @throws CHttpException
+	 * @uses self::actionCreate()
+	 * @uses self::actionAdmin()
 	 */
 	private function checkAccess($model)
 	{
@@ -146,25 +149,31 @@ class VksUfnsController extends AdminController
 	
 	/**
 	 * Manages all models.
+	 * @see Conference
 	 */
 	public function actionAdmin()
 	{
 		$model=new Conference('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->type_conference = Conference::TYPE_VKS_UFNS;
+		
 		$this->checkAccess($model);
+		
 		if(isset($_GET['Conference']))
 			$model->attributes=$_GET['Conference'];
 	
-			$this->render('/conference/admin',array(
-					'model'=>$model,
-			));
+		$this->render('/conference/admin',array(
+				'model'=>$model,
+		));
 	}
 	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @uses self::actionView()
+	 * @uses self::actionUpdate()
+	 * @uses self::actionDelete()
 	 */
 	public function loadModel($id)
 	{
@@ -178,9 +187,11 @@ class VksUfnsController extends AdminController
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{
+	    throw new CHttpException(410);
 		if(isset($_POST['ajax']) && $_POST['ajax']==='vks-form')
 		{
 			echo CActiveForm::validate($model);

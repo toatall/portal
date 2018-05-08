@@ -1,14 +1,16 @@
 <?php
 
 /**
- * По умолчанию ВКС ИФНС, 
- * @author 8600-90-331
- *
+ * Manage Vks Fns
+ * @author alexeevich
+ * @see AdminController
  */
-
 class VksFnsController extends AdminController
 {
-    
+    /**
+     * Default action
+     * @var string
+     */
 	public $defaultAction = 'admin';
 	
 	/**
@@ -17,7 +19,7 @@ class VksFnsController extends AdminController
 	public function filters()
 	{
 		return array(
-				'accessControl', // perform access control for CRUD operations
+			'accessControl', // perform access control for CRUD operations
 		);
 	}
 	
@@ -29,12 +31,12 @@ class VksFnsController extends AdminController
 	public function accessRules()
 	{
 		return array(
-				array('allow',
-						'users'=>array('@'),
-				),
-				array('deny',  // deny all users
-						'users'=>array('*'),
-				),
+			array('allow',
+				'users'=>array('@'),
+			),
+			array('deny',  // deny all users
+				'users'=>array('*'),
+			),
 		);
 	}
 	
@@ -45,13 +47,14 @@ class VksFnsController extends AdminController
 	public function actionView($id)
 	{
 		$this->render('/conference/view',array(
-				'model'=>$this->loadModel($id),
+			'model'=>$this->loadModel($id),
 		));
 	}
 	
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @see Conference
 	 */
 	public function actionCreate()
 	{
@@ -62,9 +65,6 @@ class VksFnsController extends AdminController
 		$model->time_start_msk = true;
 		$model->type_conference = Conference::TYPE_VKS_FNS;
 		$this->checkAccess($model);
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-	
 	
 		if(isset($_POST['Conference']))
 		{
@@ -76,7 +76,6 @@ class VksFnsController extends AdminController
 		$this->render('/conference/create',array(
 				'model'=>$model,
 		));
-	
 	}
 	
 	/**
@@ -87,14 +86,10 @@ class VksFnsController extends AdminController
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-	
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-	
+		
 		if(isset($_POST['Conference']))
 		{
-			$model->attributes=$_POST['Conference'];
-			//$model->action_log = $model->writeLog($model->action_log, 'изменение');
+			$model->attributes=$_POST['Conference'];			
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -108,6 +103,7 @@ class VksFnsController extends AdminController
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
+	 * @throws CHttpException
 	 */
 	public function actionDelete($id)
 	{
@@ -124,7 +120,6 @@ class VksFnsController extends AdminController
 				// we only allow deletion via POST request
 				$this->loadModel($id)->delete();
 			}
-	
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
 				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin','idTree'=>$idTree));
@@ -133,10 +128,12 @@ class VksFnsController extends AdminController
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 	
-	
 	/**
 	 * Проверка прав пользователя
 	 * @throws CHttpException
+	 * @see Access
+	 * @uses self::actionCreate()
+	 * @uses self::loadModel()
 	 */
 	private function checkAccess($model)
 	{
@@ -147,6 +144,7 @@ class VksFnsController extends AdminController
 	
 	/**
 	 * Manages all models.
+	 * @see Conference
 	 */
 	public function actionAdmin()
 	{
@@ -154,34 +152,40 @@ class VksFnsController extends AdminController
 		$model->unsetAttributes();  // clear any default values
 		$model->type_conference = Conference::TYPE_VKS_FNS;
 		$this->checkAccess($model);
+		
 		if(isset($_GET['Conference']))
 			$model->attributes=$_GET['Conference'];
 	
-			$this->render('/conference/admin',array(
-					'model'=>$model,
-			));
+		$this->render('/conference/admin',array(
+			'model'=>$model,
+		));
 	}
 	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @see Conference
+	 * @uses self::actionView()
+	 * @uses self::actionDelete()
 	 */
 	public function loadModel($id)
 	{
 		$model = Conference::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
-			$this->checkAccess($model);
-			return $model;
+		$this->checkAccess($model);
+		return $model;
 	}
 	
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{
+	    throw new CHttpException(410);
 		if(isset($_POST['ajax']) && $_POST['ajax']==='vks-form')
 		{
 			echo CActiveForm::validate($model);

@@ -1,6 +1,10 @@
 <?php
 
- 
+ /**
+  * @deprecated
+  * @author 8600-90331
+  *
+  */
 class Config extends CComponent
 {
 

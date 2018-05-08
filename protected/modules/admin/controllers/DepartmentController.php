@@ -1,9 +1,18 @@
 <?php
 
+/**
+ * Управление отделами
+ * @author alexeevich
+ * @see AdminController
+ * @see Department
+ */
 class DepartmentController extends AdminController
 {
 
-	// действие по-умолчанию
+	/**
+	 * Default action
+	 * @var string
+	 */
 	public $defaultAction = 'admin';
 
 	/**
@@ -47,14 +56,13 @@ class DepartmentController extends AdminController
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @see Department
 	 */
 	public function actionCreate()
 	{
 		$model=new Department;
 		$model->id_organization = Yii::app()->session['organization'];
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
+		
 		if(isset($_POST['Department']))
 		{
 			$model->attributes=$_POST['Department'];
@@ -79,9 +87,6 @@ class DepartmentController extends AdminController
 	{
 		$model=$this->loadModel($id);
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
 		if(isset($_POST['Department']))
 		{
 			$model->attributes=$_POST['Department'];
@@ -97,23 +102,20 @@ class DepartmentController extends AdminController
 		));
 	}
 	
-	
 	/**
-	 * Действие для установки работы пользователя 
-	 * с настройкой отдела
-	 * ------------------------------------------
+	 * Структура отдела 
+	 * @desc
 	 * 1. Карточка отдела - представляет собой
 	 * сотрудников отдела с информацией о них
 	 * (ФИО, телефон, должность, чин, фотография)
-	 * 
 	 * 2. Список ссылок на ветки структуры 
 	 * (структура доступная пользователю)
-	 * Добавить возможность выбрать значок (иконку).
-	 * 
+	 * Добавить возможность выбрать значок (иконку)
+	 * @param int $id идентификатор отдела
+	 * @see DepartmentCard
 	 */
 	public function actionUpdateStructure($id)
 	{
-		
 		$modelCard=new DepartmentCard('search');
 		$modelCard->unsetAttributes();  // clear any default values
 		if(isset($_GET['DepartmentCard']))
@@ -147,6 +149,8 @@ class DepartmentController extends AdminController
 	/**
 	 * Сохранение пользователей и групп доступа к отделу
 	 * @param Department $model
+	 * @uses self::actionCreate()
+	 * @uses self::actionUpdate()
 	 */
 	private function saveRelations($model)
 	{
@@ -199,6 +203,7 @@ class DepartmentController extends AdminController
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @uses self::actionView()
 	 */
 	public function loadModel($id)
 	{
@@ -209,7 +214,13 @@ class DepartmentController extends AdminController
 		return $model;
 	}
 	
-	
+	/**
+	 * Поиск отдел по идентификатору $id
+	 * @param int $id идентификатор отдела
+	 * @throws CHttpException
+	 * @return Department
+	 * @uses self::actionUpdateStructure()
+	 */
 	private function loadModelByUser($id)
 	{
 		if (!$this->checkAccessUserByDepartment($id))
@@ -217,6 +228,12 @@ class DepartmentController extends AdminController
 		return $this->loadModel($id);		
 	}
 	
+	/**
+	 * Проаверка прав пользователя к отделу
+	 * @param int $id идентификатор отдела
+	 * @return bool
+	 * @uses self::loadModelByUser()
+	 */
 	private function checkAccessUserByDepartment($id)
 	{
 		if (Yii::app()->user->admin) return true;
@@ -235,6 +252,7 @@ class DepartmentController extends AdminController
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{

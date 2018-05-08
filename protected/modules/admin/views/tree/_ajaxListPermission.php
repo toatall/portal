@@ -1,14 +1,9 @@
-<?php        
-    
+<?php
     $columns = (!$is_group) ? 
     	array(
     		'id', 
     		'username_windows', 
-    		array(
-				'name'=>'profile.name',
-				'filter'=>CHtml::activeTextField($model, 'profile_name'),
-				'type'=>'raw',    				
-    		),
+    	    'fio',    		
     		'default_organization',
     		
     	) : 
@@ -30,12 +25,9 @@
         'dataProvider'=>$model->searchForTree(array()),
         'enableSorting'=>false,
         'filter'=>$model,
-    	'beforeAjaxUpdate'=>$beforeJsUpdate,
-        /*'beforeAjaxUpdate' => 'js: function(id, options) {            
-            options.url = getGroupUrlGridViewAjax(options.url);
-        }',*/
+    	'beforeAjaxUpdate'=>$beforeJsUpdate,       
         'columns'=>array_merge(
-            $columns,                          
+            $columns,
     		array(array(
     			'class'=>'bootstrap.widgets.TbButtonColumn',
                 'template'=>'{insert}',
@@ -45,11 +37,10 @@
                             'options'=>array(
                                 'class'=>'btn btn-mini btn-success',
                                 'data-dismiss'=>'modal',
-                                'onclick'=>$onclick,                            
+                                'onclick'=>$onclick,
                             ),
                         ),
                     ),
     		))
-     )));       
-     
+     )));     
 ?>

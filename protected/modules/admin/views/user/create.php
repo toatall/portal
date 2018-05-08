@@ -4,8 +4,7 @@ $this->breadcrumbs=array(
 	'Создание пользователя',
 );
 
-$this->menu=array(
-	array('label'=>'Список','url'=>array('admin'), 'icon'=>'list'),
+$this->menu=array(	
 	array('label'=>'Управление','url'=>array('admin'), 'icon'=>'user'),
 );
 ?>

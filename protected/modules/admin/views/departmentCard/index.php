@@ -1,4 +1,5 @@
 <?php
+throw new CHttpException(410, 'Ресурс удален');
 $this->breadcrumbs=array(
 	'Department Cards',
 );

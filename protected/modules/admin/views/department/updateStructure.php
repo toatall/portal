@@ -12,7 +12,6 @@ $this->menu=array(
 <h1>Структура отдела</h1>
 
 <?php 
-
 	$this->widget('bootstrap.widgets.TbTabs', array(
         'id'=>'myTabs',
         'type'=>'tabs',
@@ -29,5 +28,5 @@ $this->menu=array(
         ),
     
     ));
-
+?>
 

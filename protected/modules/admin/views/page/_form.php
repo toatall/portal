@@ -16,9 +16,7 @@
             Yii::app()->clientScript->registerScriptFile(
                 Yii::app()->baseUrl.'/extension/fancybox/jquery.fancybox.js?v=2.1.5');            
             Yii::app()->clientScript->registerScriptFile(
-                Yii::app()->baseUrl.'/extension/fancybox/helpers/jquery.fancybox-buttons.js?v=1.0.5');
-            /*Yii::app()->clientScript->registerScriptFile(
-                Yii::app()->baseUrl.'/extension/fancybox/helpers/jquery.fancybox-thumbs.css?v=1.0.7');*/
+                Yii::app()->baseUrl.'/extension/fancybox/helpers/jquery.fancybox-buttons.js?v=1.0.5'); 
             Yii::app()->clientScript->registerScriptFile(
                 Yii::app()->baseUrl.'/extension/fancybox/helpers/jquery.fancybox-thumbs.js?v=1.0.7');
             Yii::app()->clientScript->registerScriptFile(
@@ -34,7 +32,7 @@
 	<?php echo $form->errorSummary($model); ?>
     
     <h3>Раздел: 
-	<?php echo Tree::model()->findByPk($idTree)->name; ?>
+	<?php echo $model->tree->name; ?>
     </h3>
     
 	<?php echo $form->textFieldRow($model,'title',array('class'=>'span5','maxlength'=>500)); ?>    

@@ -26,7 +26,6 @@
 
 <h1>Управление пользователями</h1>
 
-
 <?php echo CHtml::link('Расширенный поиск','#',array('class'=>'search-button btn')); ?>
 <div class="search-form" style="display:none">
 <?php $this->renderPartial('_search',array(
@@ -40,13 +39,8 @@
 	'filter'=>$model,
 	'columns'=>array(
 		'id',
-		'username',
 		'username_windows',
-		array(
-			'name'=>'profile.name',
-			'filter'=>CHtml::activeTextField($model, 'profile_name'),
-			'type'=>'raw',
-		),		
+		'fio',
         array(
             'name'=>'blocked',            
             'value'=>'($data->blocked)?"Да":"Нет"',

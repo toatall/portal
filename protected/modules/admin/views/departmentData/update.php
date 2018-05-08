@@ -21,7 +21,6 @@ $this->menu = array_merge($this->menu, array(
 ));
 endif;
 
-
 ?>
 
 <h1>Изменить страницу #<?= $model->id; ?></h1>

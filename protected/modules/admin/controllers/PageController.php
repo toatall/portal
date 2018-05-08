@@ -1,8 +1,16 @@
 <?php
 
+/**
+ * Manage page
+ * @author alexeevich
+ * @see AdminController
+ */
 class PageController extends AdminController
 {
-	
+	/**
+	 * Default action
+	 * @var string
+	 */
 	public $defaultAction = 'admin';
 	
 	/**
@@ -47,54 +55,51 @@ class PageController extends AdminController
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $idTree идентификатор структуры
+	 * @see News
 	 */
 	public function actionCreate($idTree)
-	{        
-        
+	{                
         $modelTree = $this->loadModelTree($idTree);
 		
         if (!(Yii::app()->user->admin || Access::model()->checkAccessUserForTree($idTree)))
             throw new CHttpException(403,'Доступ запрещен.');
             
-        $model=new News;
-        
+        $model=new News;        
         $model->id_tree = $idTree;
         $model->flag_enable = true;
         $model->date_start_pub = date('d.m.Y');
         $model->date_end_pub = date('01.m.Y', PHP_INT_MAX);
         $model->author = Yii::app()->user->name;
         $model->general_page=0; 
-        
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
+        		
 		if(isset($_POST['News']))
 		{
-		    $model->log_change = LogChange::setLog($model->log_change, 'создание');
+		    $model->log_change = Log::setLog($model->log_change, 'создание');
 			$model->attributes=$_POST['News'];
 			
-			if($model->save()) {
-			    
-                // сохраняем файлы                
+			if($model->save()) 
+			{			    
+                // сохранение файлов            
                 $model->saveFiles($model->id, $idTree);
-                // сохраняем изображения
-                $model->SaveImages($model->id, $idTree);
+                // сохранение изображений
+                $model->saveImages($model->id, $idTree);
                 
-                $this->redirect(array('view','id'=>$model->id, 'idTree'=>$idTree));
-                              
-			}				
+                $this->redirect(array('view','id'=>$model->id, 'idTree'=>$idTree)); 
+			}
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
             'modelTree'=>$modelTree,
-		));        
+		));
 	}
 
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
+	 * @param integer $idTree идентификатор структуры
 	 */
 	public function actionUpdate($id, $idTree)
 	{
@@ -102,36 +107,40 @@ class PageController extends AdminController
 		$model=$this->loadModel($id, $idTree);
         $model->id_tree = $idTree;
         $model->author = Yii::app()->user->name;
-        if ($modelTree->use_tape) $model->general_page=0; 
-        
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
+        if ($modelTree->use_tape) 
+            $model->general_page=0; 
+        		
 		if(isset($_POST['News']))
 		{
 			$model->attributes=$_POST['News'];
-			$model->log_change = LogChange::setLog($model->log_change, 'изменение');
+			$model->log_change = Log::setLog($model->log_change, 'изменение');
 			if($model->save())
-                
+			{
                 // файлы для удаления
-                if (isset($_POST['News']['deleteFile']))
-                    { $delFile = $_POST['News']['deleteFile']; }
-                        else { $delFile = array(); }
+                if (isset($_POST['News']['deleteFile'])) { 
+                    $delFile = $_POST['News']['deleteFile']; 
+                }
+                else { 
+                    $delFile = array(); 
+                }
                                                            
                 // изображения для удаления
-                if (isset($_POST['News']['deleteImage']))
-                    { $delImage = $_POST['News']['deleteImage']; }
-                        else { $delImage = array(); }
+                if (isset($_POST['News']['deleteImage'])) { 
+                    $delImage = $_POST['News']['deleteImage']; 
+                }
+                else { 
+                    $delImage = array(); 
+                }
                 
                 // сначала удаляем файлы и изображения помеченные для удаления
-                $model->DeleteFilesImages($model->id, $delFile, $delImage, $idTree);
-                
+                $model->deleteFilesImages($model->id, $delFile, $delImage, $idTree);                
                 // сохраняем файлы    
                 $model->saveFiles($model->id, $idTree);        
                 // сохраняем изображения                
-                $model->SaveImages($model->id, $idTree);                                
+                $model->saveImages($model->id, $idTree);                                
             
-			    $this->redirect(array('view','id'=>$model->id, 'idTree'=>$idTree));  
+			    $this->redirect(array('view','id'=>$model->id, 'idTree'=>$idTree));
+			}
 		}
 
 		$this->render('update',array(
@@ -144,6 +153,8 @@ class PageController extends AdminController
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
+	 * @param integer $idTree идентификатор структуры
+	 * @see News
 	 */
 	public function actionDelete($id, $idTree)
 	{
@@ -153,7 +164,7 @@ class PageController extends AdminController
             {
                 $model = $this->loadModel($id, $idTree);                
                 $model->date_delete = new CDbExpression('getdate()');
-                $model->log_change = LogChange::setLog($model->log_change,'удаление');
+                $model->log_change = Log::setLog($model->log_change,'удаление');
                 $model->save();                
             }
             else		  
@@ -162,7 +173,8 @@ class PageController extends AdminController
     			$this->loadModel($id, $idTree)->delete();
                 
                 // удаляем все файлы и изображения
-                News::model()->DeleteFilesImages($id,
+                $model = News::model();
+                $model->deleteFilesImages($id,
                     CHtml::listData(Yii::app()->db->createCommand(array(
                             'select'=>'id',
                             'from'=>'{{file}}',
@@ -189,23 +201,15 @@ class PageController extends AdminController
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 	
-
 	/**
 	 * Manages all models.
+	 * @param integer $idTree идентификатор структуры
+	 * @see NewsSearch
 	 */
 	public function actionAdmin($idTree)
-	{
-	   
-		/*
-        if (!Tree::model()->exists('id=:id AND module=:module', array(':id'=>$idTree,'module'=>'page')))
-            throw new CHttpException(404,'Страница не найдена.');
-        
-        if (!(Yii::app()->user->admin || Access::model()->checkAccessUserForTree($idTree)))
-            throw new CHttpException(403,'Доступ запрещен.');
-        */
-        
+	{	   
         $modelTree = $this->loadModelTree($idTree);
-            
+
         $model=new NewsSearch('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['News']))
@@ -221,10 +225,16 @@ class PageController extends AdminController
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @see Access
+	 * @see Tree
+	 * @see News
+	 * @throws CHttpException
+	 * @uses self::actionView()
+	 * @uses self::actionUpdate()
+	 * @uses self::actionDelete()
 	 */
 	public function loadModel($id, $idTree)
-	{
-		
+	{		
         if (!(Yii::app()->user->admin || Access::checkAccessUserForTree($idTree))
             || !Tree::model()->checkParentRight($idTree))
             throw new CHttpException(403,'Доступ запрещен.');        
@@ -239,17 +249,20 @@ class PageController extends AdminController
 		return $model;
 	}
 	
-	
 	/**
-	 * Поиск данных Tree модели
-	 * Если данные не найдены возникает HTTP исключение 404
-	 * @param int $idTree
+	 * Поиск узла структуры по его идентификатору	 
+	 * @param int $idTree идентификатор структуры
 	 * @throws CHttpException
+	 * @see Access
+	 * @see Tree
 	 * @return Tree
+	 * @uses self::actionView()
+	 * @uses self::actionCreate()
+	 * @uses self::actionUpdate()
+	 * @uses self::actionAdmin()
 	 */
 	public function loadModelTree($idTree)
 	{
-		
 		if (!(Yii::app()->user->admin || Access::checkAccessUserForTree($idTree)) || !Tree::model()->checkParentRight($idTree))
 			throw new CHttpException(403,'Доступ запрещен.');
 				
@@ -271,6 +284,7 @@ class PageController extends AdminController
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{

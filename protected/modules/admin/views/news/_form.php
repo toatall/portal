@@ -9,7 +9,7 @@
     <?php if (!$model->isNewRecord && ($model->date_delete!='') && Yii::app()->user->admin): ?>    
         <div class="alert in alert-block fade alert-error">            
             <strong>Данная запись была удалена 
-                <?php echo date('d.m.Y H:i:s', strtotime($model->date_delete)); ?>
+                <?php echo DateHelper::explodeDateTime($model->date_delete); ?>
             </strong>&nbsp;&nbsp;
             <?php 
                 $this->widget('bootstrap.widgets.TbButton', array(
@@ -29,8 +29,7 @@
         </div>                    
     <?php endif; ?>
     
-    <?php     
-    
+    <?php         
         // скрипты для просмотра избражений
         if (!$model->isNewRecord):
         
@@ -100,27 +99,7 @@
                 ? 'style="display:none;"' : ''; ?>>
             <?php echo $form->fileField($model, '_thumbail_image'); ?>
             </div>
-            <br />
-            <?php /*echo $form->textFieldRow($model,'thumbail_title',array('class'=>'span5','maxlength'=>250)); ?>
-            <?php $this->widget('bootstrap.widgets.TbButton', array(
-    			'label'=>'Скопировать заголовок',
-                'buttonType'=>'button',	
-                'htmlOptions'=>array(
-                    'style'=>'margin-top:-10px;',
-                    'onclick'=>'js:$("#'.CHtml::activeId($model, 'thumbail_title').'").val($("#'.CHtml::activeId($model, 'title').'").val());'
-                ),
-    		)); ?>
-            <?php echo $form->textAreaRow($model,'thumbail_text',array('rows'=>6, 'cols'=>50, 'class'=>'ckeditor')); ?>
-            <script type="text/javascript">
-	            CKEDITOR.replace( '<?php echo CHtml::activeId($model, 'thumbail_text'); ?>', {
-	     	       toolbar: [
-	                     [ 'Source' ],
-	                     [ 'Bold', 'Italic', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink' ],
-	                     [ 'FontSize', 'TextColor', 'BGColor' ]
-	     	       ]
-	             });
-            </script>
-            <br /><br />*/?>
+            <br />            
         </div>
     </div>
     <?php endif; ?>
@@ -167,11 +146,7 @@
             ],
             
         });
-
         
-        
-    	
-    	
         jQuery('#<?php echo CHtml::activeId($model, 'date_end_pub'); ?>').datepicker({
             'format':'dd.mm.yyyy',
             'autoclose':'true',
@@ -179,6 +154,7 @@
             'language':'ru',
             'weekStart':0            
         }); 
+        
         jQuery('#<?php echo CHtml::activeId($model, 'date_start_pub'); ?>').datepicker({
             'format':'dd.mm.yyyy',
             'autoclose':'true',

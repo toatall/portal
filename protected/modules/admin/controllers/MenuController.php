@@ -1,9 +1,17 @@
 <?php
 
+/**
+ * Manage menu
+ * @author alexeevich
+ * @see AdminController
+ * @see Menu
+ */
 class MenuController extends AdminController
 {
-    
-    
+    /**
+     * Default action
+     * @var string
+     */
     public $defaultAction = 'admin';
     
 	/**
@@ -23,19 +31,7 @@ class MenuController extends AdminController
 	 */
 	public function accessRules()
 	{
-		return array(
-			/*array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
-				'users'=>array('*'),
-			),
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
-				'users'=>array('@'),
-			),
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
-				'users'=>array('admin'),
-			),*/
+		return array(			
 			array('allow',
 				'expression'=>function() { return Yii::app()->user->inRole(['admin']); },
 			),
@@ -44,7 +40,7 @@ class MenuController extends AdminController
 			),
 		);
 	}
-
+    
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
@@ -59,14 +55,13 @@ class MenuController extends AdminController
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $typeMenu вид меню (слева, сверху)
+	 * @see Menu
 	 */
 	public function actionCreate($typeMenu)
 	{
 		$model=new Menu;
         $model->type_menu = $typeMenu;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['Menu']))
 		{
@@ -79,7 +74,7 @@ class MenuController extends AdminController
 			'model'=>$model,            
 		));
 	}
-
+    
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
@@ -88,9 +83,6 @@ class MenuController extends AdminController
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['Menu']))
 		{
@@ -108,6 +100,7 @@ class MenuController extends AdminController
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
+	 * @throws CHttpException
 	 */
 	public function actionDelete($id)
 	{
@@ -127,6 +120,7 @@ class MenuController extends AdminController
 
 	/**
 	 * Manages all models.
+	 * @see Menu
 	 */
 	public function actionAdmin()
 	{
@@ -144,6 +138,10 @@ class MenuController extends AdminController
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @throws CHttpException
+	 * @uses self::actionView()
+	 * @uses self::actionUpdate()
+	 * @uses self::actionDelete()
 	 */
 	public function loadModel($id)
 	{
@@ -156,9 +154,11 @@ class MenuController extends AdminController
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{
+	    throw new CHttpException(410);
 		if(isset($_POST['ajax']) && $_POST['ajax']==='menu-form')
 		{
 			echo CActiveForm::validate($model);

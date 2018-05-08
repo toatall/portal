@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Mange modules
+ * @author alexeevich
+ * @see AdminController
+ * @see Module
+ */
 class ModuleController extends AdminController
 {	
 
@@ -44,13 +50,12 @@ class ModuleController extends AdminController
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @see Module
+	 * @see Access
 	 */
 	public function actionCreate()
 	{
 		$model=new Module;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['Module']))
 		{
@@ -62,6 +67,7 @@ class ModuleController extends AdminController
 				$permissionUsers = (isset($_POST['Module']['permissionUser']))
 					? $_POST['Module']['permissionUser'] : array();
 				
+				//  сохранение прав доступа к модулю
 				Access::saveRelationsPermissionModule($model,
 					$permissionGroups, $permissionUsers);
 				
@@ -78,13 +84,11 @@ class ModuleController extends AdminController
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
+	 * @see Access
 	 */
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['Module']))
 		{
@@ -95,14 +99,14 @@ class ModuleController extends AdminController
 					? $_POST['Module']['permissionGroup'] : array();
 				$permissionUsers = (isset($_POST['Module']['permissionUser']))
 					? $_POST['Module']['permissionUser'] : array();
-			
+				
+                //  сохранение прав доступа к модулю
 				Access::saveRelationsPermissionModule($model,
 					$permissionGroups, $permissionUsers);
 				
 				$this->redirect(array('view','id'=>$model->name));
 			}
 		}
-
 		$this->render('update',array(
 			'model'=>$model,
 		));
@@ -112,6 +116,7 @@ class ModuleController extends AdminController
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
+	 * @throws CHttpException
 	 */
 	public function actionDelete($id)
 	{
@@ -130,6 +135,7 @@ class ModuleController extends AdminController
 
 	/**
 	 * Lists all models.
+	 * @return CActiveDataProvider
 	 */
 	public function actionIndex()
 	{
@@ -141,6 +147,7 @@ class ModuleController extends AdminController
 
 	/**
 	 * Manages all models.
+	 * @see Module
 	 */
 	public function actionAdmin()
 	{
@@ -158,6 +165,9 @@ class ModuleController extends AdminController
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
+	 * @throws CHttpException
+	 * @uses self::actionView()
+	 * @uses self::actionUpdate()
 	 */
 	public function loadModel($id)
 	{
@@ -170,6 +180,7 @@ class ModuleController extends AdminController
 	/**
 	 * Performs the AJAX validation.
 	 * @param CModel the model to be validated
+	 * @deprecated
 	 */
 	protected function performAjaxValidation($model)
 	{

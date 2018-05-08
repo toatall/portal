@@ -19,15 +19,9 @@ $this->menu=array(
 	'columns'=>array(
 			
 		'id',
-		//'id_tree',
 		'rating_year',
-		'ratingPeriodDescription',
+		'periodName',
 		'date_create',
-		/*
-		'log_change',		
-		'author',
-		'note',
-		*/
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
 			'buttons'=>array(

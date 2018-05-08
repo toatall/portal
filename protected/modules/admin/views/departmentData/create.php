@@ -17,10 +17,8 @@ $this->menu = array_merge($this->menu, array(
 		array('label'=>'Структура отдела','url'=>array('department/updateStructure', 'id'=>$modelDepartment->id), 'icon'=>'list-alt'),
 ));
 endif;
-
 ?>
 
 <h1>Создать страницу</h1>
-
 <?php echo $this->renderPartial('../news/_form', 
 		array('model'=>$model, 'idTree'=>$model->id_tree, 'modelTree'=>$modelTree)); ?>
