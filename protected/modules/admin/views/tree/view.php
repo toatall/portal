@@ -43,7 +43,7 @@ $this->menu=array(
         array(
             'name'=>'log_change',
             'type'=>'raw',
-            'value'=>$model->logСhangeText,
+            'value'=>$model->logChangeText,
         ),       
 	),
 )); ?>

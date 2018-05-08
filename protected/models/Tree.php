@@ -463,7 +463,7 @@ class Tree extends CActiveRecord
 	 */
 	public function getLogChangeText()
 	{
-	    return Log::getLog($model->log_change);
+	    return Log::getLog($this->log_change);
 	}
 	
 }
