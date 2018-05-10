@@ -148,6 +148,35 @@
 
 </div><!-- page -->
 
+
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array(
+    'id'=>'modalPreview',
+    'htmlOptions'=>array('style'=>'width:90%; margin-left:-45%; margin-top:-3%;'),
+)); ?>
+<div class="modal-header" style="height1:30px;">
+    <a class="close" data-dismiss="modal"><h3 class="text-error">&times;</h3></a>
+    <h2 id="modal-title-preview"></h2>        
+</div>
+<div class="modal-body" id="modal-content-preview" style="max-height:70vh;"></div>
+<div class="modal-footer">
+    <?php $this->widget('bootstrap.widgets.TbButton', array(
+        'label'=>'Закрыть',   
+        'type'=>'primary',
+        'htmlOptions'=>array('data-dismiss'=>'modal'),
+    )); ?>
+</div>
+<?php $this->endWidget(); ?>
+<script type="text/javascript">
+    $('#modalPreview').on('hide', function() {
+        removeParametrDialog();
+    });
+
+    $(document).on('click', '.sw_dlg', function() {    		
+    	getJson($(this).attr('href'));
+		$('#modalPreview').modal('show');
+		return false;
+	});
+</script>
 </body>
 
 </html>

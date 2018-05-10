@@ -30,7 +30,7 @@ class NewsController extends Controller
 	public function actionView($id)
 	{
         $model = $this->loadModel($id);
-	    
+
         // каталог для изображений
 	    $dirImage = str_replace('{code_no}', $model['id_organization'],
 				Yii::app()->params['pathImages']);

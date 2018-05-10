@@ -27,13 +27,13 @@ blockquote p {
 
 <div class="row">
     <div class="span12 thumbnail">
-    	<div class="span2">
-    		<a href="<?= $url ?>" data-toggle="modal" data-target="#modalPreviewNews" onclick="loadNews($(this).attr('href'), '<?php echo $data['title']; ?>');">
+    	<div class="span2 links">
+    		<a href="<?= $url ?>" class="sw_dlg" data-toggle="modal" data-target="#modalPreviewNews" onclick="loadNews($(this).attr('href'), '<?php echo $data['title']; ?>');">
     			<img src="<?= $imageUrl ?>" class="thumbnails" style="float: left; margin-right: 20px; max-width: 200px; max-height:150px;" />
     		</a>
     	</div>
     	<div class="span10 text-left" style="padding-right:20px;">
-    		<h4><a href="<?= $url ?>" class="link-title" data-toggle="modal" data-target="#modalPreviewNews" onclick="loadNews($(this).attr('href'), '<?php echo CHtml::encode($data['title']); ?>');"><?php echo $data['title']; ?></a></h4>
+    		<h4><a href="<?= $url ?>" class="link-title sw_dlg" data-toggle="modal" data-target="#modalPreviewNews" onclick="loadNews($(this).attr('href'), '<?php echo CHtml::encode($data['title']); ?>');"><?php echo $data['title']; ?></a></h4>
     		<blockquote>
     			<span style="text-align: justify; font-style: normal;"><?= $data['message1'] ?></span>    			
     		</blockquote>

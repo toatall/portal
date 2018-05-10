@@ -29,8 +29,19 @@ class ConferenceController extends Controller
 	 */
 	public function actionView($id)
 	{
+	    $model = $this->loadModel($id);
+	    
+	    if (Yii::app()->request->isAjaxRequest)
+	    {
+            echo CJSON::encode([
+                'title' => $model->theme,
+                'content' => $this->renderPartial('viewAjax',array('model'=>$model),true,true),
+            ]);
+	        Yii::app()->end();
+	    }
+		
 		$this->render('view',array(
-			'model'=>$this->loadModel($id),           
+			'model'=>$model,           
 		));
 	}
     

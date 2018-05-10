@@ -28,25 +28,6 @@ $this->pageTitle=Yii::app()->name;
     ));
 ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array(
-    'id'=>'modalPreviewNews',
-    'htmlOptions'=>array('style'=>'width:90%; margin-left:-45%; margin-top:-3%;'),
-)); ?>
-<div class="modal-header" style="height1:30px;">
-    <a class="close" data-dismiss="modal"><h3 class="text-error">&times;</h3></a>
-    <h2 id="modal-title-news-preview"></h2>        
-</div>
-<div class="modal-body" id="modal-content-news-previwe" style="max-height:70vh;"></div>
-<div class="modal-footer">
-    <?php $this->widget('bootstrap.widgets.TbButton', array(
-        'label'=>'Закрыть',   
-        'type'=>'primary',
-        'htmlOptions'=>array('data-dismiss'=>'modal'),
-    )); ?>
-</div>
-
-
-<?php $this->endWidget(); ?>
 
 <!--[if !IE]>-->
 <script type="text/javascript">
@@ -75,10 +56,13 @@ $this->pageTitle=Yii::app()->name;
 		ajaxNews('<?= Yii::app()->controller->createUrl('news/Humor') ?>', {}, '#container_humor', true);
 
 	    // then modal news preview close(hide)
+		
+		/*
 		$('#modalPreviewNews').on('hide', function() {
 			// clear hash			
 			window.history.replaceState({}, document.title, '<?= Yii::app()->controller->createUrl('site/index') ?>');
 		});
+		*/
 
 
 	    // check url hash
@@ -100,18 +84,6 @@ $this->pageTitle=Yii::app()->name;
 		}
 		
 	});
-
-	// загрузка новости
-	function loadNews(url, title, hash)
-	{			
-		$('#modal-title-news-preview').html(title);
-		ajaxJSON(url, {
-			title: '#modal-title-news-preview',
-			content: '#modal-content-news-previwe'
-		});
-		changeUrlParam('w', url);
-		return false;
-	}
 		
 </script>
 
