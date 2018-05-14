@@ -143,6 +143,7 @@ class DepartmentController extends Controller
 	 */
 	protected function performAjaxValidation($model)
 	{
+	    throw new CHttpException(410);
 	    if(isset($_POST['ajax']) && $_POST['ajax']==='news-form')
 	    {
 	        echo CActiveForm::validate($model);
@@ -225,6 +226,20 @@ class DepartmentController extends Controller
 	        return call_user_func(array($this, $methodName), $this->model->id, $idTree);
 	    }
 	    
+	    // 1/2. Если не указан модуль, то показать подразделы
+	    if ($this->modelTree->module == null)
+	    {
+    	    $treeDepartment = $this->departmentTree($idTree, $this->model->id, true);
+    	    if ($treeDepartment != null)
+    	    {
+    	        return $this->render('tree', [
+    	            'model'=>$this->model,
+    	            'treeDepartment'=>$treeDepartment,
+    	            'breadcrumbsTreePath'=>$this->breadcrumbsTreePath($idTree),
+    	        ]);
+    	    }
+	    }
+	    
 	    // 2 Поиск новостей по текущему разделу
 	    $tree = ($idTree===null) ? $this->model->id_tree : $idTree;
 	    $modelNews = News::model()->findAll('id_tree=:id_tree and date_delete is null and flag_enable=1 and date_start_pub < getdate() and date_end_pub > getdate()', [':id_tree'=>$tree]);
@@ -245,6 +260,7 @@ class DepartmentController extends Controller
                 'dirFile'=>$dirs['dirFile'],
                 'files'=>File::filesForDownload($modelNews[0]['id'], 'news'),
                 'images'=>Image::imagesForDownload($modelNews[0]['id'], 'news'),
+                'breadcrumbsTreePath'=>$this->breadcrumbsTreePath($idTree),
             ]);            
         }
         // 2.2 Вывести весь список новостей
@@ -258,6 +274,23 @@ class DepartmentController extends Controller
         }	
         
 	    return $this->render('noData', ['model'=>$this->model]); // представление с информацией, что нет данных
+	}
+	
+	private function breadcrumbsTreePath($idTree)
+	{
+	    if ($this->model->id_tree == $idTree)
+	        return [];
+	    
+	    $modelTree = Yii::app()->db->createCommand()
+	       ->from('{{tree}}')
+	       ->where('id=:id and date_delete is null', [':id'=>$idTree])
+	       ->queryRow();
+	    
+	    if ($modelTree==null)
+	        return [];
+	    
+	    return array_merge($this->breadcrumbsTreePath($modelTree['id_parent']),
+	        [$modelTree['name'] => ['department/view', 'id'=>$this->model->id, 'idTree'=>$idTree]]);
 	}
 		
 	/**
@@ -306,6 +339,7 @@ class DepartmentController extends Controller
 	               'dirFile'=>$dirs['dirFile'],
 	               'files'=>File::filesForDownload($modelFirstNews[0]['id'], 'news'),
 	               'images'=>Image::imagesForDownload($modelFirstNews[0]['id'], 'news'),
+	               'breadcrumbsTreePath'=>[$modelFirstNews[0]['title']],
 	           ]);
             }
 	    }
@@ -488,8 +522,8 @@ class DepartmentController extends Controller
 		}
 		
 		if ($menu = $model->menu)
-		{			
-			Menu::$leftMenuAdd = array_merge(Menu::$leftMenuAdd, $menu);
+		{					    
+		    Menu::$leftMenuAdd = array_merge(Menu::$leftMenuAdd, ($model->use_card ? [['name'=>'---','link'=>'#']] : []), $menu);
 		}		
 	}
 	

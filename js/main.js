@@ -1,4 +1,4 @@
-
+// изображение загрузчика
 const IMAGE_LOADER = '<img src="/images/loader_fb.gif" style="width:40px;" />';
 
 /**
@@ -13,7 +13,6 @@ function loadAjaxConferenceToday()
 			$('#container-conference-today').html(data);
 		});
 }
-
 
 /**
  * Универсальная функция для ajax-загрузки (get) 
@@ -109,9 +108,9 @@ function ajaxJSON(url, containers, gif)
 
 /**
  * Загрузчик для новостей
- * @param url
- * @param data
- * @param container
+ * @param url ссылка
+ * @param data даные
+ * @param container 
  * @returns
  */
 function ajaxNews(url, data, container, append)
@@ -119,10 +118,22 @@ function ajaxNews(url, data, container, append)
 	return ajaxGET(url, data, container, IMAGE_LOADER, append);
 }
 
+/**
+ * Проверка наличия параметра в текущей ссылке
+ * @param name
+ * @returns
+ */
 function getURLParameter(name) {
 	return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
 }
 
+/**
+ * Изменение параметра ссылки
+ * @param param параметр
+ * @param value значение параметра
+ * @returns
+ * @uses getJson()
+ */
 function changeUrlParam (param, value) 
 {
 	var currentURL = window.location.href+'&';
@@ -144,6 +155,13 @@ function changeUrlParam (param, value)
 	}
 }
 
+/**
+ * Удаление параметра со значение из ссылки
+ * @param url ссылка
+ * @param parameter параметр, который необходимо удалить
+ * @returns
+ * @uses removeParametrDialog()
+ */
 function removeURLParameter(url, parameter) {
     //prefer to use l.search if you have a location/link object
     var urlparts= url.split('?');   
@@ -167,6 +185,10 @@ function removeURLParameter(url, parameter) {
     }
 }
 
+/**
+ * Удаление параметра w из ссылки
+ * @returns
+ */
 function removeParametrDialog()
 {
 	window.history.replaceState({}, document.title, removeURLParameter(window.location.href, 'w'));
@@ -189,14 +211,58 @@ function getJson(url)
 	return false;
 }
 
-
 /**
- * Run afrer load document
+ * Load document...
  * @returns
  */
 $(document).ready(function() {
 	
-	// disable scroll in background if open modal
+	/**
+	 * Плавающее главное меню
+	 */
+		
+	// высота шапки	
+	var h_hght = 200;
+	
+	// отступ когда шапка уже не видна
+	var h_mrg = 0;
+	
+    var elem = $('#top_nav');
+    var top = $(this).scrollTop();
+     
+    if(top > h_hght){
+        elem.css('top', h_mrg);
+    }           
+     
+    $(window).scroll(function(){
+        top = $(this).scrollTop();
+         
+        if (top+h_mrg < h_hght) {
+            elem.css('top', (h_hght-top));
+        } else {
+            elem.css('top', h_mrg);
+        }
+    });
+		
+    /**
+     * Удаление параметра w из адреса при закрытии диалогового окна
+     */
+	$('#modalPreview').on('hide', function() {
+        removeParametrDialog();
+    });
+	
+	/**
+	 * Повесить на все ссылки с sw_dlg событие 'click' для отркытия диалогового окна
+	 */
+    $(document).on('click', '.sw_dlg', function() {    		
+    	getJson($(this).attr('href'));
+		$('#modalPreview').modal('show');
+		return false;
+	});
+    
+    /**
+     * Отключение прокрутки при открытии модального окна
+     */
 	$('.modal')
 		.on('shown', function(){ 
 			$('body').css({overflow: 'hidden'}); 
@@ -205,11 +271,15 @@ $(document).ready(function() {
 			$('body').css({overflow: ''}); 
 		});
 	
-	
-	// load container 
+	/**
+	 * Загрузка событий на сегодня
+	 */
 	loadAjaxConferenceToday();
 	
-	// check ulr parametr 'w'
+	/**
+	 * Если в адресной строке присутсвует параметр 'w',
+	 * то окрываем диалоговое окно с адресом = значение параметра
+	 */
 	url_w = getURLParameter('w');
     if (url_w!=null)
     {
@@ -219,7 +289,6 @@ $(document).ready(function() {
 			content: '#modal-content-preview'
 		});
 	}
-	
-	
+		
 });
 	

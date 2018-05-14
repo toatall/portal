@@ -49,7 +49,7 @@ if (isset($breadcrumbs))
 <script type="text/javascript">
 	$(document).ready(function() {
     	$('.sw_dlg').on('click',function() {    		
-    		loadNews($(this).attr('href'));
+    		loadModal($(this).attr('href'));
     		$('#modalPreview').modal('show');
     		return false;
     	});

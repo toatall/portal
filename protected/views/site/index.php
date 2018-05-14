@@ -48,6 +48,7 @@ $this->pageTitle=Yii::app()->name;
 <script type="text/javascript">
 
 	jQuery(function() {
+		
 		// load news day
 	    ajaxNews('<?= Yii::app()->controller->createUrl('news/newsDay') ?>', {}, '#container_news_day', true);
 	    // load news ifns
@@ -55,32 +56,16 @@ $this->pageTitle=Yii::app()->name;
 	    // load humor
 		ajaxNews('<?= Yii::app()->controller->createUrl('news/Humor') ?>', {}, '#container_humor', true);
 
-	    // then modal news preview close(hide)
-		
-		/*
-		$('#modalPreviewNews').on('hide', function() {
-			// clear hash			
-			window.history.replaceState({}, document.title, '<?= Yii::app()->controller->createUrl('site/index') ?>');
-		});
-		*/
-
-
 	    // check url hash
 	    url_w = getURLParameter('w');
 	    if (url_w!=null)
 	    {
 		    $('#modalPreviewNews').modal('show');
-		    //ajaxNews(url_w, {}, '#modal-content-news-previwe');		    
-		    
-		    //obj = ajaxJSON(url_w, {a:'asdas', b:'asdas'});
-		    //alert(obj);
-
+		    		  
 			ajaxJSON(url_w, {
 				title: '#modal-title-news-preview',
 				content: '#modal-content-news-previwe'
-			});
-		    
-		    
+			});					    		  
 		}
 		
 	});

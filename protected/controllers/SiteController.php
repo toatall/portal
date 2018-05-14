@@ -127,6 +127,7 @@ class SiteController extends Controller
      */
     public function actionBrowsers()
     {
+        print_r(BreadcrumbsHelper::app()->brGeneral(25));
     	$this->pageTitle = 'Рекомендуемые браузеры';    	
         $this->render('browsers');
     }

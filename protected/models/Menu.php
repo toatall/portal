@@ -377,9 +377,16 @@ class Menu extends CActiveRecord
     	if (count($arr)>0) $resultMenu .= '<ul class="dropdown-menu' . ($main ? ' dropdown-menu-main dropdown-menu-wrap' : '') . '">';    	
     	foreach ($arr as $a)
     	{
-    		$flagItems = isset($a['items']) && count($a['items'])>0;
-    		$resultMenu .= '<li' . ($flagItems ? ' class="dropdown-submenu"' : '') . '>'
-    			. CHtml::link($a['name'], $a['link']) . ($flagItems ? $this->getLeftMenuAdd($a['items'], false) : '') . '</li>';
+    	    if ($a['name']==='---')
+    	    {
+    	        $resultMenu .= '<li class="divider"></li>';
+    	    }
+    	    else
+    	    {
+        		$flagItems = isset($a['items']) && count($a['items'])>0;
+        		$resultMenu .= '<li' . ($flagItems ? ' class="dropdown-submenu"' : '') . '>'
+                    . CHtml::link($a['name'], $a['link']) . ($flagItems ? $this->getLeftMenuAdd($a['items'], false) : '') . '</li>';
+    	    }
     	}
     	
     	if (count($arr)>0) $resultMenu .= '</ul>';    	
