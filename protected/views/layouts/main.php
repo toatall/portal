@@ -18,73 +18,33 @@
     <link rel="shortcut icon" href="/css/favicon.png" />
     
     <?php 
-        Yii::app()->getClientScript()->registerScriptFile(Yii::app()->baseUrl.'/extension/upButton/query.js');
+        Yii::app()->getClientScript()->registerScriptFile(Yii::app()->baseUrl.'/extension/upButton/query.js');     
     ?>
     
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/menu.css" />    
-    <?php Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl . '/js/main.js', CClientScript::POS_END); ?>
+    <?php Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl . '/js/main.js', CClientScript::POS_END); ?>   
     
     
 </head>
     
 <body>	
-	<?php 
-	   $d1 = new DateTime();
-	   $d2 = new DateTime('2018-05-16');
-	   $dateDiff = $d1->diff($d2)->format('%r%a');	
-	?>
 	
 <!-- header -->	
 	<table id="head">
 	    <tr>
-	    	<td id="header-right">
-	    		<?php if ($dateDiff > 0): ?>
-	    		<div style="color: #fff; float: right; width:300px;">
-	    			<h4>До начала XV Спартакиады налоговых органов Югры осталось</h4> <h1><?= $dateDiff ?></h1> <h4>дней</h4>
-	    		</div>
-	    		<?php endif; ?>
+	    	<td id="header-right">    		
 	    	</td>	    	
 	    </tr>	   
 	</table>
 <!-- header -->
 
-<?php
-    
+<?php    
     Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/extension/spoiler/spoiler.js');
-    Yii::app()->clientScript->registerCssFile(Yii::app()->request->baseUrl.'/extension/spoiler/spoiler.css');    
-    Yii::app()->clientScript->registerScript('fixed-menu', "
-    	var h_hght = 200; // высота шапки
-		var h_mrg = 0;    // отступ когда шапка уже не видна
-		                 
-		$(function(){
-		 
-		    var elem = $('#top_nav');
-		    var top = $(this).scrollTop();
-		     
-		    if(top > h_hght){
-		        elem.css('top', h_mrg);
-		    }           
-		     
-		    $(window).scroll(function(){
-		        top = $(this).scrollTop();
-		         
-		        if (top+h_mrg < h_hght) {
-		            elem.css('top', (h_hght-top));
-		        } else {
-		            elem.css('top', h_mrg);
-		        }
-		    });
-		 
-		});        		    	
-    ", CClientScript::POS_END);
+    Yii::app()->clientScript->registerCssFile(Yii::app()->request->baseUrl.'/extension/spoiler/spoiler.css');        
 ?>
 
-
-
-<?php      
-   
-    $this->widget('bootstrap.widgets.TbNavbar',array(   
+<?php $this->widget('bootstrap.widgets.TbNavbar',array(   
         'brand'=>'',
         //'fixed'=>'inverse',
         'htmlOptions'=>array('style'=>'top: 200px;', 'id'=>'top_nav', 'class'=>'navbar-static-top'),
@@ -93,10 +53,7 @@
                 'class'=>'bootstrap.widgets.TbMenu',
                 'items'=>Menu::getTopMenuArray(),
             )),
-    ));
-      
-?>
-    
+    )); ?>    
 <div id="page">
 
     <?php if(isset($this->breadcrumbs)):?>
@@ -105,7 +62,7 @@
 			'links' => $this->breadcrumbs,            
 		)); ?><!-- breadcrumbs -->
 	<?php endif?>
-    
+	    				
     <div class="content-fluid">
     	<div class="row-fluid">
     		<div class="span2">
@@ -148,7 +105,6 @@
 
 </div><!-- page -->
 
-
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array(
     'id'=>'modalPreview',
     'htmlOptions'=>array('style'=>'width:90%; margin-left:-45%; margin-top:-3%;'),
@@ -166,17 +122,12 @@
     )); ?>
 </div>
 <?php $this->endWidget(); ?>
+
 <script type="text/javascript">
-    $('#modalPreview').on('hide', function() {
-        removeParametrDialog();
-    });
 
-    $(document).on('click', '.sw_dlg', function() {    		
-    	getJson($(this).attr('href'));
-		$('#modalPreview').modal('show');
-		return false;
-	});
+	
+	
 </script>
-</body>
 
+</body>
 </html>
