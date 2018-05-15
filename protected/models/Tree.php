@@ -26,7 +26,7 @@ class Tree extends CActiveRecord
      * Модуль по умолчанию
      * @var string
      */
-    const defaultModule = 'news';
+    const defaultModule = 'page';
     
     /**
      * Доступ пользователей к узлу
