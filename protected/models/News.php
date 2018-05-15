@@ -33,7 +33,7 @@ class News extends CActiveRecord
 	 * Имя модуля по умолчанию
 	 * @var string
 	 */
-	const DEFAULT_MODULE = 'news';	
+	const DEFAULT_MODULE = 'page';	
     
 	/**
 	 * Размер миниатюр для галереи (ширина - пикселей)
