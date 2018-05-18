@@ -45,7 +45,7 @@ class News extends CActiveRecord
      * Размер миниатюры для главной страницы
      * @var integer
      */
-    private $_miniatureImageHeight = 150; 
+    private $_miniatureImageHeight = 500; 
     
     /**
      * Флаг отвечающий за дополнительные настройки прав
@@ -97,6 +97,7 @@ class News extends CActiveRecord
 			// search	
 			array('id, id_tree, id_organization, title, message1, message2, author, date_start_pub, date_end_pub, date_create,
                 date_edit, date_delete, flag_enable, thumbail_image, general_page, param1', 'safe', 'on'=>'search'),
+		    array('id_organization, title, message1, message2, author, date_create', 'safe', 'on'=>'searchPublic'),
             array('_thumbail_image', 'file', 'types'=>'jpg, jpeg, gif, png', 'allowEmpty'=>true),
 		);
 	}
@@ -117,7 +118,7 @@ class News extends CActiveRecord
             	'condition'=>"[images].[model]='news'"),
 		);
 	}
-
+    	
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
