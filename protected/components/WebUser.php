@@ -87,7 +87,7 @@ class WebUser extends CWebUser
 	{
 		Yii::app()->db->createCommand()
 			->insert('{{log_authenticate}}', array(
-				'username'=>UserInfo::inst()->ADLogin,
+				'username'=>UserInfo::inst()->userLogin,
 				'operation'=>$operation,
 				'session_id'=>session_id(),
 				'remote_ip_address'=>UserInfo::inst()->clientIP,
