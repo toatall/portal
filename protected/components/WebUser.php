@@ -63,7 +63,7 @@ class WebUser extends CWebUser
 	 */
 	public function login($identity, $duration=0)
 	{	
-	    return parent::login($identity, $duration);
+	    parent::login($identity, $duration);
 	    $this->saveLogOpertaion('login');		
 	}
 		
