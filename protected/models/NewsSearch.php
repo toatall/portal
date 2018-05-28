@@ -12,7 +12,7 @@ class NewsSearch extends News
 	 * Количество новостей
 	 * @var integer
 	 */
-	const LIMIT_TOP_NEWS = 6;
+	const LIMIT_TOP_NEWS = 10;
 	
 	/**
 	 * Дополнительный параметр
