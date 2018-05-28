@@ -20,7 +20,6 @@
  * @property integer $count_like
  * @property integer $count_comment
  * @property integer $count_visit
- * @property string $sort_index
  * @property string $organization_name
  * 
  * The followings are the available model relations:
@@ -89,7 +88,7 @@ class News extends CActiveRecord
 			array('id_tree, flag_enable, general_page, id_organization, on_general_page, count_like, count_comment, count_visit', 
 				'numerical', 'integerOnly'=>true),
 			array('title', 'length', 'max'=>500),
-			array('author, sort_index, organization_name', 'length', 'max'=>250),
+			array('author, organization_name', 'length', 'max'=>250),
             array('thumbail_image, thumbail_title', 'length', 'max'=>250),
             array('thumbail_text', 'length', 'max'=>1000),
 			array('message1, message2, date_create, date_edit, date_delete, 
@@ -98,7 +97,7 @@ class News extends CActiveRecord
 			// search	
 			array('id, id_tree, id_organization, title, message1, message2, author, date_start_pub, date_end_pub, date_create,
                 date_edit, date_delete, flag_enable, thumbail_image, general_page, param1', 'safe', 'on'=>'search'),
-		    array('id_organization, title, message1, message2, author, date_create, sort_index, organization_name, date_create_1, date_create_2, param1', 'safe', 'on'=>'searchPublic'),
+		    array('id_organization, title, message1, message2, author, date_create, organization_name, date_create_1, date_create_2, param1', 'safe', 'on'=>'searchPublic'),
             array('_thumbail_image', 'file', 'types'=>'jpg, jpeg, gif, png', 'allowEmpty'=>true),
 		);
 	}
@@ -717,7 +716,7 @@ class News extends CActiveRecord
      */
     public function getOrganization_name()
     {
-        return $this->organization->name;
+        return isset($this->organization->name) ? $this->organization->name : $this->id_organization;
     }
     
 	/** 
