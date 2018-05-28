@@ -95,7 +95,7 @@ class NewsSearch extends News
 		$criteria->with = array('tree','organization');
 		
 		if ($id>0)    	
-    	   $criteria->compare("CONVERT(varchar,t.date_create,112)+right('0',cast(DATEPART(HOUR,t.date_create) as varchar),2)+right('0'+cast(DATEPART(MINUTE,t.date_create) as varchar),2)+right('0'+cast(DATEPART(SECOND,t.date_create) as varchar),2)+CAST(t.id as varchar)", '<'.$id);
+    	   $criteria->compare("CONVERT(varchar,t.date_create,112)+right('0'+cast(DATEPART(HOUR,t.date_create) as varchar),2)+right('0'+cast(DATEPART(MINUTE,t.date_create) as varchar),2)+right('0'+cast(DATEPART(SECOND,t.date_create) as varchar),2)+CAST(t.id as varchar)", '<'.$id);
 		
 		$criteria->limit = self::LIMIT_TOP_NEWS;
 		$criteria->compare('t.title',$this->title,true);
