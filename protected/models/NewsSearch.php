@@ -12,7 +12,7 @@ class NewsSearch extends News
 	 * Количество новостей
 	 * @var integer
 	 */
-	const LIMIT_TOP_NEWS = 10;
+	const LIMIT_TOP_NEWS = 6;
 	
 	/**
 	 * Дополнительный параметр
@@ -95,7 +95,7 @@ class NewsSearch extends News
 		$criteria->with = array('tree','organization');
 		
 		if ($id>0)    	
-    	   $criteria->compare('CONVERT(varchar,t.date_create,112)+cast(DATEPART(HOUR,t.date_create) as varchar)+cast(DATEPART(MINUTE,t.date_create) as varchar)+cast(DATEPART(SECOND,t.date_create) as varchar)+CAST(t.id as varchar)', '<'.$id);
+    	   $criteria->compare("CONVERT(varchar,t.date_create,112)+right('0',cast(DATEPART(HOUR,t.date_create) as varchar),2)+right('0'+cast(DATEPART(MINUTE,t.date_create) as varchar),2)+right('0'+cast(DATEPART(SECOND,t.date_create) as varchar),2)+CAST(t.id as varchar)", '<'.$id);
 		
 		$criteria->limit = self::LIMIT_TOP_NEWS;
 		$criteria->compare('t.title',$this->title,true);
@@ -116,7 +116,7 @@ class NewsSearch extends News
 		$criteria->compare('t.id_organization',$this->id_organization);
 		$criteria->compare('tree.id', $this->id_tree);
 		$criteria->compare('tree.param1', $this->param1);
-		$criteria->order = 'CONVERT(varchar,t.date_create,112)+cast(DATEPART(HOUR,t.date_create) as varchar)+cast(DATEPART(MINUTE,t.date_create) as varchar)+cast(DATEPART(SECOND,t.date_create) as varchar)+CAST(t.id as varchar) desc';		
+		$criteria->order = "CONVERT(varchar,t.date_create,112)+right('0'+cast(DATEPART(HOUR,t.date_create) as varchar),2)+right('0'+cast(DATEPART(MINUTE,t.date_create) as varchar),2)+right('0'+cast(DATEPART(SECOND,t.date_create) as varchar),2)+CAST(t.id as varchar) desc";		
 		
 		return self::model()->findAll($criteria);		
 	}
