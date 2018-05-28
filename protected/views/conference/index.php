@@ -8,6 +8,7 @@ $this->breadcrumbs = array(
 
 ?>
 
+<div class="content content-color">
 <h1><?= $model->typeName ?></h1>
 
 
@@ -128,3 +129,4 @@ $this->breadcrumbs = array(
 		'displayFirstAndLast'=>true,
 	),
 )); ?>
+</div>

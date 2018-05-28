@@ -1,3 +1,4 @@
+<div class="content content-color">
 <?php
 $this->breadcrumbs=$breadcrumbs;
 ?>
@@ -57,4 +58,5 @@ $this->breadcrumbs=$breadcrumbs;
 	));
 	
 ?>
+</div>
 </div>

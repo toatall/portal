@@ -8,7 +8,7 @@ $this->breadcrumbs=array(
 	'Структура',
 );
 ?>
-
+<div class="content content-color">
 <h1><?= $model->department_name . ' (структура)' ?></h1>
 <hr />
 
@@ -35,3 +35,4 @@ $this->breadcrumbs=array(
 		</div>		
 	</div>
 <?php endforeach; ?>
+</div>

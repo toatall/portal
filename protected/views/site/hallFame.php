@@ -1,3 +1,4 @@
+<div class="content content-color">
 <?php 
     // скрипты для просмотра изображений //
     Yii::app()->clientScript->registerScriptFile(
@@ -25,8 +26,7 @@
     .carousel-indicators {
         padding: 5px;
         background: #777777;
-        background: rgba(0, 0, 0, 0.30);
-        
+        background: rgba(0, 0, 0, 0.30);       
     }
 </style>
 
@@ -60,4 +60,4 @@
         echo TbHtml::carousel($photoFiles);
 	endif; 
 ?>
-
+</div>

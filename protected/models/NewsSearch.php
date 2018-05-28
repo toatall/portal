@@ -12,7 +12,7 @@ class NewsSearch extends News
 	 * Количество новостей
 	 * @var integer
 	 */
-	const LIMIT_TOP_NEWS = 5;
+	const LIMIT_TOP_NEWS = 10;
 	
 	/**
 	 * Дополнительный параметр
@@ -20,6 +20,21 @@ class NewsSearch extends News
 	 */
 	public $param1;
 		
+	/**
+	 * Дата создания "с"
+	 * Используется для поиска на главной странице
+	 * @var string
+	 */
+	public $date_create_1;
+	
+	/**
+	 * Дата создания "до"
+	 * Используется для поиска на главной странице
+	 * @var string
+	 */
+	public $date_create_2;
+	
+	
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 *
@@ -51,7 +66,7 @@ class NewsSearch extends News
 		$criteria->compare('message2',$this->message2,true);
 		$criteria->compare('author',$this->author,true);
 		$criteria->compare('date_start_pub',$this->date_start_pub,true);
-		$criteria->compare('date_end_pub',$this->date_end_pub,true);
+		$criteria->compare('date_end_pub',$this->date_end_pub,true);				
 		$criteria->compare('date_create',$this->date_create,true);
 		$criteria->compare('date_delete',$this->date_delete);
 		$criteria->compare('flag_enable',$this->flag_enable);
@@ -60,7 +75,7 @@ class NewsSearch extends News
 			$criteria->addCondition('date_delete IS NULL');
 		
 		$criteria->compare('id_organization', Yii::app()->session['organization']);
-			
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
@@ -73,36 +88,37 @@ class NewsSearch extends News
 	 * Search for frontend
 	 * @return CActiveDataProvider
 	 */
-	public function searchPublic()
-	{
-		$criteria=new CDbCriteria;		
-	
+	public function searchPublic($id=0, $moduleNews=true)
+	{	    	    
+		$criteria=new CDbCriteria;
+	   
 		$criteria->with = array('tree','organization');
-	
-		$criteria->compare('t.id',$this->id);
-		$criteria->compare('t.id_tree',$this->id_tree);
+		
+		if ($id>0)    	
+    	   $criteria->compare('CONVERT(varchar,t.date_create,112)+cast(DATEPART(HOUR,t.date_create) as varchar)+cast(DATEPART(MINUTE,t.date_create) as varchar)+cast(DATEPART(SECOND,t.date_create) as varchar)+CAST(t.id as varchar)', '<'.$id);
+		
+		$criteria->limit = self::LIMIT_TOP_NEWS;
 		$criteria->compare('t.title',$this->title,true);
 		$criteria->compare('t.message1',$this->message1,true);
 		$criteria->compare('t.message2',$this->message2,true);
 		$criteria->compare('t.author',$this->author,true);
-		$criteria->compare('t.date_start_pub',$this->date_start_pub,true);
-		$criteria->compare('t.date_end_pub',$this->date_end_pub,true);
-		$criteria->compare('t.date_create',$this->date_create,true);
-		$criteria->compare('t.date_delete',$this->date_delete);
-		
-		$criteria->compare('tree.module','news');
+		//$criteria->compare('t.date_start_pub',$this->date_start_pub,true);
+		//$criteria->compare('t.date_end_pub',$this->date_end_pub,true);
+		if ($this->date_create_1 != null)
+		    $criteria->compare('t.date_create', '>=' . $this->date_create_1);
+	    if ($this->date_create_2 != null)
+	        $criteria->compare('t.date_create', '<=' . $this->date_create_2);
+	    if ($moduleNews)
+            $criteria->compare('tree.module','news');
 		$criteria->addCondition('t.flag_enable=1 AND t.date_delete is null
-            AND t.date_start_pub < getdate() AND t.date_end_pub > getdate()');
-		
-		
-		$criteria->compare('t.id_organization',$this->id_organization);		
+            AND tree.date_delete is null AND t.date_start_pub < getdate()
+            AND t.date_end_pub > getdate()');
+		$criteria->compare('t.id_organization',$this->id_organization);
+		$criteria->compare('tree.id', $this->id_tree);
 		$criteria->compare('tree.param1', $this->param1);
+		$criteria->order = 'CONVERT(varchar,t.date_create,112)+cast(DATEPART(HOUR,t.date_create) as varchar)+cast(DATEPART(MINUTE,t.date_create) as varchar)+cast(DATEPART(SECOND,t.date_create) as varchar)+CAST(t.id as varchar) desc';		
 		
-		
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-			'sort'=>array('defaultOrder'=>'t.date_create desc, t.id desc'),
-		));
+		return self::model()->findAll($criteria);		
 	}
 	
 	/**
@@ -111,7 +127,7 @@ class NewsSearch extends News
 	 * @see CDbCriteria
 	 * @return CActiveDataProvider
 	 */
-	public function searchPages($page)
+	public function searchPages($page=null)
 	{
 		$criteria=new CDbCriteria;
 
@@ -137,6 +153,7 @@ class NewsSearch extends News
 			'sort'=>array('defaultOrder'=>'t.date_create desc'),
 		));
 	}
+	
 		
     /**
      * Новости для раздела "Новость дня"
@@ -155,6 +172,25 @@ class NewsSearch extends News
 	    if ($id>0 && is_numeric($id))
 	       $model->where('id<:id', [':id'=>$id]);
 	       
+	    return $model->queryAll();
+	}
+	
+	/**
+	 * Новости
+	 * @param integer $id идентификатор новости
+	 * @return array|mixed
+	 * @uses SiteController::actionIndex()
+	 */
+	public static function feedNews($id=0)
+	{
+	    $model = Yii::app()->db->createCommand()
+	       ->from('{{view_feed_news}}')
+	       ->limit(self::LIMIT_TOP_NEWS)
+	       ->order('date_create desc, id desc');
+	    
+	    if ($id>0 && is_numeric($id))
+	        $model->where('id<:id', [':id'=>$id]);
+	    
 	    return $model->queryAll();
 	}
 	

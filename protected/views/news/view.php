@@ -8,7 +8,7 @@ $this->breadcrumbs=array(
 
 ?>
 
-
+<div class="content content-color">
 <?php 
 	$this->renderPartial('_view', ['model'=>$model, 'dirFile'=>$dirFile, 'dirImage'=>$dirImage, 'files'=>$files, 'images'=>$images]);
 ?>
@@ -21,3 +21,4 @@ $this->breadcrumbs=array(
 <?php 
 	$this->renderPartial('application.views.comment.index', ['id'=>$model['id']]);
 ?>
+</div>

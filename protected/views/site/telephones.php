@@ -5,8 +5,10 @@ $this->breadcrumbs=array(
 );
 
 ?>
+<div class="content content-color">
 
 <h1>Телефонные справочники</h1>
+
 
 <?php 
 
@@ -15,7 +17,7 @@ $func_url = function($data) {
 };
 	
 $this->widget('bootstrap.widgets.TbGridView',array(
-	'id'=>'news-grid',
+	//'id'=>'news-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>null,
     'hideHeader'=>true, 
@@ -50,9 +52,7 @@ $this->widget('bootstrap.widgets.TbGridView',array(
 			},
 			'type'=>'raw',				
 		),
-		//'date_edit',
 	),
 )); ?>
-<script type="text/javascript">
-	function sendStatistic(){} 
-</script>
+
+</div>

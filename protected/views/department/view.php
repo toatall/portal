@@ -18,7 +18,7 @@ if (is_array(end($this->breadcrumbs)))
 }
 
 ?>
-
+<div class="content content-color">
 <?php 	    
 	$this->renderPartial('application.views.news._view', [
 	    'model'=>$modelNews[0], 
@@ -28,3 +28,4 @@ if (is_array(end($this->breadcrumbs)))
 	    'images'=>$images,
 	]);
 ?>
+</div>

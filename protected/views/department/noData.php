@@ -9,4 +9,6 @@ $this->breadcrumbs=array(
 
 ?>
 
-<h1>Нет данных</h1>
+<div class="alert">	
+	<h3>Нет данных</h3>
+</div>

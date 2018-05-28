@@ -152,6 +152,18 @@ class DepartmentController extends Controller
 	}
 	
 	/**
+	 * Список отделов	 
+	 * @see Department
+	 */
+	public function actionIndex()
+	{
+	    $model = Department::model()->findAll();
+	    $this->render('index', [
+	        'model'=>$model,
+	    ]);
+	}
+	
+	/**
 	 * Отображение материала отдела
 	 * 1. Если $idTree != null и в текущем классе имеется
 	 * функция с именем "render_$module$", где $module$ - имя модуля (Tree->module)
@@ -218,7 +230,7 @@ class DepartmentController extends Controller
 	 */
 	private function showTreeNode($idTree)
 	{
-	    // 1 подгрузка по модулю (например, райтинги)
+	    // 1. подгрузка по модулю (например, райтинги)
 	    $this->modelTree = $this->loadModelTree($idTree);
 	    $methodName = 'render_' . $this->modelTree->module;
 	    if (in_array($this->modelTree->module, $this->useModules) && method_exists($this, $methodName))
@@ -240,15 +252,15 @@ class DepartmentController extends Controller
     	    }
 	    }
 	    
-	    // 2 Поиск новостей по текущему разделу
+	    // 2. Поиск новостей по текущему разделу
 	    $tree = ($idTree===null) ? $this->model->id_tree : $idTree;
 	    $modelNews = News::model()->findAll('id_tree=:id_tree and date_delete is null and flag_enable=1 and date_start_pub < getdate() and date_end_pub > getdate()', [':id_tree'=>$tree]);
 	    
-	    $modelNewsSearch = new NewsSearch('search');
+	    $modelNewsSearch = new NewsSearch('searchPublic');
 	    $modelNewsSearch->unsetAttributes();	    
         $modelNewsSearch->id_tree = $tree;
 	       
-        // 2.1 Проверить если в новостях текущего раздела имеется 1 новость,
+        // 2.1. Проверить если в новостях текущего раздела имеется 1 новость,
         // то вывести эту новость в 
 	    if (count($modelNews) == 1 && isset($modelNews[0]) && $modelNews[0] instanceof News)
         {
@@ -263,13 +275,22 @@ class DepartmentController extends Controller
                 'breadcrumbsTreePath'=>$this->breadcrumbsTreePath($idTree),
             ]);            
         }
-        // 2.2 Вывести весь список новостей
+        // 2.2. Вывести весь список новостей
         elseif (count($modelNews)>1)
         {            
+            $modelNewsSearch = $modelNewsSearch->searchPublic(0, false);
+            
+            $lastId = isset($modelNewsSearch[count($modelNewsSearch)-1]['id']) 
+                    ? date('YmdHis', strtotime($modelNewsSearch[count($modelNewsSearch)-1]['date_create'])) . $modelNewsSearch[count($modelNewsSearch)-1]['id'] 
+                    : 0;
+            
             return $this->render('news', [
                 'model'=>$this->model,
                 'modelNews'=>$modelNewsSearch,
                 'modelTree'=>$this->modelTree,
+                'type'=>'department',
+                'urlAjax'=>Yii::app()->controller->createUrl('news/newsTree', ['id'=>$lastId, 'idTree'=>$this->modelTree->id]),
+                'lastId'=>$lastId,
             ]);            
         }	
         

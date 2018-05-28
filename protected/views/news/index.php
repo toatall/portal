@@ -1,3 +1,9 @@
+<?php 
+    /**
+     * @param Organization $organizationModel
+     */
+?>
+
 <?php
 
 if (isset($breadcrumbs))
@@ -7,51 +13,24 @@ if (isset($breadcrumbs))
 
 ?>
 
-<style type="text/css">
-    #news-grid, #news-grid .summary{
-        top: 0;
-        padding-top: 0;
-        margin-top: 0;
-        margin-bottom: 0;
-    }
-    .filters td {
-        padding: 0;
-    }
-    #news-grid table td {
-        padding: 0;
-        border: 0;
-    }
-    ul.yiiPager .first, ul.yiiPager .last {
-    	display: inline;
-    } 
-</style>
+<?php if ($organizationModel !== null) { ?>
+	<div class="alert alert-info" style="width: 600px;">
+		<h3>Новости: <?= $organizationModel['code'] . ' (' . $organizationModel['name'] . ')' ?></h3>
+	</div>	
+<?php } ?>
 
+<div class="content content-color" style="width: 600px; padding-bottom:30px;">
 <?php 
-	$this->widget('bootstrap.widgets.TbGridView',array(
-		'id'=>'news-grid',
-		'ajaxUpdate'=>false,
-		'dataProvider'=>$model,
-		'hideHeader'=>true,
-		'summaryText'=>'',
-		'columns'=>array(
-			array(
-				'value'=>'Yii::app()->getController()->renderPartial("application.views.news._indexRow",array("data"=>$data), true)',
-				'type'=>'html',
-			),
-		),
-		'pager'=>array(
-			'class'=>'bootstrap.widgets.TbPager',
-			'displayFirstAndLast'=>true,
-		),
-	));
+    $this->renderPartial('/news/_search', ['hideOrganization'=>!$allOrganization, 'organization'=>$organization, 'linkActionNews'=>(isset($linkActionNews) ? $linkActionNews : null)]);
 ?>
+</div>    
+
+<div id="container_news" style="margin-top: 20px;"></div>
 
 <script type="text/javascript">
-	$(document).ready(function() {
-    	$('.sw_dlg').on('click',function() {    		
-    		loadModal($(this).attr('href'));
-    		$('#modalPreview').modal('show');
-    		return false;
-    	});
+
+	jQuery(function() {
+		ajaxNews('<?= (isset($linkActionNews) && $linkActionNews != null ? $linkActionNews : Yii::app()->controller->createUrl('news/news', ['organization'=>$organization])) ?>', {}, '#container_news', false);
 	});
+		
 </script>
