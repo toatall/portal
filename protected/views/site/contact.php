@@ -8,7 +8,7 @@ $this->breadcrumbs=array(
 	'Обращение',
 );
 ?>
-
+<div class="content content-color">
 <h1>Обращение</h1>
 
 <?php if(Yii::app()->user->hasFlash('contact')): ?>
@@ -50,6 +50,7 @@ $this->breadcrumbs=array(
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
+</div>
 <script type="text/javascript">
 	$('#contact-form').on('submit', function() {
 		$('#<?= CHtml::activeId($model, 'body') ?>').val($('#contactDiv').html());

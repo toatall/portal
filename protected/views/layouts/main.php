@@ -5,14 +5,16 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 	<meta name="language" content="en" />
+	
     <?php Yii::app()->bootstrap->register(); ?>
+	
 	<!-- blueprint CSS framework -->
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/screen.css" media="screen, projection" />
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/print.css" media="print" />
 	<!--[if lt IE 8]>
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/ie.css" media="screen, projection" />
 	<![endif]-->
-    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css" />
+    
 	
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/form.css" />        
     <link rel="shortcut icon" href="/css/favicon.png" />
@@ -22,9 +24,10 @@
     ?>
     
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
-    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/menu.css" />    
-    <?php Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl . '/js/main.js', CClientScript::POS_END); ?>   
-    
+    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/menu.css" />  
+    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css" />  
+    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/fontawesome/fontawesome-all.min.css" />  
+    <?php Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl . '/js/main.js', CClientScript::POS_BEGIN); ?>   
     
 </head>
     
@@ -59,13 +62,17 @@
     <?php if(isset($this->breadcrumbs)):?>
 		<?php $this->widget('bootstrap.widgets.TbBreadcrumbs', array(
             'homeLink' => CHtml::link('Главная', array('site/index')),
-			'links' => $this->breadcrumbs,            
+			'links' => $this->breadcrumbs,    
+		    'htmlOptions'=>array(
+                'class' => 'well',
+                'style' => 'margin: 10px;',
+		    ),
 		)); ?><!-- breadcrumbs -->
 	<?php endif?>
 	    				
     <div class="content-fluid">
     	<div class="row-fluid">
-    		<div class="span2">
+    		<div class="span2" style="margin-left:10px;">
     			<ul class="dropdown-menu dropdown-menu-main dropdown-menu-wrap">
 		        <?php
 		            echo Menu::model()->getLeftMenuArray();                                    
@@ -74,7 +81,7 @@
 		        <?php echo Menu::model()->getLeftMenuAdd(Menu::$leftMenuAdd); ?>
 		        <div id="container-conference-today"></div>   		
     		</div>
-    		<div class="span10">
+    		<div class="span9">
 				<!--[if lt IE 9]>
 					<div class="alert alert-danger">
 				    	<strong>Для корректной работы портала необходимо использовать браузер Internet Explorer версии 9 и выше!</strong>

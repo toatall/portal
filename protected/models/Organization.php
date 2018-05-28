@@ -34,8 +34,7 @@ class Organization extends CActiveRecord
 			array('code', 'length', 'max'=>4),
             array('name', 'length', 'max'=>250),
 			array('date_create, date_edit', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+			// The following rule is used by search().			
 			array('code, name, sort, date_create, date_edit', 'safe', 'on'=>'search'),
 		);
 	}
@@ -149,7 +148,7 @@ class Organization extends CActiveRecord
     {        
         $model = Yii::app()->db->createCommand()
             ->from('{{organization}}')
-            ->where('code<>:code', [':code'=>'8600'])
+            //->where('code<>:code', [':code'=>'8600'])
             ->order('sort asc')
             ->queryAll();
         

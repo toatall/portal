@@ -68,14 +68,19 @@ class SiteController extends Controller
 	    {
 	        return 'Страница не поддерживает ajax-запрос';
 	    }
-	    		
+        
+        /*
 		return $this->render('index', [
 		    'modelUFNS'=>NewsSearch::getFeedNewsDay(),
 		    'modelIFNS'=>NewsSearch::getFeedIfns(),
 		    'modelPressClub'=>NewsSearch::feedDopNews('PressClub'),
 		    'modelDosug'=>NewsSearch::feedDopNews('Dosug'),			
 		    'modelHumor'=>NewsSearch::feedDopNews('Humor'),
-		]);
+		]);*/
+	    
+	    return $this->render('index', [
+	        'model'=>NewsSearch::feedNews(),
+	    ]);
 	}
 	
 	/**
@@ -126,8 +131,7 @@ class SiteController extends Controller
      * @return
      */
     public function actionBrowsers()
-    {
-        print_r(BreadcrumbsHelper::app()->brGeneral(25));
+    {       
     	$this->pageTitle = 'Рекомендуемые браузеры';    	
         $this->render('browsers');
     }

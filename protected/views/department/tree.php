@@ -18,10 +18,8 @@ if ($breadcrumbsTemp !== null)
 }
 
 ?>
+<div class="content content-color">
+	<h1 class="page-header"><?= $model->department_name; ?></h1>
+	<?= $treeDepartment; ?>
+</div>
 
-<h1><?= $model->department_name; ?></h1>
-<hr />
-
-<?php 
-    
-    echo $treeDepartment;

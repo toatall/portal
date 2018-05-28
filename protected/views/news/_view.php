@@ -25,7 +25,7 @@
 
 ?>
 
-<div class="bs-callout">
+<div class="bs-callouts">
 
 <h2><?php echo $model['title']; ?></h2>
 <hr />

@@ -62,9 +62,9 @@ class WebUser extends CWebUser
 	 * @see CWebUser::login()
 	 */
 	public function login($identity, $duration=0)
-	{	
+	{		    
 	    $this->saveLogOpertaion('login');
-		return parent::login($identity, $duration);
+	    return parent::login($identity, $duration);
 	}
 		
 	/**
@@ -87,7 +87,7 @@ class WebUser extends CWebUser
 	{
 		Yii::app()->db->createCommand()
 			->insert('{{log_authenticate}}', array(
-				'username'=>$this->name,
+				'username'=>UserInfo::inst()->userLogin,
 				'operation'=>$operation,
 				'session_id'=>session_id(),
 				'remote_ip_address'=>UserInfo::inst()->clientIP,

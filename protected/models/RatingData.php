@@ -360,7 +360,7 @@ class RatingData extends CActiveRecord
 	 * Render for tree
 	 * @param Tree(array) $modelTree
 	 * @return 
-	 * @deprecated это зачем?
+	 * @use TreeController::actionView(102)
 	 */
 	public function treeAction($modelTree)
 	{	    

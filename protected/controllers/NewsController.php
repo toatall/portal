@@ -28,7 +28,7 @@ class NewsController extends Controller
 	 * @see VisitNews
 	 */
 	public function actionView($id)
-	{
+	{	   
         $model = $this->loadModel($id);
 
         // каталог для изображений
@@ -141,8 +141,8 @@ class NewsController extends Controller
 	 */
 	public function actionIndex($organization=null, $section=null)
 	{
-	    
-		$organizationModel = null;		
+	    	  
+		$organizationModel = null;
 	    
 	    // проверка организации
 		if ($organization!==null 
@@ -152,6 +152,7 @@ class NewsController extends Controller
 		}
 				
 		$treeModel = null;
+		
 		// проверка раздела
 		if ($section!==null 
 		    && ($treeModel=Yii::app()->db->createCommand()->from('{{tree}}')
@@ -179,15 +180,18 @@ class NewsController extends Controller
 			$this->pageTitle = ($organizationModel === null ? '' : $organizationModel['name'] . ': ') . 'Новости';
 		}
 		
-		$model=new NewsSearch('search');
-		$model->unsetAttributes();  // clear any default values		
+		/*
+		$model=new NewsSearch('searchPublic');
+		$model->unsetAttributes();  // clear any default values			
 		$model->id_organization = $organization;
 		$model->param1 = $section;
 			
 		if(isset($_GET['News']))
 			$model->attributes=$_GET['News'];
-        
+        */
+		
 		// левое меню (дополнительное)
+		/*
 		$menu = [
 			['name'=>'Новости', 'link'=>['news/index']],
 			['name'=>'Пресс клуб', 'link'=>['news/index', 'section'=>'PressClub']],
@@ -201,12 +205,15 @@ class NewsController extends Controller
 			['name'=>'Юмор налоговиков', 'link'=>['news/index', 'section'=>'Humor']],
 		];
 		Menu::$leftMenuAdd = array_merge(Menu::$leftMenuAdd, $menu);
-		
+		*/
+			
 		$this->render('index',array(
-			'model'=>$model->searchPublic(),            
-            'organization'=>$organization,			
+			//'model'=>$model->searchPublic(),
+		    'linkActionNews' => ($treeModel['id'] !==null ? $this->createUrl('news/newsTree', ['idTree'=>$treeModel['id']]) : null),
+            'organization'=>$organization,
 			'allOrganization'=>($organization===null),
 			'breadcrumbs' => $breadcrumbs,
+		    'organizationModel' => $organizationModel,
 		));
 		
 	}
@@ -218,6 +225,7 @@ class NewsController extends Controller
 	 * @param int $id идентификатор матерала
 	 * @see NewsSearch
 	 * @return string
+	 * @deprecated
 	 */
 	public function actionNewsDay($id=0)
 	{	    	    
@@ -236,12 +244,73 @@ class NewsController extends Controller
 	}
 	
 	/**
+	 * Новости все
+	 * Если $id == 0, то выводятся последние 5 материалов
+	 * Если $id <> 0, то выводятся последние материалы, идентификатор у которых < $id
+	 * @param int $id идентификатор матерала
+	 * @param string $organization код организации
+	 * @see NewsSearch
+	 * @return string
+	 */
+	public function actionNews($id=0, $organization=null)
+	{	    	    
+	    $model=new NewsSearch('searchPublic');
+	    $model->unsetAttributes();  // clear any default values
+	    if(isset($_GET['News']))
+	       $model->attributes=$_GET['News'];
+	    
+	    if ($organization!=null)
+	        $model->id_organization = $organization;
+	    
+        $model = $model->searchPublic($id);
+        
+        $lastId = isset($model[count($model)-1]['id']) ? date('YmdHis', strtotime($model[count($model)-1]['date_create'])) . $model[count($model)-1]['id'] : 0;
+	        
+        $this->renderPartial('/news/feed',array(
+            'model'=>$model,
+            'lastId'=>$lastId,
+            'type'=>'news',
+            'urlAjax'=>Yii::app()->controller->createUrl('news/news', ['id'=>$lastId]),
+        ));
+	}
+	
+	/**
+	 * Новости из раздела (структуры)
+	 * @param int $idTree идентификатор раздела
+	 * @param int $id идентификатор новости
+	 * @see NewsSearch
+	 * @return string
+	 */
+	public function actionNewsTree($idTree, $id=0)
+	{
+	    $model=new NewsSearch('searchPublic');
+	    $model->unsetAttributes();  // clear any default values
+	    if(isset($_GET['News']))
+	       $model->attributes=$_GET['News'];
+	    	   
+	    if ($idTree!=null)
+	        $model->id_tree = $idTree;
+	    
+        $model = $model->searchPublic($id, false);
+        
+        $lastId = isset($model[count($model)-1]['id']) ? date('YmdHis', strtotime($model[count($model)-1]['date_create'])) . $model[count($model)-1]['id'] : 0;
+	        
+        $this->renderPartial('/news/feed',array(
+            'model'=>$model,
+            'lastId'=>$lastId,
+            'type'=>'news',
+            'urlAjax'=>Yii::app()->controller->createUrl('news/newsTree', ['id'=>$lastId, 'idTree'=>$idTree]),
+        ));
+	}
+	
+	/**
 	 * Новости ИФНС
 	 * Если $id == 0, то выводятся последние 5 материалов
 	 * Если $id <> 0, то выводятся последние материалы, идентификатор у которых < $id 
 	 * @param int $id идентификатор материала
 	 * @see NewsSearch
 	 * @return string
+	 * @deprecated
 	 */
 	public function actionNewsIfns($id=0)
 	{
@@ -266,6 +335,7 @@ class NewsController extends Controller
 	 * @param int $id идентификатор материала
 	 * @see NewsSearch
 	 * @return string
+	 * @deprecated
 	 */
 	public function actionHumor($id=0)
 	{

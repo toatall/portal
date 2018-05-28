@@ -1,5 +1,5 @@
 // изображение загрузчика
-const IMAGE_LOADER = '<img src="/images/loader_fb.gif" style="width:40px;" />';
+IMAGE_LOADER = '<img src="/images/loader_fb.gif" style="width: 150px;" />';
 
 /**
  * Загрузка ВКС и собраний
@@ -209,6 +209,14 @@ function getJson(url)
 	});
 	changeUrlParam('w', url);
 	return false;
+}
+
+
+function urlConcationation(url, params)
+{
+	if (url.indexOf('?') > 1)
+		return url + '&' + params;
+	return url + '?' + params;
 }
 
 /**

@@ -275,10 +275,40 @@ class Menu extends CActiveRecord
                     eval('return '.$value['link']) : $value['link']),
                 'linkOptions'=>array('target'=>$value['target']),
                 'items'=>($value['submenu_code'] != '') ? eval('return '.$value['submenu_code'])
-                : self::getTopMenuArray($value['id']),
+                    : self::getTopMenuArray($value['id']),
             );            
         }
         return $resultArray;
+    }
+    
+    /**
+     * Преобразование меню из массива в html-формат
+     * @param array $arr 
+     * @return string
+     */
+    public static function mainTopMenu($arr)
+    {
+        $result = '';        
+        foreach ($arr as $a)
+        {            
+            // exists subitems
+            $subItems = (isset($a['items']) && count($a['items']) > 0);
+            
+            $active = (!$subItems && (strpos(Yii::app()->request->url, CHtml::normalizeUrl($a['url'])) !== false)) ? ' active' : '';                
+            
+            // open tag li
+            $result .= '<li class="' . ($subItems ? '  dropdown' : '') . $active . '">';
+            // link
+            $linkOptions = ($subItems ? ' class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"' : '');
+            $result .= '<a href="' . ($subItems ? '#' : CHtml::normalizeUrl($a['url'])) . '"' . $linkOptions . '>' . $a['label'] . ($subItems ? ' <span class="caret"></span>' : '') . '</a>' . "\n";
+            // sub items
+            if ($subItems)
+            {
+                $result .= '<ul class="dropdown-menu">' . self::mainTopMenu($a['items']) . '</ul>';
+            }
+            $result .= '</li>';
+        }
+        return $result;
     }
 
     /**
@@ -293,7 +323,7 @@ class Menu extends CActiveRecord
         foreach ($arrayMenu as $value)
         {
             if ($value['label']=='---') {
-                $res .= '<li class="divider"></li>';    
+                $res .= '<li class="divider"></li>';
             } 
             else
             {                
@@ -307,6 +337,8 @@ class Menu extends CActiveRecord
         }
         return $res;
     }
+    
+    
     
     /**
      * Левое меню
@@ -364,8 +396,63 @@ class Menu extends CActiveRecord
     }
     
     /**
-     * 
-     * @todo где-то испольуется?
+     * Вертикальное меню
+     * @param integer $idParent идентификатор родительского меню
+     * @param integer $level уровень вложенности
+     * @return string
+     */
+    public function leftMenu($idParent=0, $level=0)
+    {
+        $resultMenu = '';
+        
+        // получение списка меню с текущим идентификатором
+        $model = Yii::app()->db->createCommand()
+            ->from('{{menu}}')
+            ->where('blocked=0 AND type_menu=2 AND id_parent=:id_parent', [':id_parent'=>$idParent])
+            ->order('sort_index asc')
+            ->queryAll();
+        
+        // перебор найденного списка меню
+        foreach ($model as $value)
+        {
+            if ($value['name'] == '---')
+            {                
+                continue;
+            }
+                        
+            $existsSubMenu = Yii::app()->db->createCommand()
+                ->from('{{menu}}')
+                ->select('count(id)')
+                ->where('id_parent=:id_parent and blocked=0', [':id_parent'=>$value['id']])
+                ->queryScalar();
+            
+            // create link
+            $linkHtmlOptions = ['class'=>'list-group-item'];
+            if ($existsSubMenu)
+                $linkHtmlOptions['data-toggle'] = 'collapse';
+            
+            $linkHref = strpos($value['link'],'array') !== false ? eval('return ' . $value['link']) : $value['link'];
+                
+            if (!$existsSubMenu && strpos(Yii::app()->request->url, CHtml::normalizeUrl($linkHref)) !== false)
+                $linkHtmlOptions['class'] .= ' active';
+                
+            $resultMenu .= CHtml::link(str_repeat('&nbsp;', $level) . $value['name'] . ($existsSubMenu ? ' <span class="caret"></span>' : ''), 
+                $existsSubMenu ? '#menu_' . $value['id'] : $linkHref, $linkHtmlOptions);                            
+            
+            // submenu div
+            if ($existsSubMenu)
+            {
+                $resultMenu .= '<div class="collapse" id="menu_' . $value['id'] . '">' . "\n";
+                $resultMenu .= $this->leftMenu($value['id'], $level+2);
+                $resultMenu .= '</div>' . "\n";
+            }            
+        }
+        
+        return $resultMenu;
+    }
+    
+    /**
+     * Добавочное левое меню
      * @param array $arr
      * @param boolean $main
      * @return string
@@ -393,6 +480,51 @@ class Menu extends CActiveRecord
     	return $resultMenu;
     	
     }
+    
+    /********************************************
+     * 
+     * @param unknown $arr
+     * @return string
+     */
+    public function leftMenuAdd($arr,$level=0)
+    {
+        $resultMenu = '';
+        
+        foreach ($arr as $a)
+        {
+            if ($a['name']==='---')
+            {
+                continue;
+            };
+            
+            $prefix = rand(1,1000); 
+            
+            $existsSubMenu = isset($a['items']) && count($a['items'])>0;
+            
+            $linkHtmlOptions = ['class'=>'list-group-item'];
+            if ($existsSubMenu)
+                $linkHtmlOptions['data-toggle'] = 'collapse';
+            
+            if (strpos(Yii::app()->request->url, CHtml::normalizeUrl($a['link'])) !== false)
+                $linkHtmlOptions['class'] .= ' active';                     
+                
+            $resultMenu .= CHtml::link(str_repeat('&nbsp;', $level) . $a['name'] . ($existsSubMenu ? ' <span class="caret"></span>' : ''),
+                $existsSubMenu ? '#menu_' . $prefix : $a['link'], $linkHtmlOptions);
+            
+            // submenu div
+            if ($existsSubMenu)
+            {
+                $resultMenu .= '<div class="collapse" id="menu_' . $prefix . '">' . "\n";
+                $resultMenu .= $this->leftMenuAdd($a['items'], $level+2);
+                $resultMenu .= '</div>' . "\n";
+            }         
+            
+        }
+        
+        if (count($arr)>0) $resultMenu .= '</ul>';
+        return $resultMenu;
+    }
+    
     
     
 }
