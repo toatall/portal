@@ -8,7 +8,8 @@ Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'Портал УФНС Росии по ХМАО - Югре',
-
+    //'theme'=>'portal2018',
+    
 	// preloading 'log' component
 	'preload'=>array(
         'log',
@@ -154,7 +155,7 @@ return array(
         'pathImages'=>'/files/{code_no}/{module}/{id}/image_galery/',
         'miniatureImage'=>'/files/{code_no}/{module}/{id}/miniature_image/',
         'pathTelephones'=>'/files/telephones',
-        'noImage'=>'/images/no-photo.gif',
+        'noImage'=>'/images/no_image_available.jpeg',
 		'pathCardImage' =>'/files/{code_no}/department_card_image/',		
 			
 		// Profiles

@@ -26,7 +26,7 @@
 
     <div class="jumbotron centered" style="height:400px;">
     	<a class="snippet-lnk centered sw_dlg" href="<?= $url ?>" style="position:relative;">
-        	<div class="snippet-container centered" style="background: url('<?= $imageUrl ?>') no-repeat center; background-size: cover; background-position:550%;"></div>
+        	<div class="snippet-container centered" style="background: url('<?= $imageUrl ?>') no-repeat center; background-size: cover; background-position:50%;"></div>
         	<div class="snippet-container snippet-img"></div>
         	<div class="snippet-container" style="width:600px; height:400px; top:0; color:white;">
                 <div style="text-align: center; padding: 10px; text-shadow:0 4px 21px rgba(0,0,0,.32);">
