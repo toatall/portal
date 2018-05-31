@@ -81,7 +81,7 @@
 		        <?php echo Menu::model()->getLeftMenuAdd(Menu::$leftMenuAdd); ?>
 		        <div id="container-conference-today"></div>   	
 		        <div>
-		        	<ul class="dropdown-menu dropdown-menu-main">
+		        	<ul class="dropdown-menu dropdown-menu-main" style="z-index: 0;">
 		        		<li class="nav-header">Голосование</li>
 		        		<li>
 		        			<p style="padding: 0 15px;" id="container-votes"></p>
