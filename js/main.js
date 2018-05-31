@@ -6,12 +6,13 @@ IMAGE_LOADER = '<img src="/images/loader_fb.gif" style="width: 150px;" />';
  * @returns
  */
 function loadAjaxConferenceToday()
+{	
+	ajaxGET('/conference/today.html', null, '#container-conference-today');
+}
+
+function loadAjaxVotes()
 {
-	$('#container-conference-today').html(IMAGE_LOADER);
-	$.get('/conference/today.html')
-		.done(function(data){
-			$('#container-conference-today').html(data);
-		});
+	ajaxGET('/vote/current.html', null, '#container-votes');
 }
 
 /**
@@ -101,7 +102,19 @@ function ajaxJSON(url, containers, gif)
 		
 	})
 	.fail(function(jqXHR){
-		//return '<div class="alert alert-danger">' + jqXHR.statusText + '</div>';
+		var error_text = '<div class="alert alert-danger">' + jqXHR.status + ' ' + jqXHR.statusText + '</div>';
+		// заголовок
+		if (('title' in containers))
+		{
+			$(containers['title']).html(error_text);
+		}
+		
+		// контент
+		if (('content' in containers))
+		{
+			$(containers['content']).html(error_text);
+		}
+		//return ;
 	});
 	
 }
@@ -283,6 +296,11 @@ $(document).ready(function() {
 	 * Загрузка событий на сегодня
 	 */
 	loadAjaxConferenceToday();
+	
+	/**
+	 * Загрузка голосований
+	 */
+	loadAjaxVotes();
 	
 	/**
 	 * Если в адресной строке присутсвует параметр 'w',

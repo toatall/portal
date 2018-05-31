@@ -122,6 +122,42 @@ class NewsSearch extends News
 	}
 	
 	/**
+	 * Search for frontend
+	 * @return CActiveDataProvider
+	 */
+	public function searchPublicOLD()
+	{
+	    $criteria=new CDbCriteria;
+	    
+	    $criteria->with = array('tree','organization');
+	    
+	    $criteria->compare('t.id',$this->id);
+	    $criteria->compare('t.id_tree',$this->id_tree);
+	    $criteria->compare('t.title',$this->title,true);
+	    $criteria->compare('t.message1',$this->message1,true);
+	    $criteria->compare('t.message2',$this->message2,true);
+	    $criteria->compare('t.author',$this->author,true);
+	    $criteria->compare('t.date_start_pub',$this->date_start_pub,true);
+	    $criteria->compare('t.date_end_pub',$this->date_end_pub,true);
+	    $criteria->compare('t.date_create',$this->date_create,true);
+	    $criteria->compare('t.date_delete',$this->date_delete);
+	    
+	    $criteria->compare('tree.module','news');
+	    $criteria->addCondition('t.flag_enable=1 AND t.date_delete is null
+            AND t.date_start_pub < getdate() AND t.date_end_pub > getdate()');
+	    
+	    
+	    $criteria->compare('t.id_organization',$this->id_organization);
+	    $criteria->compare('tree.param1', $this->param1);
+	    
+	    
+	    return new CActiveDataProvider($this, array(
+	        'criteria'=>$criteria,
+	        'sort'=>array('defaultOrder'=>'t.date_create desc, t.id desc'),
+	    ));
+	}
+	
+	/**
 	 * Поиск
 	 * @param string $page
 	 * @see CDbCriteria

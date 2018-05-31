@@ -11,6 +11,27 @@ if (isset($breadcrumbs))
 	$this->breadcrumbs = $breadcrumbs;
 }
 
+
+$this->widget('bootstrap.widgets.TbGridView',array(
+    'id'=>'news-grid',
+    //'ajaxUpdate'=>false,
+    'dataProvider'=>$model,
+    'hideHeader'=>true,
+    'summaryText'=>'',
+    'columns'=>array(
+        array(
+            'value'=>'Yii::app()->getController()->renderPartial("application.views.news._indexRow",array("data"=>$data), true)',
+            'type'=>'html',
+        ),
+    ),
+    'pager'=>array(
+        'class'=>'bootstrap.widgets.TbPager',
+        'displayFirstAndLast'=>true,
+    ),
+));
+
+
+/*
 ?>
 
 <?php if ($organizationModel !== null) { ?>
@@ -34,3 +55,6 @@ if (isset($breadcrumbs))
 	});
 		
 </script>
+
+*/
+?>

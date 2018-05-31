@@ -177,7 +177,6 @@ class SiteController extends Controller
    	        'year'=>$model->getYear(),
    	        'yearList'=>$model->getYears(),
    	    ]);   	    
-   	}   	
-   	
+   	}   	   
 	
 }

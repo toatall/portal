@@ -242,5 +242,10 @@ class UserAuth
 		return $groups;
 	}
 	
+	public function organizationFromLogin()
+	{
+	    return $this->getOrganization();
+	}
+	
 	
 }

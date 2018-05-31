@@ -79,7 +79,17 @@
 		        ?>         
 		        </ul>
 		        <?php echo Menu::model()->getLeftMenuAdd(Menu::$leftMenuAdd); ?>
-		        <div id="container-conference-today"></div>   		
+		        <div id="container-conference-today"></div>   	
+		        <div>
+		        	<ul class="dropdown-menu dropdown-menu-main">
+		        		<li class="nav-header">Голосование</li>
+		        		<li>
+		        			<p style="padding: 0 15px;" id="container-votes"></p>
+		        		</li>
+		        		<li class="divider"></li>
+		        		<li><a href="<?= Yii::app()->createUrl('vote/index') ?>">Смотреть все</a></li>		        		
+		        	</ul>	
+		        </div>	
     		</div>
     		<div class="span9">
 				<!--[if lt IE 9]>
@@ -98,10 +108,7 @@
 	<div class="clear"></div>
     
 	<div id="footer">
-        <h3>&copy; Управление ФНС России 
-                по Ханты-Мансийскому автономному округу - Югре, <?php echo date('Y'); ?>
-                <br /><span style="font-size:14px; color:white;">Разработка и сопровождение: Трусов Олег Алексеевич</span>                
-		</h3>                                                   
+        <h3>&copy; Powered by Yii Framework 1.1</h3>           		                                   
         <?php echo CHtml::link('Рекомендуемые браузеры', array('site/browsers')); ?>
         <br /><br />
         <?php echo Log::StatisticOnlineAndDay(); ?>
@@ -129,12 +136,6 @@
     )); ?>
 </div>
 <?php $this->endWidget(); ?>
-
-<script type="text/javascript">
-
-	
-	
-</script>
 
 </body>
 </html>

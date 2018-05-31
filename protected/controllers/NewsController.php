@@ -180,18 +180,19 @@ class NewsController extends Controller
 			$this->pageTitle = ($organizationModel === null ? '' : $organizationModel['name'] . ': ') . 'Новости';
 		}
 		
-		/*
-		$model=new NewsSearch('searchPublic');
-		$model->unsetAttributes();  // clear any default values			
+		
+		$model=new NewsSearch('search');
+		$model->unsetAttributes();  // clear any default values
+		
 		$model->id_organization = $organization;
 		$model->param1 = $section;
 			
 		if(isset($_GET['News']))
 			$model->attributes=$_GET['News'];
-        */
+       
 		
 		// левое меню (дополнительное)
-		/*
+		
 		$menu = [
 			['name'=>'Новости', 'link'=>['news/index']],
 			['name'=>'Пресс клуб', 'link'=>['news/index', 'section'=>'PressClub']],
@@ -205,10 +206,10 @@ class NewsController extends Controller
 			['name'=>'Юмор налоговиков', 'link'=>['news/index', 'section'=>'Humor']],
 		];
 		Menu::$leftMenuAdd = array_merge(Menu::$leftMenuAdd, $menu);
-		*/
+		
 			
 		$this->render('index',array(
-			//'model'=>$model->searchPublic(),
+			'model'=>$model->searchPublicOLD(),
 		    'linkActionNews' => ($treeModel['id'] !==null ? $this->createUrl('news/newsTree', ['idTree'=>$treeModel['id']]) : null),
             'organization'=>$organization,
 			'allOrganization'=>($organization===null),

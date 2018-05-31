@@ -33,7 +33,7 @@ blockquote p {
     		</a>
     	</div>
     	<div class="span10 text-left" style="padding-right:20px;">
-    		<h4><a href="<?= $url ?>" class="link-title sw_dlg" data-toggle="modal" data-target="#modalPreviewNews" onclick="loadNews($(this).attr('href'), '<?php echo CHtml::encode($data['title']); ?>');"><?php echo $data['title']; ?></a></h4>
+    		<h4><a href="<?= $url ?>" class="link-title sw_dlg"><?php echo $data['title']; ?></a></h4>
     		<blockquote>
     			<span style="text-align: justify; font-style: normal;"><?= $data['message1'] ?></span>    			
     		</blockquote>

@@ -1,11 +1,13 @@
 body {
-	background: #edeef0;
+	/*background: #edeef0;*/
+	background: #fff;
 }
   
 #page
 {	
 	margin-top: 55px; 
-	background: #edeef0;
+	/*background: #edeef0;*/
+	background: #fff;
     width: 100%;
 }
 

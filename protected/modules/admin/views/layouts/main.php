@@ -46,6 +46,7 @@
                     array('label'=>'Пользователи', 'url'=>array('/admin/user/admin')),
                     array('label'=>'Группы', 'url'=>array('/admin/group/admin')),
                     array('label'=>'Модули', 'url'=>array('/admin/module/admin')),
+                    array('label'=>'Голосование', 'url'=>array('/admin/vote/admin')),
                     '---',
                     array('label'=>'Управление структурой'),
                     array('label'=>'Организации', 'url'=>array('/admin/organization/admin')),

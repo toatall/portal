@@ -4,16 +4,77 @@
 $this->pageTitle=Yii::app()->name;
 ?>
 
-<div class="content content-color" style="width: 600px; padding-bottom:30px;">
-	<?php $this->renderPartial('/news/_search') ?>	
-</div>		
+<?php
+    $this->widget('bootstrap.widgets.TbTabs', array(
+        'id'=>'myTabs',        
+        'type'=>'tabs',
+        'encodeLabel'=>false,
+        'tabs'=>array(           
+            array(
+                'label'=>'Новость дня',
+                'content'=>'<div id="container_news_day"></div><!--div class="page-header"><a href="" class="btn btn-primary" style="float:right;">Все новости</a></div-->',
+                'active'=>true,
+            ),
+            array(
+                'label'=>'Новости ИФНС',
+                'content'=>'<div id="container_news_ifns"></div>',                
+            ),
+            array(
+                'label'=>'Юмор налоговиков',
+                'content'=>'<div id="container_humor"></div>',
+            ),
+        ),
+    
+    ));
+?>
 
-<div id="container_news" style="margin-top: 20px;"></div>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array(
+    'id'=>'modalPreviewNews',
+    'htmlOptions'=>array('style'=>'width:90%; margin-left:-45%; margin-top:-3%;'),
+)); ?>
+<div class="modal-header" style="height1:30px;">
+    <a class="close" data-dismiss="modal"><h3 class="text-error">&times;</h3></a>
+    <h2 id="modal-title-news-preview"></h2>        
+</div>
+<div class="modal-body" id="modal-content-news-previwe" style="max-height:70vh;"></div>
+<div class="modal-footer">
+    <?php $this->widget('bootstrap.widgets.TbButton', array(
+        'label'=>'Закрыть',   
+        'type'=>'primary',
+        'htmlOptions'=>array('data-dismiss'=>'modal'),
+    )); ?>
+</div>
 
+
+<?php $this->endWidget(); ?>
+
+<!--[if !IE]>-->
+<script type="text/javascript">
+    jQuery(function() {    	
+    	$('a[data-toggle="tab"]').on("show", function(e){
+            localStorage.setItem("lastTab", $(e.target).attr("href"));
+        });    
+        var lastTab = localStorage.getItem("lastTab");
+        if (lastTab) {
+            $('a[href='+lastTab+']').tab("show");
+        } else {
+            $('a[data-toggle="tab"]:first').tab("show");
+        }
+    });
+</script>
+<!-- <![endif]-->
+			
 <script type="text/javascript">
 
 	jQuery(function() {
-		ajaxNews('<?= Yii::app()->controller->createUrl('news/news') ?>', {}, '#container_news', false);
-	});
+		// load news day
+	    ajaxNews('<?= Yii::app()->controller->createUrl('news/newsDay') ?>', {}, '#container_news_day');
+	    // load news ifns
+		ajaxNews('<?= Yii::app()->controller->createUrl('news/newsIfns') ?>', {}, '#container_news_ifns');
+	    // load humor
+		ajaxNews('<?= Yii::app()->controller->createUrl('news/Humor') ?>', {}, '#container_humor');
 		
+	});
+
 </script>
+
