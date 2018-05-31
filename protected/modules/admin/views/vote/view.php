@@ -30,6 +30,7 @@ $this->menu=array(
 		'date_end',
 		'organizations',
 		'multi_answer',
+	    'description',
 		'date_create',
 		'date_edit',
 		array(

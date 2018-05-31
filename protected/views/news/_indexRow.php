@@ -28,7 +28,7 @@ blockquote p {
 <div class="row">
     <div class="span12 thumbnail">
     	<div class="span2 links">
-    		<a href="<?= $url ?>" class="sw_dlg" data-toggle="modal" data-target="#modalPreviewNews" onclick="loadNews($(this).attr('href'), '<?php echo $data['title']; ?>');">
+    		<a href="<?= $url ?>" class="sw_dlg">
     			<img src="<?= $imageUrl ?>" class="thumbnails" style="float: left; margin-right: 20px; max-width: 200px; max-height:150px;" />
     		</a>
     	</div>

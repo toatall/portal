@@ -14,6 +14,7 @@
  * @property string $date_edit
  * @property string $log_change
  * @property boolean $on_general_page
+ * @property string $description
  *
  * The followings are the available model relations:
  * @property VoteQuestion[] $voteQuestions
@@ -40,9 +41,9 @@ class VoteMain extends CActiveRecord
 			array('name, date_start, date_end, organizations', 'required'),
 			array('name', 'length', 'max'=>200),
 			array('organizations', 'length', 'max'=>100),		    
-			array('multi_answer, date_edit, orgList, on_general_page', 'safe'),
+			array('multi_answer, date_edit, orgList, on_general_page, description', 'safe'),
 			// The following rule is used by search().			
-			array('id, name, date_start, date_end, organizations, multi_answer, date_create, date_edit, on_general_page', 'safe', 'on'=>'search'),
+			array('id, name, date_start, date_end, organizations, multi_answer, date_create, date_edit, on_general_page, description', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -74,6 +75,7 @@ class VoteMain extends CActiveRecord
 			'date_create' => 'Дата создания',
 			'date_edit' => 'Дата изменения',
 			'log_change' => 'Журнал изменений',
+		    'description' => 'Описание',
 		);
 	}
 
@@ -103,6 +105,7 @@ class VoteMain extends CActiveRecord
 		$criteria->compare('date_edit',$this->date_edit,true);
 		$criteria->compare('log_change',$this->log_change,true);
 		$criteria->compare('on_general_page',$this->on_general_page);
+		$criteria->compare('description',$this->description,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

@@ -21,7 +21,13 @@
         </div>
         <?php     
     }
-        
+    
+?>
+	<?php if (strlen($modelMain->description)>0): ?>
+	<div class="well well-small"><?= $modelMain->description ?></div>
+	<?php endif; ?>
+<?php 
+    
     // голосование
     if (!$modelMain->isVoted)
     {

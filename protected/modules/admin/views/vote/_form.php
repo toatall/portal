@@ -31,6 +31,9 @@
 	
 	<?php echo $form->checkBoxRow($model,'on_general_page'); ?>
 	
+	<br />
+	<?php echo $form->textAreaRow($model,'description',array('class'=>'span6', 'rows'=>6)); ?>
+	
 	<div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.TbButton', array(
 			'buttonType'=>'submit',
