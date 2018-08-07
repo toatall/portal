@@ -386,8 +386,8 @@ class DepartmentController extends Controller
                    'modelNews'=>$modelFromListNews,
                    'dirImage'=>$dirs['dirImage'],
                    'dirFile'=>$dirs['dirFile'],
-                   'files'=>File::filesForDownload($modelFromListNews[0]['id'], 'news'),
-                   'images'=>Image::imagesForDownload($modelFromListNews[0]['id'], 'news'),
+                   'files'=>File::filesForDownload($modelFromListNews['id'], 'news'),
+                   'images'=>Image::imagesForDownload($modelFromListNews['id'], 'news'),
                ]);
            }
 	    }

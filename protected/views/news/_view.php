@@ -34,7 +34,7 @@
 <i class="icon-heart"></i> <i><?= $model['count_like'] ?></i>,
 <i class="icon-comment"></i> <i><?= $model['count_comment'] ?></i>,
 <i class="icon-eye-open" title="Просмотров"></i> <i><?= $model['count_visit'] ?></i>,
-<br /><i class="icon-home"></i> <i><?= $model['organization_name'] ?></i>
+<br /><i class="icon-home"></i> <i><?= (isset($model['organization_name']) ? $model['organization_name'] : '') ?></i>
 <hr />
 
 <div style="text-align: justify;">

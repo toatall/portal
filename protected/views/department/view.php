@@ -21,7 +21,7 @@ if (is_array(end($this->breadcrumbs)))
 <div class="content content-color">
 <?php 	    
 	$this->renderPartial('application.views.news._view', [
-	    'model'=>$modelNews[0], 
+	    'model'=>(isset($modelNews[0]) ? $modelNews[0] : $modelNews), 
 	    'dirFile'=>$dirFile, 
 	    'dirImage'=>$dirImage,
 	    'files'=>$files,
