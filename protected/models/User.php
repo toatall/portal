@@ -488,7 +488,25 @@ class User extends CActiveRecord
     		}
     	}    	
     	return Yii::app()->controller->renderFile(dirname(__FILE__) . '/../views/profile/info.php', array('username'=>$username, 'photo'=>$photo));
-    }          
+    }        
+    
+    
+    
+    /**
+     * Получение ФИО пользователя по его логину
+     * Если ФИО не найдено, то возвращается логин
+     * @param string $login логин пользователя
+     * @return string
+     * @author oleg
+     */
+    public static function nameByLogin($login)
+    {
+        $user = Yii::app()->db->createCommand()
+            ->from('{{user}}')            
+            ->where('username_windows=:username_windows', [':username_windows'=>$login])
+            ->queryRow();
+        return ($user!==null && isset($user['fio'])) ? $user['fio'] : $login;
+    }
     
     
 }

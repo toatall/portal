@@ -39,7 +39,7 @@ blockquote p {
     		</blockquote>
     		<small>
     			<i class="icon-calendar" title="Дата создания"></i> <i><?= date('d.m.Y H:i:s',strtotime($data['date_create'])) ?></i>,
-    			<i class="icon-user" title="Автор"></i> <i><?= Profile::nameByLogin($data['author']) ?></i>,    			
+    			<i class="icon-user" title="Автор"></i> <i><?= User::nameByLogin($data['author']) ?></i>,    			
 	            <i class="icon-heart" title="Понравилось"></i> <i><?= $data['count_like'] ?></i>,
 	            <i class="icon-comment" title="Комментарии"></i> <i><?= $data['count_comment'] ?></i>,
 	            <i class="icon-eye-open" title="Просмотров"></i> <i><?= $data['count_visit'] ?></i>,
