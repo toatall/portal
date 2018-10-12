@@ -10,7 +10,7 @@
 ?>
 
 <i class="icon-calendar"></i> <i><?php echo date('d.m.Y',strtotime($model['date_create'])); ?></i>,
-<i class="icon-user"></i> <i><?php echo Profile::nameByLogin($model['author']); ?></i>,
+<i class="icon-user"></i> <i><?php echo User::nameByLogin($model['author']); ?></i>,
 <i class="icon-heart"></i> <i><?= $model['count_like'] ?></i>,
 <i class="icon-comment"></i> <i><?= $model['count_comment'] ?></i>,
 <i class="icon-eye-open" title="Просмотров"></i> <i><?= $model['count_visit'] ?></i>,
