@@ -107,16 +107,16 @@
     
 	<div class="clear"></div>
     
-	<div id="footer">
-        <h3>&copy; Powered by Yii Framework 1.1</h3>           		                                   
+	<div id="footer">        
+        <h4>Разработка и соопровождение: Трусов Олег Алексеевич</h4>
         <?php echo CHtml::link('Рекомендуемые браузеры', array('site/browsers')); ?>
         <br /><br />
         <?php echo Log::StatisticOnlineAndDay(); ?>
         <br />
-        <?= CHtml::link('Направить обращение', array('site/contact')) ?>
-        <br /><br />        
+        <?= CHtml::link('Направить обращение', array('site/contact')) ?>        
+        <br /><br />
+        <h4>&copy; Powered by Yii Framework 1.1</h4> 
 	</div><!-- footer -->
-
 </div><!-- page -->
 
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array(

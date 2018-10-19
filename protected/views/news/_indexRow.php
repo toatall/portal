@@ -29,7 +29,7 @@ blockquote p {
     <div class="span12 thumbnail">
     	<div class="span2 links">
     		<a href="<?= $url ?>" class="sw_dlg">
-    			<img src="<?= $imageUrl ?>" class="thumbnails" style="float: left; margin-right: 20px; max-width: 200px; max-height:150px;" />
+    			<img src="<?= $imageUrl ?>" class="thumbnails" style="float: left; margin-right: 10px; max: 200px; max:150px;" />
     		</a>
     	</div>
     	<div class="span10 text-left" style="padding-right:20px;">
