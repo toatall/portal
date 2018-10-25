@@ -1,14 +1,3 @@
-
-<?php 
-
-    // скрипты для просмотра изображений //    
-    Yii::app()->clientScript->registerScriptFile(
-        Yii::app()->baseUrl.'/extension/baguetteBox/baguetteBox.min.js');
-    Yii::app()->getClientScript()->registerCssFile(
-        Yii::app()->baseUrl.'/extension/baguetteBox/baguetteBox.min.css');
-    
-?>
-
 <i class="icon-calendar"></i> <i><?php echo date('d.m.Y',strtotime($model['date_create'])); ?></i>,
 <i class="icon-user"></i> <i><?php echo User::nameByLogin($model['author']); ?></i>,
 <i class="icon-heart"></i> <i><?= $model['count_like'] ?></i>,
@@ -64,7 +53,9 @@
     </div>
 </div>
 <script type="text/javascript">
-	baguetteBox.run('.gallery');
+	$(document).ready(function() {		
+		baguetteBox.run('.gallery');
+	});
 </script>
 <?php
     endif; 

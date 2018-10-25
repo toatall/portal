@@ -28,6 +28,12 @@
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css" />  
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/fontawesome/fontawesome-all.min.css" />  
     <?php Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl . '/js/main.js', CClientScript::POS_BEGIN); ?>   
+    <?php 
+        Yii::app()->clientScript->registerScriptFile(
+            Yii::app()->baseUrl.'/extension/baguetteBox/baguetteBox.min.js');
+        Yii::app()->getClientScript()->registerCssFile(
+            Yii::app()->baseUrl.'/extension/baguetteBox/baguetteBox.min.css');
+    ?>
     
 </head>
     
