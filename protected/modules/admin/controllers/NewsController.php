@@ -318,7 +318,23 @@ class NewsController extends AdminController
         $model->log_change = Log::setLog($model->log_change,'восстановление');
         $model->save();
         $this->redirect(array('view','id'=>$model->id, 'idTree'=>$idTree));     
-    }    
+	}    
+	
+	public function actionTags($term = null)
+	{
+		$model = Yii::app()->db->createCommand()
+			->selectDistinct('t.tags')
+			->from('{{news}} t')
+			->join('{{tree}} tree', 't.id_tree=tree.id')
+			->where('tree.module = :module and t.tags is not null', [':module'=>'news']);
+		if ($term != null && strlen(trim($term)) > 0)
+		{
+			$model->andWhere(array('like', 't.tags', '%'.$term.'%'));
+		}
+		//print_r(array_values(CHtml::listData($model->queryAll(),'tags','tags')));
+		echo CJSON::encode(array_values(CHtml::listData($model->queryAll(),'tags','tags')));
+	}
+
 
 	/**
 	 * Performs the AJAX validation.

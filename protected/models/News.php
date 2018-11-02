@@ -90,14 +90,14 @@ class News extends CActiveRecord
 			array('title', 'length', 'max'=>500),
 			array('author, organization_name', 'length', 'max'=>250),
             array('thumbail_image, thumbail_title', 'length', 'max'=>250),
-            array('thumbail_text', 'length', 'max'=>1000),
+            array('thumbail_text, tags', 'length', 'max'=>1000),
 			array('message1, message2, date_create, date_edit, date_delete, 
                 flag_enable, general_page, _thumbail_image', 'safe'),
 			array('id_tree, count_like, count_comment, count_visit', 'unsafe'),
 			// search	
 			array('id, id_tree, id_organization, title, message1, message2, author, date_start_pub, date_end_pub, date_create,
-                date_edit, date_delete, flag_enable, thumbail_image, general_page, param1', 'safe', 'on'=>'search'),
-		    array('id_organization, title, message1, message2, author, date_create, organization_name, date_create_1, date_create_2, param1', 'safe', 'on'=>'searchPublic'),
+                date_edit, date_delete, flag_enable, thumbail_image, general_page, param1, tags', 'safe', 'on'=>'search'),
+		    array('id_organization, title, message1, message2, author, date_create, organization_name, date_create_1, date_create_2, param1, tags', 'safe', 'on'=>'searchPublic'),
             array('_thumbail_image', 'file', 'types'=>'jpg, jpeg, gif, png', 'allowEmpty'=>true),
 		);
 	}
@@ -145,7 +145,8 @@ class News extends CActiveRecord
 			'on_general_page' => 'Новость дня',
 			'count_like' => 'Количество лайков',
 			'count_comment' => 'Количество комментариев',
-			'count_visit' => 'Количество просмотров',
+            'count_visit' => 'Количество просмотров',
+            'tags' => 'Теги',
 		);
 	}
 

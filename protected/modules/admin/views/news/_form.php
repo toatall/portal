@@ -69,6 +69,22 @@
             Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.ru.js');
         Yii::app()->getClientScript()->registerCssFile(
             Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.css');
+
+        // for tags    
+        Yii::app()->clientScript->registerCssFile(
+            Yii::app()->baseUrl.'/extension/bootstrap-tokenfield/bootstrap-tokenfield.min.css');
+        Yii::app()->clientScript->registerCssFile(
+            Yii::app()->baseUrl.'/extension/bootstrap-tokenfield/tokenfield-typeahead.min.css');   
+        Yii::app()->clientScript->registerCssFile(
+            Yii::app()->baseUrl.'/extension/bootstrap-tokenfield/form-control.css'); 
+        Yii::app()->clientScript->registerScriptFile(
+            Yii::app()->baseUrl.'/extension/bootstrap-tokenfield/bootstrap-tokenfield.js');   
+
+        // jQuery ui
+        Yii::app()->clientScript->registerScriptFile(
+            Yii::app()->baseUrl.'/extension/jquery-ui/jquery-ui.min.js');   
+        Yii::app()->clientScript->registerCssFile(
+            Yii::app()->baseUrl.'/extension/jquery-ui/jquery-ui.min.css');  
     ?>
     
 	<?php echo $form->textAreaRow($model,'message1',array('rows'=>6, 'cols'=>50, 'class'=>'ckeditor')); ?>
@@ -232,7 +248,14 @@
 	<?php echo $form->checkBoxRow($model,'flag_enable'); ?>
 	
 	<?php if (Yii::app()->user->isUFNS && $modelTree->module=='news'): ?>
-	<?php echo $form->checkBoxRow($model,'on_general_page'); ?>
+        <?php echo $form->checkBoxRow($model,'on_general_page'); ?>
+        <?php echo $form->textFieldRow($model,'tags'); ?>
+        <script type="text/javascript">            
+            $('#<?= CHtml::activeId($model, 'tags'); ?>').autocomplete({
+                source: '<?= Yii::app()->createUrl('/admin/news/tags') ?>',
+                delay: 100
+            });
+        </script>        
 	<?php endif; ?>
     
 	<div class="form-actions">

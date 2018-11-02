@@ -102,6 +102,7 @@ class NewsSearch extends News
 		$criteria->compare('t.message1',$this->message1,true);
 		$criteria->compare('t.message2',$this->message2,true);
 		$criteria->compare('t.author',$this->author,true);
+		$criteria->compare('t.tags',$this->tags,true);
 		//$criteria->compare('t.date_start_pub',$this->date_start_pub,true);
 		//$criteria->compare('t.date_end_pub',$this->date_end_pub,true);
 		if ($this->date_create_1 != null)

@@ -354,6 +354,31 @@ class NewsController extends Controller
 	    ]);
 	}
 
+	public function actionTag($q)
+	{
+		if (strlen(trim($q)) < 2)
+		{
+			throw new CHttpException(400,'Некорректный запрос!');
+		}
+
+		$model=new NewsSearch('searchPublic');
+	    $model->unsetAttributes();  // clear any default values
+	    if(isset($_GET['News']))
+	       $model->attributes=$_GET['News'];
+		
+		$model->tags = $q;		
+        $model = $model->searchPublic();
+        
+        $lastId = isset($model[count($model)-1]['id']) ? date('YmdHis', strtotime($model[count($model)-1]['date_create'])) . $model[count($model)-1]['id'] : 0;
+	        
+        $this->render('/news/feed',array(
+            'model'=>$model,
+            'lastId'=>$lastId,
+            'type'=>'news',
+            'urlAjax'=>Yii::app()->controller->createUrl('news/tag', ['q'=>$q]) //Yii::app()->controller->createUrl('news/newsTree', ['id'=>$lastId, 'idTree'=>$idTree]),
+        ));
+	}
+
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
