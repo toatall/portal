@@ -65,7 +65,9 @@ class News extends CActiveRecord
 	public function tableName()
 	{
 		return '{{news}}';
-	}         
+    }
+    
+    public $tags;
     
 	/**
 	 * Returns the static model of the specified AR class.
