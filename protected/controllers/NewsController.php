@@ -354,7 +354,7 @@ class NewsController extends Controller
 	    ]);
 	}
 
-	public function actionTag($q)
+	public function actionTagNews($id=0, $q)
 	{
 		if (strlen(trim($q)) < 2)
 		{
@@ -366,17 +366,30 @@ class NewsController extends Controller
 	    if(isset($_GET['News']))
 	       $model->attributes=$_GET['News'];
 		
-		$model->tags = $q;		
-        $model = $model->searchPublic();
+		$model->tags = $q;
+        $model = $model->searchPublic($id);
         
         $lastId = isset($model[count($model)-1]['id']) ? date('YmdHis', strtotime($model[count($model)-1]['date_create'])) . $model[count($model)-1]['id'] : 0;
 	        
-        $this->render('/news/feed',array(
+        $this->renderPartial('/news/feed',array(
             'model'=>$model,
             'lastId'=>$lastId,
             'type'=>'news',
-            'urlAjax'=>Yii::app()->controller->createUrl('news/tag', ['q'=>$q]) //Yii::app()->controller->createUrl('news/newsTree', ['id'=>$lastId, 'idTree'=>$idTree]),
-        ));
+            'urlAjax'=>Yii::app()->controller->createUrl('news/tagNews', ['q'=>$q, 'id'=>$lastId]) //Yii::app()->controller->createUrl('news/newsTree', ['id'=>$lastId, 'idTree'=>$idTree]),
+		));				
+	}
+
+	public function actionTag($q)
+	{
+		if (strlen(trim($q)) < 2)
+		{
+			throw new CHttpException(400,'Некорректный запрос!');
+		}
+
+		$this->render('/news/tag',array(
+			'q'=>$q,
+			'breadcrumbs'=>[$q],
+		));
 	}
 
 	/**
