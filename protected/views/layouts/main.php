@@ -47,7 +47,11 @@
 		<?php 
             Yii::app()->clientScript->registerScriptFile(
                 Yii::app()->baseUrl.'/extension/new_year/timer/timer.js'); ?>            
-		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/extension/new_year/timer/timer.css" />           
+		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/extension/new_year/timer/timer.css" /> 
+		
+		<?php 
+            Yii::app()->clientScript->registerScriptFile(
+                Yii::app()->baseUrl.'/js/snow.js'); ?>		          
     <?php
         endif;
     ?>
