@@ -1,0 +1,11 @@
+#timer_container {
+	position:absolute;
+	top:50px;
+	right: 10px;
+	text-align: right;	
+	width:100%;
+	overflow:hidden;
+	z-index:99;	
+	color: white;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;	
+}

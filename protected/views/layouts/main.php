@@ -35,14 +35,54 @@
             Yii::app()->baseUrl.'/extension/baguetteBox/baguetteBox.min.css');
     ?>
     
+    <?php 
+        // New Year
+        if (date('m') == 12 && date('d') >= 15):
+    ?>
+    	<?php 
+            Yii::app()->clientScript->registerScriptFile(
+                Yii::app()->baseUrl.'/extension/new_year/gerljanda/script.js'); ?>		     
+		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/extension/new_year/gerljanda/gerljanda.css" /> 
+		
+		<?php 
+            Yii::app()->clientScript->registerScriptFile(
+                Yii::app()->baseUrl.'/extension/new_year/timer/timer.js'); ?>            
+		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/extension/new_year/timer/timer.css" />           
+    <?php
+        endif;
+    ?>
+    
 </head>
     
 <body>	
+
+<?php 
+    // New Year
+    if (date('m') == 12 && date('d') >= 15):
+?>
+	<div id="timer_container">		
+		<div>
+    		<h3>До Нового года осталось:</h3>
+    		<h1 id="timer"></h1>
+		</div>
+		
+	</div>	
+    <div id="gir" class="gir_3">
+    	<div id="nums_1">1</div>
+    </div>
+	
+	<div style="position: fixed; right:10px; bottom:10px;">
+		<img src="/images/elka.gif" style="height:230px;" />
+	</div>
+	
+<?php
+    endif;
+?>
 	
 <!-- header -->	
 	<table id="head">
 	    <tr>
-	    	<td id="header-right">    		
+	    	<td id="header-right">	    		
 	    	</td>	    	
 	    </tr>	   
 	</table>
@@ -54,8 +94,7 @@
 ?>
 
 <?php $this->widget('bootstrap.widgets.TbNavbar',array(   
-        'brand'=>'',
-        //'fixed'=>'inverse',
+        'brand'=>'',        
         'htmlOptions'=>array('style'=>'top: 200px;', 'id'=>'top_nav', 'class'=>'navbar-static-top'),
         'items'=>array(
             array(

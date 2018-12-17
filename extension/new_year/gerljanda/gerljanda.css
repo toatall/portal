@@ -1,0 +1,14 @@
+#gir {
+	position:absolute;
+	top:0;
+	left:0;
+	background-image:url('/extension/new_year/gerljanda/gerljanda1.png');
+	height:36px;
+	width:100%;
+	overflow:hidden;
+	z-index:99
+}  
+#nums_1 { padding:100px; }  
+.gir_1 { background-position: 0 0; }  
+.gir_2 { background-position: 0 -36px; }  
+.gir_3 { background-position: 0 -72px; }
