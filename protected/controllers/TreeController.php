@@ -32,18 +32,21 @@ class TreeController extends Controller
 	    $model = $this->loadModelTree($id);
 	    $module = $model['module'];
 	    
-	    // run procedure to class or http.error 401
-	    if (class_exists($module))
-	    {	        
-	        $modelModule = new $module;
-	        if (method_exists($module, 'treeAction'))
-	        {	            
-	            return $modelModule->treeAction($model);
-	        }
-	    }
-	        
+        // run procedure to class or http.error 401
+        if (@class_exists($module))
+        {
+            $modelModule = new $module;
+            if (method_exists($module, 'treeAction'))
+            {
+                return $modelModule->treeAction($model);
+            }
+            else
+            {
+                echo 'Not found treeAction!'; return;
+            }
+        }	   
+        
 	    throw new CHttpException(400,'Некорректный запрос.');
-
 	}
 	
 	/**
