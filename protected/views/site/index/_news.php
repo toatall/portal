@@ -28,8 +28,8 @@
     
     <script type="text/javascript">
     	$('#btn-show-<?= $type ?>').on('click', function() {
-    		ajaxNews('<?= $urlAjax ?>', {}, '#container_<?= $type ?>', true);
-    		$('#content_next_<?= $type ?>').remove();
+            ajaxNews('<?= $urlAjax ?>', {}, '#container_<?= $type ?>', true);
+            $('#content_next_<?= $type ?>').remove();
     	});
     </script>
 

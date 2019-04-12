@@ -12,16 +12,16 @@ $this->pageTitle=Yii::app()->name;
         'tabs'=>array(           
             array(
                 'label'=>'Новость дня',
-                'content'=>'<div id="container_news_day"></div><!--div class="page-header"><a href="" class="btn btn-primary" style="float:right;">Все новости</a></div-->',
+                'content'=>$this->renderPartial('tabs/newsDay', null, true),
                 'active'=>true,
             ),
             array(
                 'label'=>'Новости ИФНС',
-                'content'=>'<div id="container_news_ifns"></div>',                
+                'content'=>$this->renderPartial('tabs/newsIfns', null, true),          
             ),
             array(
                 'label'=>'Юмор налоговиков',
-                'content'=>'<div id="container_humor"></div>',
+                'content'=>$this->renderPartial('tabs/humor', null, true),      
             ),
         ),
     

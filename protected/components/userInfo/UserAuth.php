@@ -145,7 +145,8 @@ class UserAuth
 			return $this->_fields['userAuth'] = false;
 			
 		$authUser = $_SERVER['AUTH_USER'];
-		$authUser = split('[\]', $authUser);
+		//$authUser = split('[\]', $authUser);
+                $authUser = explode('\\', $authUser);
 		if (count($authUser) < 2) return false;
 		$this->userLogin = $authUser[1];
 		$this->ADLogin = $_SERVER['AUTH_USER'];

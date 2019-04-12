@@ -228,12 +228,12 @@ class NewsController extends Controller
 	 * @return string
 	 * @deprecated
 	 */
-	public function actionNewsDay($id=0)
+	public function actionNewsDay($id=0, $team=null, $dateFrom=null, $dateTo=null)
 	{	    	    
-	    $model = NewsSearch::getFeedNewsDay($id);
+	    $model = NewsSearch::getFeedNewsDay($id, $team, $dateFrom, $dateTo);            
 	    $lastId = isset($model[count($model)-1]['id']) ? $model[count($model)-1]['id'] : 0; 
 	    return $this->renderPartial('/site/index/_news', [
-	        'urlAjax'=>Yii::app()->controller->createUrl('news/newsDay', ['id'=>$lastId]),
+	        'urlAjax'=>Yii::app()->controller->createUrl('news/newsDay', ['id'=>$lastId, 'team'=>$team, 'dateFrom'=>$dateFrom, 'dateTo'=>$dateTo]),
 	        'type'=>'news_day',
 	        'model'=> $model,
 	        'lastId'=>$lastId,
@@ -313,14 +313,14 @@ class NewsController extends Controller
 	 * @return string
 	 * @deprecated
 	 */
-	public function actionNewsIfns($id=0)
+	public function actionNewsIfns($id=0, $team=null, $dateFrom=null, $dateTo=null)
 	{
-	    $model = NewsSearch::getFeedIfns($id);
+	    $model = NewsSearch::getFeedIfns($id, $team, $dateFrom, $dateTo);
 	    $lastId = isset($model[count($model)-1]['id']) ? $model[count($model)-1]['id'] : 0; 
 	    return $this->renderPartial('/site/index/_news', [
-	        'urlAjax'=>Yii::app()->controller->createUrl('news/newsIfns', ['id'=>$lastId]),
+	        'urlAjax'=>Yii::app()->controller->createUrl('news/newsIfns', ['id'=>$lastId, 'team'=>$team, 'dateFrom'=>$dateFrom, 'dateTo'=>$dateTo]),
 	        'type'=>'news_ifns',
-	        'model'=> $model,
+	        'model'=> $model,   
 	        'lastId'=>$lastId,
 	        'btnUrl' => [
 	            'url'=>$this->createUrl('news/index'),
@@ -354,19 +354,20 @@ class NewsController extends Controller
 	    ]);
 	}
 
-	public function actionTagNews($id=0, $q)
-	{
-		if (strlen(trim($q)) < 2)
-		{
-			throw new CHttpException(400,'Некорректный запрос!');
-		}
+    public function actionTagNews($id=0, $q)
+    {
+        if (strlen(trim($q)) < 2)
+        {
+            throw new CHttpException(400,'Некорректный запрос!');
+        }
 
-		$model=new NewsSearch('searchPublic');
-	    $model->unsetAttributes();  // clear any default values
-	    if(isset($_GET['News']))
-	       $model->attributes=$_GET['News'];
-		
-		$model->tags = $q;
+        $model=new NewsSearch('searchPublic');
+        $model->unsetAttributes();  // clear any default values
+        if (isset($_GET['News'])) {
+            $model->attributes = $_GET['News'];
+        }
+
+        $model->tags = $q;
         $model = $model->searchPublic($id);
         
         $lastId = isset($model[count($model)-1]['id']) ? date('YmdHis', strtotime($model[count($model)-1]['date_create'])) . $model[count($model)-1]['id'] : 0;
@@ -377,20 +378,20 @@ class NewsController extends Controller
             'type'=>'news',
             'urlAjax'=>Yii::app()->controller->createUrl('news/tagNews', ['q'=>$q, 'id'=>$lastId]) //Yii::app()->controller->createUrl('news/newsTree', ['id'=>$lastId, 'idTree'=>$idTree]),
 		));				
-	}
+    }
 
-	public function actionTag($q)
-	{
-		if (strlen(trim($q)) < 2)
-		{
-			throw new CHttpException(400,'Некорректный запрос!');
-		}
+    public function actionTag($q)
+    {
+        if (strlen(trim($q)) < 2)
+        {
+            throw new CHttpException(400,'Некорректный запрос!');
+        }
 
-		$this->render('/news/tag',array(
-			'q'=>$q,
-			'breadcrumbs'=>[$q],
-		));
-	}
+        $this->render('/news/tag',array(
+            'q'=>$q,
+            'breadcrumbs'=>[$q],
+        ));
+    }
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
