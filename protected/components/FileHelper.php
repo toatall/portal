@@ -88,8 +88,7 @@ class FileHelper extends CComponent
 	        {
 	            if (!@mkdir($_SERVER['DOCUMENT_ROOT'] . $pathFile, 0777, true))
 	            {
-	                $resultArray[] = 'Ошибка создания каталога "' . $pathFile . '"';
-	                continue;
+	                $resultArray[] = 'Ошибка создания каталога "' . $pathFile . '"';	                
 	            }
 	        }
 	        
