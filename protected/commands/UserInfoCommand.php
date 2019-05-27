@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 
-
+require 'components\DateHelper.php';
 require 'components\LDAPInfo.php';
 require 'models\User.php';
 require 'models\Organization.php';
