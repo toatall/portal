@@ -17,7 +17,7 @@
     {
         ?>
         <div class="alert alert-info">
-        	Голосование проводится с <strong><?= $modelMain->date_start ?></strong> по <strong><?= $modelMain->date_end ?></strong>
+            Голосование проводится с <strong><?= $modelMain->date_start ?></strong> по <strong><?= $modelMain->date_end ?></strong>
         </div>
         <?php     
     }
@@ -29,7 +29,7 @@
 <?php 
     
     // голосование
-    if (!$modelMain->isVoted)
+    if (!$modelMain->isVoted && !$modelMain->endVote)
     {
         
         ?>
