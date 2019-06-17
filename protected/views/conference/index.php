@@ -85,7 +85,7 @@ $this->breadcrumbs = array(
 	'id'=>'conference-grid',	
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,     
-	'rowCssClassExpression'=>'date("YmdHi") > date("YmdHi",strtotime($data->date_start)) ? "conference-finish" : "conference-not-begin"',
+	'rowCssClassExpression'=>'$data->isPast ? "conference-finish" : "conference-not-begin"', //'(date("YmdHi") > date("YmdHi",strtotime($data->date_start))) ? "conference-finish" : "conference-not-begin"',
 	'columns'=>array(	
         array(
         	'name'=>'date_start',

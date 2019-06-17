@@ -49,21 +49,21 @@ class Conference extends CActiveRecord
 	 * @uses getTypeController()
 	 */
 	private $_typeConference = array(
-		1 => [
-			'name' => 'ВКС с УФНС',
-			'controller' => 'vksUFNS',
-		],
-		2 => [
-			'name' => 'ВКС с ФНС',
-			'controller' => 'vksFNS',
-		],
-		3 => [
-			'name' => 'Собрания',
-			'controller' => 'conference',
-		],
-	);
-	
-	/**
+            1 => [
+                'name' => 'ВКС с УФНС',
+                'controller' => 'vksUFNS',
+            ],
+            2 => [
+                'name' => 'ВКС с ФНС',
+                'controller' => 'vksFNS',
+            ],
+            3 => [
+                'name' => 'Собрания',
+                'controller' => 'conference',
+            ],
+        );
+
+        /**
 	 * Флаг отвечающий за дополнительные настройки прав
 	 * @var boolean
 	 */
@@ -92,7 +92,7 @@ class Conference extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return '{{conference}}';
+            return '{{conference}}';
 	}
 
 	/**
@@ -100,18 +100,18 @@ class Conference extends CActiveRecord
 	 */
 	public function rules()
 	{		
-		return array(
-			array('theme, _tempDateStart, _tempTimeStart', 'required'),
-			array('type_conference, time_start_msk', 'numerical', 'integerOnly'=>true),
-			array('theme', 'length', 'max'=>500),
-			array('duration', 'length', 'max'=>20),
-			array('place', 'length', 'max'=>100),
-			array('type_conference', 'unsafe'),
-			array('responsible, members_people, members_organization, is_confidential, note', 'safe'),			
-			array('id, type_conference, theme, responsible, members_people, 
-				members_organization, date_start, duration, is_confidential, 
-				date_create, date_edit, date_delete, place, time_start_msk, note', 'safe', 'on'=>'search'),
-		);
+            return array(
+                array('theme, _tempDateStart, _tempTimeStart', 'required'),
+                array('type_conference, time_start_msk', 'numerical', 'integerOnly'=>true),
+                array('theme', 'length', 'max'=>500),
+                array('duration', 'length', 'max'=>20),
+                array('place', 'length', 'max'=>100),
+                array('type_conference', 'unsafe'),
+                array('responsible, members_people, members_organization, is_confidential, note', 'safe'),			
+                array('id, type_conference, theme, responsible, members_people, 
+                    members_organization, date_start, duration, is_confidential, 
+                    date_create, date_edit, date_delete, place, time_start_msk, note', 'safe', 'on'=>'search'),
+            );
 	}
 
 	/**
@@ -120,9 +120,9 @@ class Conference extends CActiveRecord
 	 */
 	public function relations()
 	{		
-		return array(
-			
-		);
+            return array(
+
+            );
 	}
 	
 	/**
@@ -130,27 +130,27 @@ class Conference extends CActiveRecord
 	 */
 	public function attributeLabels()
 	{
-		return array(
-			'id' => 'ИД',
-			'type_conference' => 'Тип конференции',
-			'theme' => 'Тема',
-			'responsible' => 'Отвественные',
-			'members_people' => 'Участники (сотрудники Управления)',
-			'members_organization' => 'Участники (Инспекции)',
-			'date_start' => 'Дата и время начала',
-			'_tempDateStart' => 'Дата начала',
-			'_tempTimeStart' => 'Время начала',
-			'duration' => 'Продолжительность',
-			'is_confidential' => 'Конфиценциально',
-			'date_create' => 'Дата создания',
-			'date_edit' => 'Дата изменения',
-			'date_delete' => 'Дата удаления',
-			'time_start_msk' => 'Время московское',
-			'place' => 'Место проведения',
-			'note' => 'Примечание',
-			'dateStartFormat'=>'Дата начала',
-			'timeStartFormat'=>'Время начала',
-		);
+            return array(
+                'id' => 'ИД',
+                'type_conference' => 'Тип конференции',
+                'theme' => 'Тема',
+                'responsible' => 'Отвественные',
+                'members_people' => 'Участники (сотрудники Управления)',
+                'members_organization' => 'Участники (Инспекции)',
+                'date_start' => 'Дата и время начала',
+                '_tempDateStart' => 'Дата начала',
+                '_tempTimeStart' => 'Время начала',
+                'duration' => 'Продолжительность',
+                'is_confidential' => 'Конфиценциально',
+                'date_create' => 'Дата создания',
+                'date_edit' => 'Дата изменения',
+                'date_delete' => 'Дата удаления',
+                'time_start_msk' => 'Время московское',
+                'place' => 'Место проведения',
+                'note' => 'Примечание',
+                'dateStartFormat'=>'Дата начала',
+                'timeStartFormat'=>'Время начала',
+            );
 	}
 		
 	/**
@@ -159,10 +159,10 @@ class Conference extends CActiveRecord
 	 */
 	public function attributeConference()
 	{
-		return array(
-			'is_confidential',
-			'place',
-		);
+            return array(
+                'is_confidential',
+                'place',
+            );
 	}
 	
 	/**
@@ -171,9 +171,9 @@ class Conference extends CActiveRecord
 	 */
 	public function atttributeVksFns()
 	{
-		return array(
-			'time_start_msk',
-		);
+            return array(
+                'time_start_msk',
+            );
 	}
 	
 	/**
@@ -182,9 +182,9 @@ class Conference extends CActiveRecord
 	 */
 	public function attributeVksUfns()
 	{
-		return array(
-			'responsible',				
-		);
+            return array(
+                'responsible',				
+            );
 	}
 	
 	/**
@@ -429,6 +429,18 @@ class Conference extends CActiveRecord
 	    mb_language('ru');
 	    mb_send_mail($to, $subject, $message, $headers);	    
 	}
+        
+        /**
+         * Проверка наступило ли время начала?
+         * @return bool
+         */
+        public function getIsPast()
+        {
+            $dateNow = new DateTime('now');
+            $dateStart = new DateTime($this->date_start);
+            return ($dateNow > $dateStart);
+            
+        }
 		
 	
 	

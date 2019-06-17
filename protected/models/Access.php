@@ -496,10 +496,9 @@ class Access extends CActiveRecord
 	{
 		return Yii::app()->db->createCommand()
 			->select("u.id, 
-				u.username_windows + ' (' + p.fio + ')' concatened")
+				u.username_windows + ' (' + u.fio + ')' concatened")
 			->from('{{access_department_user}} t ')
 			->join('{{user}} u', 't.id_user = u.id')
-			->leftJoin('{{profile}} p', 'u.id = p.id')
 			->where('id_department=:id_department', [':id_department'=>$id])
 			->queryAll();
 	}
