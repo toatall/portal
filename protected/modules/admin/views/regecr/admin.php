@@ -4,7 +4,7 @@
 
 <?php
 $this->breadcrumbs=array(
-   'Анкетирование по ГР'=>array('admin'),
+    'Анкетирование по ГР'=>array('admin'),
     'Управление',
 );
 
@@ -14,7 +14,7 @@ $this->menu=array(
 
 ?>
 
-<h1>Структура сайта</h1>
+<h1>Анкетирование по ГР</h1>
 
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
     'id'=>'regecr-main-grid',
