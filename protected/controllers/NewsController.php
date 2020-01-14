@@ -368,6 +368,11 @@ class NewsController extends Controller {
             'breadcrumbs' => [$q],
         ));
     }
+    
+    
+    public function actionVov($id = 0) {  
+        return $this->render('vov', ['breadcrumbs' => ['ПОМНИМ! ГОРДИМСЯ!']]);
+    }
 
     /**
      * Returns the data model based on the primary key given in the GET variable.
