@@ -16,9 +16,9 @@ if (isset($breadcrumbs))
 <script type="text/javascript">
     jQuery(function() {
         ajaxNews('<?= Yii::app()->controller->createUrl('news/tagNews', array('q'=>75)) ?>', {}, '#container_news');
-        $('#page').css('background', '#edeef0');
+        /*$('#page').css('background', '#edeef0');
         $('body').css('background', 'url(/images/hello_html_m25590707.jpg)');
-        $('#page').css('background', 'url(/images/hello_html_m25590707.jpg)');
+        $('#page').css('background', 'url(/images/hello_html_m25590707.jpg)');*/
         $('#war_container').hide();
     });
 

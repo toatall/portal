@@ -350,7 +350,7 @@ class NewsController extends Controller {
 
         $lastId = isset($model[count($model) - 1]['id']) ? date('YmdHis', strtotime($model[count($model) - 1]['date_create'])) . $model[count($model) - 1]['id'] : 0;
 
-        $this->renderPartial('/news/feed', array(
+        $this->renderPartial('/site/index/_news', array(
             'model' => $model,
             'lastId' => $lastId,
             'type' => 'news',

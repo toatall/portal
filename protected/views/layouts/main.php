@@ -86,8 +86,10 @@
     if (true):
 ?>    
   
-	<div id="war_container" style="position: fixed; right:10px; bottom:30px;">
-		<a href="<?= Yii::app()->createUrl('news/vov') ?>" title='Проект "ПОМНИМ! ГОРДИМСЯ!"'><img src="/images/War.png" style="height:200px;" /></a>
+	<div id="war_container" style="position: fixed; right:10px; top:10px;">
+		<a href="<?= Yii::app()->createUrl('news/vov') ?>" title='Проект "ПОМНИМ! ГОРДИМСЯ!"'>
+			<img src="/images/War.png" style="height:180px;" />
+		</a>
 	</div>
   
 <?php   
