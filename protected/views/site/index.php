@@ -23,6 +23,10 @@ $this->pageTitle=Yii::app()->name;
                 'label'=>'Юмор налоговиков',
                 'content'=>$this->renderPartial('tabs/humor', null, true),      
             ),
+            array(
+                'label'=>'Проект "Помним! Гордимся!"',
+                'content'=>$this->renderPartial('tabs/vov', null, true),
+            ),
         ),
     
     ));
@@ -73,6 +77,8 @@ $this->pageTitle=Yii::app()->name;
 		ajaxNews('<?= Yii::app()->controller->createUrl('news/newsIfns') ?>', {}, '#container_news_ifns');
 	    // load humor
 		ajaxNews('<?= Yii::app()->controller->createUrl('news/Humor') ?>', {}, '#container_humor');
+		// load vov
+		ajaxNews('<?= Yii::app()->controller->createUrl('news/tagNews', array('q'=>75)) ?>', {}, '#container_vov');
 		
 	});
 
