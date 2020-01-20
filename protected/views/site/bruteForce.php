@@ -1,17 +1,15 @@
 <div class="row">
 
-<h1>Подбор слов</h1>
+<h1>Подбор букв с словах</h1>
 <hr />
 
 <?= CHtml::beginForm(); ?>
-
-
-	
-	<?= CHtml::label('Разделитель', 'demiter') ?>
-	<?= CHtml::textField('demiter', '/') ?>
 	
 	<?= CHtml::label('Список', 'label') ?>
 	<?= CHtml::textArea('list', '', ['class'=>'span12', 'rows'=>10]) ?>
+	
+	<?= CHtml::label('Разделитель в результате', 'demiter') ?>
+	<?= CHtml::textField('demiter', '/') ?>
 	
 	<?= CHtml::ajaxSubmitButton('Отправить', ['site/bruteforce'], [
 	    'type' => 'GET',
