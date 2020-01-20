@@ -25,7 +25,7 @@ class SiteController extends Controller {
     public function accessRules() {
         return array(
             array('allow',
-                'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'hallFame', 'contact', 'captcha', 'error', 'bruteforce'),
+                'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'hallFame', 'contact', 'captcha', 'error', 'bruteforce', 'test'),
                 'users' => array('@'),
             ),
             array(
@@ -202,6 +202,11 @@ class SiteController extends Controller {
         }
     }
     
+    public function actionTest()
+    {
+        print_r($this->bruteForce2('ааааа'));
+    }
+    
     /**
      * @param string $dem
      * @return string
@@ -253,62 +258,73 @@ class SiteController extends Controller {
         $result = [];
         if (strlen($str) > 0)
         {  
-            
-            $str = mb_strtolower($str, 'utf-8');
-            $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
-            
-            for ($i=0; $i<count($strArr); $i++)
+            $countChars = count(preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY));
+            for ($x=0; $x<$countChars;$x++)
             {
-                // i - сколько символов менять
+                $str = mb_strtolower($str, 'utf-8');
+                $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
+                $strArr[$x] = mb_strtoupper($strArr[$x]);
                 
-                for ($k=0; $k<count($strArr); $k++)
+                for ($i=0; $i<count($strArr); $i++)
                 {
-                    // k - с какой позиции начать замену
-                    $newArr = $strArr;
+                    // i - сколько символов менять
                     
-                    $len = $i;
-                    $index = $k;
-                    while ($len > 0)
+                    for ($k=0; $k<count($strArr); $k++)
                     {
-                        if ($index < count($strArr))
+                        // k - с какой позиции начать замену
+                        $newArr = $strArr;
+                        
+                        $len = $i;
+                        $index = $k;
+                        while ($len > 0)
                         {
-                            $newArr[$index] = mb_strtoupper($newArr[$index]);
-                        }
-                        $len--;
-                        $index++;
-                    }                    
-                    $this->addToArray($result, implode($newArr));                    
-                }
-                
-            }
-            
-            $str = mb_strtoupper($str, 'utf-8');
-            $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
-            
-            for ($i=0; $i<count($strArr); $i++)
-            {
-                // i - сколько символов менять
-                
-                for ($k=0; $k<count($strArr); $k++)
-                {
-                    // k - с какой позиции начать замену
-                    $newArr = $strArr;
-                    
-                    $len = $i;
-                    $index = $k;
-                    while ($len > 0)
-                    {
-                        if ($index < count($strArr))
-                        {
-                            $newArr[$index] = mb_strtolower($newArr[$index]);
-                        }
-                        $len--;
-                        $index++;
+                            if ($index < count($strArr))
+                            {
+                                $newArr[$index] = mb_strtoupper($newArr[$index]);
+                            }
+                            $len--;
+                            $index++;
+                        }                    
+                        $this->addToArray($result, implode($newArr));                    
                     }
-                    $this->addToArray($result, implode($newArr));
+                    
                 }
-                
             }
+            
+            for ($x=0; $x<$countChars;$x++)
+            {
+                $str = mb_strtoupper($str, 'utf-8');
+                $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
+                $strArr[$x] = mb_strtolower($strArr[$x]);
+                
+                for ($i=0; $i<count($strArr); $i++)
+                {
+                    // i - сколько символов менять
+                    
+                    for ($k=0; $k<count($strArr); $k++)
+                    {
+                        // k - с какой позиции начать замену
+                        $newArr = $strArr;
+                        
+                        $len = $i;
+                        $index = $k;
+                        while ($len > 0)
+                        {
+                            if ($index < count($strArr))
+                            {
+                                $newArr[$index] = mb_strtolower($newArr[$index]);
+                            }
+                            $len--;
+                            $index++;
+                        }
+                        $this->addToArray($result, implode($newArr));
+                    }
+                    
+                }
+            }
+            
+            
+            
         }
         return $result;
     }
