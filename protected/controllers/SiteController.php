@@ -187,7 +187,7 @@ class SiteController extends Controller {
                 $result = [];
                 foreach ($words as $word)
                 {
-                    $result = array_merge($result, $this->bruteForce($word));
+                    $result = array_merge($result, $this->bruteForce2($word));
                 }
                 echo implode($demiter, $result);
             }
@@ -243,6 +243,72 @@ class SiteController extends Controller {
                 $this->addToArray($result, implode($strArr));
             }            
             
+        }
+        return $result;
+    }
+    
+    
+    private function bruteForce2($str)
+    {
+        $result = [];
+        if (strlen($str) > 0)
+        {  
+            
+            $str = mb_strtolower($str, 'utf-8');
+            $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
+            
+            for ($i=0; $i<count($strArr); $i++)
+            {
+                // i - сколько символов менять
+                
+                for ($k=0; $k<count($strArr); $k++)
+                {
+                    // k - с какой позиции начать замену
+                    $newArr = $strArr;
+                    
+                    $len = $i;
+                    $index = $k;
+                    while ($len > 0)
+                    {
+                        if ($index < count($strArr))
+                        {
+                            $newArr[$index] = mb_strtoupper($newArr[$index]);
+                        }
+                        $len--;
+                        $index++;
+                    }                    
+                    $this->addToArray($result, implode($newArr));                    
+                }
+                
+            }
+            
+            $str = mb_strtoupper($str, 'utf-8');
+            $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
+            
+            for ($i=0; $i<count($strArr); $i++)
+            {
+                // i - сколько символов менять
+                
+                for ($k=0; $k<count($strArr); $k++)
+                {
+                    // k - с какой позиции начать замену
+                    $newArr = $strArr;
+                    
+                    $len = $i;
+                    $index = $k;
+                    while ($len > 0)
+                    {
+                        if ($index < count($strArr))
+                        {
+                            $newArr[$index] = mb_strtolower($newArr[$index]);
+                        }
+                        $len--;
+                        $index++;
+                    }
+                    $this->addToArray($result, implode($newArr));
+                }
+                
+            }
         }
         return $result;
     }
