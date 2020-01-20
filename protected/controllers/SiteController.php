@@ -25,7 +25,7 @@ class SiteController extends Controller {
     public function accessRules() {
         return array(
             array('allow',
-                'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'hallFame', 'contact', 'captcha', 'error'),
+                'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'hallFame', 'contact', 'captcha', 'error', 'bruteforce'),
                 'users' => array('@'),
             ),
             array(
@@ -163,5 +163,101 @@ class SiteController extends Controller {
             'yearList' => $model->getYears(),
         ]);
     }
+    
+    /**
+     * Перебор комбинаций слов
+     * @param array $list
+     * @param string $demiter
+     */
+    public function actionBruteforce()
+    {
+        if (Yii::app()->request->isAjaxRequest)
+        {                
+            if (!isset($_POST['list']))
+            {
+                die('Не задан параметр list');
+            }
+            
+            $demiter = isset($_POST['demiter']) ? $this->getDemiter($_POST['demiter']) : '/';
+            $list = $_POST['list']; 
+                        
+            $words = preg_split("/\s|\n|\/|\\\|\|/", $list, null, PREG_SPLIT_NO_EMPTY);            
+            if ($words)                 
+            {
+                $result = [];
+                foreach ($words as $word)
+                {
+                    $result = array_merge($result, $this->bruteForce($word));
+                }
+                echo implode($demiter, $result);
+            }
+            else
+            {
+                echo 'Отсутсвует текст';
+            }            
+        }
+        else
+        {
+            $this->render('bruteForce');
+        }
+    }
+    
+    /**
+     * @param string $dem
+     * @return string
+     */
+    private function getDemiter($dem)
+    {
+        if (empty($dem))
+        {
+            return "/";
+        }
+        return $dem;
+    }
+    
+    /**
+     * @param string $str
+     * @return array
+     */
+    private function bruteForce($str)
+    {        
+        
+        $result = [];
+        if (strlen($str) > 0)
+        {                 
+            // сначала все маленькие
+            $str = mb_strtolower($str, 'UTF-8');
+            $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
+            for ($i=0; $i<count($strArr); $i++)
+            {                                               
+                $strArr[$i] = mb_strtoupper($strArr[$i]);                
+                $this->addToArray($result, implode($strArr));
+            }
+               
+            // теперь все большие
+            $str = mb_strtoupper($str, 'UTF-8');
+            $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
+            for ($i=0; $i<count($strArr); $i++)
+            {
+                $strArr[$i] = mb_strtolower($strArr[$i]);
+                $this->addToArray($result, implode($strArr));
+            }            
+            
+        }
+        return $result;
+    }
+    
+    /**
+     * @param array $arr
+     * @param string $value
+     */
+    private function addToArray(&$arr, $value)
+    {
+        if (!in_array($value, $arr))
+        {
+            $arr[] = $value;
+        }
+    }
+        
 
 }
