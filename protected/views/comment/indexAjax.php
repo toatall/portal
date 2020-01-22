@@ -1,4 +1,20 @@
-<h4>Комментарии <button class="btn btn-default" onclick="loadData('<?= Yii::app()->controller->createUrl('comment/index',array('id'=>$id)) ?>', '#container-comments-<?= $id ?>');"><i class="icon-refresh"></i></button></h3>
+<?php 
+    /* @var $this CController */
+    /* @var $id int */
+    /* @var $urlIndex string */
+    /* @var $urlUpdate string */
+    /* @var $urlForm string */
+
+    $urlIndex = isset($urlIndex) ? $urlIndex : Yii::app()->controller->createUrl('comment/index',array('id'=>$id));
+    $urlUpdate = isset($urlUpdate) ? $urlUpdate : Yii::app()->controller->createUrl('comment/update',array('id'=>'_id_'));
+    $urlForm = isset($urlForm) ? $urlForm : Yii::app()->controller->createUrl('comment/form', ['id'=>$id]);
+?>
+
+
+<h4>Комментарии
+	<button class="btn btn-default" onclick="loadData('<?= $urlIndex ?>', '#container-comments-<?= $id ?>');">
+		<i class="icon-refresh"></i></button>
+</h4>
 
 
 <script type="text/javascript">
@@ -20,7 +36,7 @@
 
 	function loadDataComments()
 	{
-		loadData('<?= Yii::app()->controller->createUrl('comment/index',array('id'=>$id)) ?>', '#container-comments-<?= $id ?>');
+		loadData('<?= $urlIndex ?>', '#container-comments-<?= $id ?>');
 	}
 		
 	$(document).ready(function(){
@@ -56,8 +72,7 @@
 
 	// изменение комментария
 	function updateComment(id, url)
-	{
-		//ajaxGET(url, null, '#modal-comment-div');
+	{		
 	    // 1 подгрузить форму
 		$('#div-comment-' + id).attr('contenteditable', true);
 		$('#div-comment-' + id).addClass('uneditable-input span4');
@@ -76,7 +91,7 @@
 		$('#comment-hide-'+id).val($('#div-comment-'+id).html());        	
     	var dataForm = $('#form-comment-'+id).serialize();
     	
-		var urlPost = '<?= Yii::app()->controller->createUrl('comment/update',array('id'=>'_id_')) ?>';
+		var urlPost = '<?= $urlUpdate ?>';
 		urlPost = urlPost.replace('_id_',id);
 								 		
    		$.ajax({
@@ -109,10 +124,9 @@
 	
 		
 </script>
-<?php //echo TbHtml::button('Добавить комментарий',['id'=>'btn-comment-create', 'data-toggle'=>'modal', 'data-target'=>'#modal-comment', 'class'=>'btn btn-primary']);  ?>
 <script type="text/javascript">
 	$('#btn-comment-create').on('click', function() {
-		ajaxGET('<?= Yii::app()->controller->createUrl('comment/form', ['id'=>$id]) ?>', null, '#modal-comment-div');		
+		ajaxGET('<?= $urlForm ?>', null, '#modal-comment-div');		
 	});
 </script><br /><br />
 
@@ -128,7 +142,7 @@
 <?php endif; ?>
 
 <script type="text/javascript">	
-	ajaxGET('<?= Yii::app()->controller->createUrl('comment/form', ['id'=>$id]) ?>', {}, '#container-comment-form');
+	ajaxGET('<?= $urlForm ?>', {}, '#container-comment-form');
 </script>
 
 <hr />

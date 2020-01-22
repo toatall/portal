@@ -1,3 +1,14 @@
+<?php 
+    /* @var $this CController */
+    /* @var $model array */
+   
+    /* @var $urlDeleteStr string */
+    $urlDeleteStr = isset($urlDeleteStr) ? $urlDeleteStr : 'comment/delete';
+    
+    /* @var $urlUpdateStr string */
+    $urlUpdateStr = isset($urlUpdateStr) ? $urlUpdateStr : 'comment/update';
+?>
+
 <?php
 	
 	if (count($model) == 0):
@@ -29,8 +40,8 @@
 				<br /><button id="btn-form-update-<?= $m['id']; ?>" style="display: none;" class="btn btn-primary" onclick="js: return sendFormCommentUpdate(<?= $m['id']; ?>);">Сохранить</button>
 			</form>
 			<div>
-				<button onclick="deleteComment(<?= $m['id'] ?>, '<?= Yii::app()->controller->createUrl('comment/delete', ['id'=>$m['id']]) ?>');" class="btn btn-default" title="Удалить"><i class="icon-trash"></i></button>
-				<button onclick="updateComment(<?= $m['id'] ?>, '<?= Yii::app()->controller->createUrl('comment/update', ['id'=>$m['id']]) ?>');" class="btn btn-default" title="Изменить" data-toggle="modal" data-target="#modal-comment"><i class="icon-pencil"></i></button>
+				<button onclick="deleteComment(<?= $m['id'] ?>, '<?= Yii::app()->controller->createUrl($urlDeleteStr, ['id'=>$m['id']]) ?>');" class="btn btn-default" title="Удалить"><i class="icon-trash"></i></button>
+				<button onclick="updateComment(<?= $m['id'] ?>, '<?= Yii::app()->controller->createUrl($urlUpdateStr, ['id'=>$m['id']]) ?>');" class="btn btn-default" title="Изменить" data-toggle="modal" data-target="#modal-comment"><i class="icon-pencil"></i></button>
 			</div>			
 			<?php else: ?>
 			Комментарий удален

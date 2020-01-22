@@ -562,5 +562,65 @@ class Access extends CActiveRecord
 			}
 		}
 	}
+	
+	/**
+	 * Проверка прав доступа для измнения поста по наставничеству
+	 * @param int $idPost
+	 * @return boolean
+	 */
+	public static function checkAccessMentorPost($idPost)
+	{
+	    if (Yii::app()->user->isGuest)
+	    {
+	        return false;
+	    }
+	    if (Yii::app()->user->admin)
+	    {
+	        return true;
+	    }
+	    if (Yii::app()->db->createCommand()
+	        ->from('{{mentor_roles_assign}}')
+	        ->where('role_name=:role_name and username=:username', [
+	            ':role_name' => 'moderator',
+	            ':username' => UserInfo::inst()->userLogin,
+	        ])
+	        ->queryScalar()
+	        )
+	    {
+	        return true;
+	    }
+	    
+	    return Yii::app()->db->createCommand()
+	       ->from('{{mentor_post}}')
+	       ->where('id=:id and author=:author and date_delete is null', [
+	           ':id'=>$idPost,
+	           ':author'=>UserInfo::inst()->userLogin,
+	       ])
+	       ->queryScalar();
+	}	
+	
+	/**
+	 * Is user admin or moderator role
+	 * @return boolean
+	 */
+	public static function checkAccessMentorIsModerator()
+	{
+	    if (Yii::app()->user->isGuest)
+	    {
+	        return false;
+	    }
+	    if (Yii::app()->user->admin)
+	    {
+	        return true;
+	    }
+	    return Yii::app()->db->createCommand()
+	       ->from('{{mentor_roles_assign}}')
+	       ->where('role_name=:role_name and username=:username', [
+	           ':role_name'=>'moderator',
+	           ':username'=>UserInfo::inst()->userLogin,
+	       ])
+	       ->queryScalar();
+	}
+	
 				
 }

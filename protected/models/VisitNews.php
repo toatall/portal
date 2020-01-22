@@ -128,4 +128,19 @@ class VisitNews extends CActiveRecord
 			->execute();
 	}
 	
+	/**
+	 * Save information about visit
+	 * @param int $id
+	 */
+	public static function saveVisitMentor($id)
+	{
+	    Yii::app()->db->createCommand('exec p_pr_visit_mentor @id_post=:id_post, @username=:username, @ip_address=:ip_address, @hostname=:hostname, @session_id=:session_id')
+    	    ->bindValue(':id_post', $id)
+    	    ->bindValue(':username', UserInfo::inst()->userLogin)
+    	    ->bindValue(':ip_address', UserInfo::inst()->clientIP)
+    	    ->bindValue(':hostname', UserInfo::inst()->clientHost)
+    	    ->bindValue(':session_id', session_id())
+	       ->execute();
+	}
+	
 }

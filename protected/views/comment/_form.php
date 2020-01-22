@@ -1,3 +1,16 @@
+<?php 
+    /* @var $this CController */
+    /* @var $model Comment */
+    /* @var $id int */
+
+    /* @var $urlForm string */
+    $urlForm = isset($urlForm) ? $urlForm : Yii::app()->controller->createUrl('comment/form',array('id'=>$id));
+    
+    /* @var $urlUpdate string */
+    $urlUpdate = isset($urlUpdate) ? $urlUpdate : Yii::app()->controller->createUrl('comment/update',array('id'=>$model->id));
+    
+?>
+
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
     'id'=>'comment-form',
     'enableAjaxValidation'=>false,
@@ -37,7 +50,7 @@
         	var dataForm = $('#comment-form').serialize();
 
     		$('#container-comment-form').html('<img src="/images/loading.gif" />');
-			var urlPost = '<?= ($model->isNewRecord ?  Yii::app()->controller->createUrl('comment/form',array('id'=>$id)) : Yii::app()->controller->createUrl('comment/update',array('id'=>$model->id))) ?>';
+			var urlPost = '<?= ($model->isNewRecord ?  $urlForm : $urlUpdate) ?>';
 									 		
    	   		$.ajax({
    	   			type: 'POST',
@@ -48,7 +61,7 @@
 		   	   	if (data == 'OK')
 		   	   	{
 		   	   		loadDataComments();
-		   	   		ajaxGET('<?= Yii::app()->controller->createUrl('comment/form', ['id'=>$id]) ?>', {}, '#container-comment-form');
+		   	   		ajaxGET('<?= $urlForm ?>', {}, '#container-comment-form');
 		   	   	}
 		   	   	else
 		   	   	{

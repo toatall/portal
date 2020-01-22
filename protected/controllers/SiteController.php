@@ -187,7 +187,7 @@ class SiteController extends Controller {
                 $result = [];
                 foreach ($words as $word)
                 {
-                    $result = array_merge($result, $this->bruteForce2($word));
+                    $result = array_merge($result, $this->bruteForce($word));
                 }
                 echo implode($demiter, $result);
             }
@@ -200,12 +200,7 @@ class SiteController extends Controller {
         {
             $this->render('bruteForce');
         }
-    }
-    
-    public function actionTest()
-    {
-        print_r($this->bruteForce2('ааааа'));
-    }
+    }       
     
     /**
      * @param string $dem
@@ -223,37 +218,8 @@ class SiteController extends Controller {
     /**
      * @param string $str
      * @return array
-     */
+     */    
     private function bruteForce($str)
-    {        
-        
-        $result = [];
-        if (strlen($str) > 0)
-        {                 
-            // сначала все маленькие
-            $str = mb_strtolower($str, 'UTF-8');
-            $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
-            for ($i=0; $i<count($strArr); $i++)
-            {                                               
-                $strArr[$i] = mb_strtoupper($strArr[$i]);                
-                $this->addToArray($result, implode($strArr));
-            }
-               
-            // теперь все большие
-            $str = mb_strtoupper($str, 'UTF-8');
-            $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
-            for ($i=0; $i<count($strArr); $i++)
-            {
-                $strArr[$i] = mb_strtolower($strArr[$i]);
-                $this->addToArray($result, implode($strArr));
-            }            
-            
-        }
-        return $result;
-    }
-    
-    
-    private function bruteForce2($str)
     {
         $result = [];
         if (strlen($str) > 0)
