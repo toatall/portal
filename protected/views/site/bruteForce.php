@@ -13,11 +13,15 @@
 	
 	<?= CHtml::ajaxSubmitButton('Отправить', ['site/bruteforce'], [
 	    'type' => 'GET',
+	    'beforeSend' => "js:function() { $('#btn-submit').attr('disabled', true); return true; }",
 	    'success' => "js:function(data) { $('#result_container').html(data); }",
-	], ['class'=>'btn btn-primary']) ?>
+	    'complete' => "js:function() { $('#btn-submit').attr('disabled', false); return true; }",
+	], ['class'=>'btn btn-primary', 'id'=>'btn-submit', 'style'=>'margin-top:-10px;']) ?>
     
 <?= CHtml::endForm() ?>
 
 	<div class="well" id="result_container" style="margin-top:10px;"></div>
 
 </div>
+<script type="text/javascript">	
+</script>

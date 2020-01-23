@@ -211,6 +211,11 @@ class MentorController extends Controller
 		return $model;
 	}
 	
+	/**
+	 * @param int $id
+	 * @throws CHttpException
+	 * @return MentorWays
+	 */
 	public function loadModelWay($id)
 	{
 	    $model=MentorWays::model()->findByPk($id);

@@ -171,13 +171,21 @@ class SiteController extends Controller {
      */
     public function actionBruteforce()
     {
+        
+        //echo ;die;
+        
+//         $text = 'Долматова';
+//         $result = $this->bruteForceNew($text);
+//         print_r(implode('/', $result));die;
+        
+        
         if (Yii::app()->request->isAjaxRequest)
         {                
             if (!isset($_POST['list']))
             {
                 die('Не задан параметр list');
             }
-            
+                        
             $demiter = isset($_POST['demiter']) ? $this->getDemiter($_POST['demiter']) : '/';
             $list = $_POST['list']; 
                         
@@ -187,7 +195,7 @@ class SiteController extends Controller {
                 $result = [];
                 foreach ($words as $word)
                 {
-                    $result = array_merge($result, $this->bruteForce($word));
+                    $result = array_merge($result, $this->bruteForceNew($word));
                 }
                 echo implode($demiter, $result);
             }
@@ -257,6 +265,7 @@ class SiteController extends Controller {
                 }
             }
             
+            // 
             for ($x=0; $x<$countChars;$x++)
             {
                 $str = mb_strtoupper($str, 'utf-8');
@@ -289,11 +298,74 @@ class SiteController extends Controller {
                 }
             }
             
+            // через одну буква большая            
+            for ($t=0; $t<=1; $t++)
+            {
+                $str = mb_strtolower($str, 'utf-8');
+                $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
+                
+                for ($x=0; $x<$countChars; $x++)
+                {
+                    if (($x % 2) == $t)
+                    {
+                        $strArr[$x] = mb_strtoupper($strArr[$x]);
+                    }
+                }
+                $this->addToArray($result, implode($strArr));
+            }
+            
+            // через одну буква маленькая
+            for ($t=0; $t<=1; $t++)
+            {
+                $str = mb_strtolower($str, 'utf-8');
+                $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
+                
+                for ($x=0; $x<$countChars; $x++)
+                {
+                    if (($x % 2) == $t)
+                    {
+                        $strArr[$x] = mb_strtoupper($strArr[$x]);
+                    }
+                }
+                $this->addToArray($result, implode($strArr));
+            }
             
             
         }
         return $result;
     }
+    
+    
+    private function bruteForceNew($str)
+    {
+        $result = [];        
+       
+        $str = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
+        $countChars = count($str);
+        for ($i=0; $i < pow(2, $countChars); $i++)
+        {
+            $strArr = $str;
+            
+            $size = intval($countChars);
+            
+            $bin = sprintf("%'0{$size}b", $i);            
+            
+            for ($x = 0; $x < $countChars; $x++)
+            {                
+                if ($bin[$x] == '1')
+                {                    
+                    $strArr[$x] = mb_strtoupper($strArr[$x], 'utf-8');
+                }
+                else
+                {
+                    $strArr[$x] = mb_strtolower($strArr[$x], 'utf-8');
+                }
+            }            
+            $this->addToArray($result, implode($strArr));
+        }
+        return $result;
+    }
+    
     
     /**
      * @param array $arr
@@ -302,8 +374,9 @@ class SiteController extends Controller {
     private function addToArray(&$arr, $value)
     {
         if (!in_array($value, $arr))
-        {
-            $arr[] = $value;
+        {       
+            $index = $value . (count($arr)+1);
+            $arr[$index] = $value;
         }
     }
         
