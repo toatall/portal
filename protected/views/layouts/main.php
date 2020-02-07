@@ -170,8 +170,7 @@
     
 	<div class="clear"></div>
     
-	<div id="footer">        
-        <h4>Разработка и соопровождение: Трусов Олег Алексеевич</h4>
+	<div id="footer">
         <?php echo CHtml::link('Рекомендуемые браузеры', array('site/browsers')); ?>
         <br /><br />
         <?php echo Log::StatisticOnlineAndDay(); ?>
