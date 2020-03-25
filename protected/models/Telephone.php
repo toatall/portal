@@ -347,6 +347,11 @@ class Telephone extends CActiveRecord
             
         }*/
     }
+
+    public function getUrl()
+    {
+        return Yii::app()->params["pathTelephones"] . "/" . $this->telephone_file;
+    }
     
     
     

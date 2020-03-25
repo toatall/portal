@@ -172,13 +172,6 @@ class SiteController extends Controller {
     public function actionBruteforce()
     {
         
-        //echo ;die;
-        
-//         $text = 'Долматова';
-//         $result = $this->bruteForceNew($text);
-//         print_r(implode('/', $result));die;
-        
-        
         if (Yii::app()->request->isAjaxRequest)
         {                
             if (!isset($_POST['list']))
@@ -195,7 +188,7 @@ class SiteController extends Controller {
                 $result = [];
                 foreach ($words as $word)
                 {
-                    $result = array_merge($result, $this->bruteForceNew($word));
+                    $result = array_merge($result, $this->bruteForce($word));
                 }
                 echo implode($demiter, $result);
             }
@@ -228,115 +221,6 @@ class SiteController extends Controller {
      * @return array
      */    
     private function bruteForce($str)
-    {
-        $result = [];
-        if (strlen($str) > 0)
-        {  
-            $countChars = count(preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY));
-            for ($x=0; $x<$countChars;$x++)
-            {
-                $str = mb_strtolower($str, 'utf-8');
-                $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
-                $strArr[$x] = mb_strtoupper($strArr[$x]);
-                
-                for ($i=0; $i<count($strArr); $i++)
-                {
-                    // i - сколько символов менять
-                    
-                    for ($k=0; $k<count($strArr); $k++)
-                    {
-                        // k - с какой позиции начать замену
-                        $newArr = $strArr;
-                        
-                        $len = $i;
-                        $index = $k;
-                        while ($len > 0)
-                        {
-                            if ($index < count($strArr))
-                            {
-                                $newArr[$index] = mb_strtoupper($newArr[$index]);
-                            }
-                            $len--;
-                            $index++;
-                        }                    
-                        $this->addToArray($result, implode($newArr));                    
-                    }
-                    
-                }
-            }
-            
-            // 
-            for ($x=0; $x<$countChars;$x++)
-            {
-                $str = mb_strtoupper($str, 'utf-8');
-                $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
-                $strArr[$x] = mb_strtolower($strArr[$x]);
-                
-                for ($i=0; $i<count($strArr); $i++)
-                {
-                    // i - сколько символов менять
-                    
-                    for ($k=0; $k<count($strArr); $k++)
-                    {
-                        // k - с какой позиции начать замену
-                        $newArr = $strArr;
-                        
-                        $len = $i;
-                        $index = $k;
-                        while ($len > 0)
-                        {
-                            if ($index < count($strArr))
-                            {
-                                $newArr[$index] = mb_strtolower($newArr[$index]);
-                            }
-                            $len--;
-                            $index++;
-                        }
-                        $this->addToArray($result, implode($newArr));
-                    }
-                    
-                }
-            }
-            
-            // через одну буква большая            
-            for ($t=0; $t<=1; $t++)
-            {
-                $str = mb_strtolower($str, 'utf-8');
-                $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
-                
-                for ($x=0; $x<$countChars; $x++)
-                {
-                    if (($x % 2) == $t)
-                    {
-                        $strArr[$x] = mb_strtoupper($strArr[$x]);
-                    }
-                }
-                $this->addToArray($result, implode($strArr));
-            }
-            
-            // через одну буква маленькая
-            for ($t=0; $t<=1; $t++)
-            {
-                $str = mb_strtolower($str, 'utf-8');
-                $strArr = preg_split("//u", $str, null, PREG_SPLIT_NO_EMPTY);
-                
-                for ($x=0; $x<$countChars; $x++)
-                {
-                    if (($x % 2) == $t)
-                    {
-                        $strArr[$x] = mb_strtoupper($strArr[$x]);
-                    }
-                }
-                $this->addToArray($result, implode($strArr));
-            }
-            
-            
-        }
-        return $result;
-    }
-    
-    
-    private function bruteForceNew($str)
     {
         $result = [];        
        
