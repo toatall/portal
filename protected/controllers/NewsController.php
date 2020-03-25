@@ -353,8 +353,29 @@ class NewsController extends Controller {
         $this->renderPartial('/site/index/_news', array(
             'model' => $model,
             'lastId' => $lastId,
-            'type' => 'news',
+            'type' => 'newsTag',
             'urlAjax' => Yii::app()->controller->createUrl('news/tagNews', ['q' => $q, 'id' => $lastId]) //Yii::app()->controller->createUrl('news/newsTree', ['id'=>$lastId, 'idTree'=>$idTree]),
+        ));
+    }
+
+    public function actionVov($id = 0) {
+
+        $model = new NewsSearch('searchPublic');
+        $model->unsetAttributes();  // clear any default values
+        if (isset($_GET['News'])) {
+            $model->attributes = $_GET['News'];
+        }
+
+        $model->tags = '75';
+        $model = $model->searchPublic($id);
+
+        $lastId = isset($model[count($model) - 1]['id']) ? date('YmdHis', strtotime($model[count($model) - 1]['date_create'])) . $model[count($model) - 1]['id'] : 0;
+
+        $this->renderPartial('/site/index/_news', array(
+            'model' => $model,
+            'lastId' => $lastId,
+            'type' => 'vov',
+            'urlAjax' => Yii::app()->controller->createUrl('news/vov', ['id' => $lastId]) //Yii::app()->controller->createUrl('news/newsTree', ['id'=>$lastId, 'idTree'=>$idTree]),
         ));
     }
 
@@ -368,16 +389,13 @@ class NewsController extends Controller {
             'breadcrumbs' => [$q],
         ));
     }
-    
-    
-    public function actionVov($id = 0) {  
-        return $this->render('vov', ['breadcrumbs' => ['ПОМНИМ! ГОРДИМСЯ!']]);
-    }
+
 
     /**
      * Returns the data model based on the primary key given in the GET variable.
      * If the data model is not found, an HTTP exception will be raised.
      * @param integer the ID of the model to be loaded
+     * @return CDbDataReader|mixed
      * @uses actionView()
      */
     public function loadModel($id) {

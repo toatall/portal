@@ -78,7 +78,7 @@ $this->pageTitle=Yii::app()->name;
 	    // load humor
 		ajaxNews('<?= Yii::app()->controller->createUrl('news/Humor') ?>', {}, '#container_humor');
 		// load vov
-		ajaxNews('<?= Yii::app()->controller->createUrl('news/tagNews', array('q'=>75)) ?>', {}, '#container_vov');
+		ajaxNews('<?= Yii::app()->controller->createUrl('news/vov') ?>', {}, '#container_vov');
 		
 	});
 
