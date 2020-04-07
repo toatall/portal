@@ -57,7 +57,7 @@
 <div class="wrap">
     <div id="logo-background">
         <div id="logo-image"></div>
-        <div style="float: right; padding: 10px;">
+        <div style="top: 5px; right: 5px; position: absolute;">
             <a href="<?= $this->createUrl('/site/vov') ?>" data-toggle="popover" data-content='Проект "Помним! Гордимся!"' data-placement="left">
                 <img src="/images/War.png" width="200px;" />
             </a>
