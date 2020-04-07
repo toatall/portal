@@ -107,7 +107,7 @@ class News extends CActiveRecord
             array('thumbail_image, thumbail_title', 'length', 'max' => 250),
             array('thumbail_text, tags', 'length', 'max' => 1000),
             array('message1, message2, date_create, date_edit, date_delete, 
-                flag_enable, general_page, _thumbail_image, team, date_sort', 'safe'),
+                flag_enable, general_page, _thumbail_image, team, date_sort, date_top', 'safe'),
             array('id_tree, count_like, count_comment, count_visit', 'unsafe'),
             // search	
             array('id, id_tree, id_organization, title, message1, message2, author, date_start_pub, date_end_pub, date_create,
@@ -195,9 +195,14 @@ class News extends CActiveRecord
         {
             $this->date_sort = $dateHelper->asDateWithHighTime($this->date_top);
         }
-        else
-        {
-            $this->date_sort = $dateHelper->asDateTime($this->date_create);
+        else {
+            if ($this->isNewRecord) {
+                $this->date_sort = new CDbExpression('getdate()');
+            }
+            else {
+                $this->date_sort = $dateHelper->asDateTime($this->date_create);
+            }
+
         }
 
         if ($this->date_delete == null)
@@ -238,7 +243,7 @@ class News extends CActiveRecord
         $this->date_end_pub = $dateHelper->asDate($this->date_end_pub, true);
         if (!$dateHelper->equalsDate($this->date_create, $this->date_sort))
         {
-            $this->date_top = $this->date_sort;
+            $this->date_top = $dateHelper->asDate($this->date_sort);
         }
     }
 
