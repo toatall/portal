@@ -97,11 +97,11 @@ class CommentController extends Controller
 		$model->ip_address = UserInfo::inst()->clientIP;
 		$model->hostname = UserInfo::inst()->clientHost;
 				
-		if(isset($_POST['Comment']))
+		if (isset($_POST['Comment']))
 		{			
-			$model->attributes=$_POST['Comment'];
-			if($model->save())
-			{				
+			$model->attributes = $_POST['Comment'];
+			if ($model->save())
+			{
 				echo 'OK';
 				Yii::app()->end();
 			}

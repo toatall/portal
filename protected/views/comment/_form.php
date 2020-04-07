@@ -10,7 +10,7 @@
     $urlUpdate = isset($urlUpdate) ? $urlUpdate : Yii::app()->controller->createUrl('comment/update',array('id'=>$model->id));
     
 ?>
-
+<div id="container-comment-form">
 <?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
     'id'=>'comment-form',
     'enableAjaxValidation'=>false,
@@ -57,7 +57,7 @@
 		   	   	if (data == 'OK')
 		   	   	{
 		   	   		loadDataComments();
-		   	   		ajaxGET('<?= $urlForm ?>', {}, '#container-comment-form');
+                    $('.modal').modal('hide');
 		   	   	}
 		   	   	else
 		   	   	{
@@ -77,3 +77,4 @@
     </script>
 
 <?php $this->endWidget(); ?>
+</div>

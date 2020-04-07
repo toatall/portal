@@ -5,8 +5,8 @@
  */
 ?>
 <h3>
-    Комментарии4
-    <button class="btn btn-default" onclick="loadData('<?= $this->createUrl('comment/index',array('id'=>$id)) ?>', '#container-comments-<?= $id ?>');">
+    Комментарии
+    <button class="btn btn-default" onclick="loadData('<?= $this->createUrl('comment/comments',array('id'=>$id)) ?>', '#container-comments-<?= $id ?>');">
         <i class="glyphicon glyphicon-refresh"></i>
     </button>
 </h3>
@@ -31,7 +31,7 @@
 
 	function loadDataComments()
 	{
-		loadData('<?= Yii::app()->controller->createUrl('comment/index',array('id'=>$id)) ?>', '#container-comments-<?= $id ?>');
+		loadData('<?= Yii::app()->controller->createUrl('comment/comments',array('id'=>$id)) ?>', '#container-comments-<?= $id ?>');
 	}
 		
 	$(document).ready(function(){
@@ -73,46 +73,61 @@
 	
 		
 </script>
-<?= TbHtml::button('Добавить комментарий',['id'=>'btn-comment-create', 'data-toggle'=>'modal', 'data-target'=>'#modal-comment', 'class'=>'btn btn-primary'])  ?>
+<?= BsHtml::button('Добавить комментарий',['id'=>'btn-comment-create', 'data-toggle'=>'modal', 'data-target'=>'#modal-dialog', 'class'=>'btn btn-primary'])  ?>
 <script type="text/javascript">
 	$('#btn-comment-create').on('click', function() {
-		ajaxGET('<?= Yii::app()->controller->createUrl('comment/form', ['id'=>$id]) ?>', null, '#modal-comment-div');		
-	});
+	    $('#modal-title').html('Изменить комментарий');
+		ajaxGET('<?= $this->createUrl('comment/form', ['id'=>$id]) ?>', null, '#modal-body');
+        //var container = '#modal-body';
+        //$.ajax({
+        //    url: '<?//= $this->createUrl('comment/form', ['id'=>$id]) ?>//',
+        //    method: 'POST',
+        //    data: $('#comment-form').serialize()
+        //})
+        //.done(function (data) {
+        //    $(container).html(data);
+        //})
+        //.fail(function (jqXHR) {
+        //    $(container).html('<div class="alert alert-danger">' + jqXHR.statusText + '</div>');
+        //});
+    });
 </script><br /><br />
-<div id="container-comments-<?= $id ?>"></div>
+    <div id="container-comments-<?= $id ?>"></div>
 
-<hr />
+    <hr />
 
-<?php $form=$this->beginWidget('bootstrap.widgets.TbModal',array(
-	'id'=>'modal-comment',
-	'htmlOptions'=>[
-		'data-backdrop'=>'static',
-		'data-keyboard'=>false,		
-	],
-));
-?>
-	<div class="modal-header">
-        <a class="close" data-dismiss="modal">&times;</a>
-        <h4 id="modal-comment-title">Изменить комментарий</h4>
-    </div>            
-    <div class="modal-body" id="modal-comment-div"></div>
-    <div class="modal-footer">
-	    
-	    <?php $this->widget('bootstrap.widgets.TbButton', array(
-	    		'type'=>'primary',
-	    		'label'=>'Сохранить',            
-	            'htmlOptions'=>array('id'=>'btn-form-comment-submit'),
-	        )); ?>
-	    <script type="text/javascript">	    	
-			$('#btn-form-comment-submit').on('click', function() {
-				$('#comment-form').submit();
-			});
-	    </script>
-    	<?php $this->widget('bootstrap.widgets.TbButton', array(
-            'label'=>'Отмена',            
-            'htmlOptions'=>array('data-dismiss'=>'modal'),
-        )); ?>
-        
-    </div>   
-<?php $this->endWidget(); ?>
+    <?php
+    /*
+    $form=$this->beginWidget('bootstrap.widgets.TbModal',array(
+        'id'=>'modal-comment',
+        'htmlOptions'=>[
+            'data-backdrop'=>'static',
+            'data-keyboard'=>false,
+        ],
+    ));
+    ?>
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">&times;</a>
+            <h4 id="modal-comment-title">Изменить комментарий</h4>
+        </div>
+        <div class="modal-body" id="modal-comment-div"></div>
+        <div class="modal-footer">
+
+            <?php $this->widget('bootstrap.widgets.TbButton', array(
+                    'type'=>'primary',
+                    'label'=>'Сохранить',
+                    'htmlOptions'=>array('id'=>'btn-form-comment-submit'),
+                )); ?>
+            <script type="text/javascript">
+                $('#btn-form-comment-submit').on('click', function() {
+                    $('#comment-form').submit();
+                });
+            </script>
+            <?php $this->widget('bootstrap.widgets.TbButton', array(
+                'label'=>'Отмена',
+                'htmlOptions'=>array('data-dismiss'=>'modal'),
+            )); ?>
+
+        </div>
+    <?php $this->endWidget(); */ ?>
 
