@@ -2,15 +2,13 @@
 
 class AdminModule extends CWebModule
 {
-    
-    //public $homeUrl = '/admin/';
-    
+
 	public $errorLogin = false; // если есть ошибки при входе
     
 	public function init()
 	{
         parent::init();
-               
+        Yii::app()->homeUrl = '/admin/default/index';
         //Yii::app()->theme = 'bootstrap-admin';
         
 		// this method is called when the module is being created

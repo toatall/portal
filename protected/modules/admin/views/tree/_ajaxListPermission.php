@@ -1,9 +1,15 @@
 <?php
+/**
+ * @var $this CController
+ * @var $is_group bool
+ *
+ */
+
     $columns = (!$is_group) ? 
     	array(
     		'id', 
     		'username_windows', 
-    	    'fio',    		
+    	    'fio:ФИО',
     		'default_organization',
     		
     	) : 
@@ -20,27 +26,34 @@
     	? 'js: function(id, options) { options.url = options.url + \'&Group[groups]=\' + listGroups(); }'
     	: 'js: function(id, options) { options.url = options.url + \'&User[users]=\' + listUsers(); }';
                 
-    $this->widget('bootstrap.widgets.TbGridView',array(
+    $this->widget('bootstrap.widgets.BsGridView',[
         'id'=>'listPermissionGrid',
-        'dataProvider'=>$model->searchForTree(array()),
-        'enableSorting'=>false,
-        'filter'=>$model,
-    	'beforeAjaxUpdate'=>$beforeJsUpdate,       
-        'columns'=>array_merge(
+        'dataProvider' => $model->searchForTree([]),
+        'enableSorting' => false,
+        'filter' => $model,
+    	'beforeAjaxUpdate' => $beforeJsUpdate,
+        'columns' => array_merge(
             $columns,
-    		array(array(
-    			'class'=>'bootstrap.widgets.TbButtonColumn',
-                'template'=>'{insert}',
-                    'buttons'=>array(
-                        'insert'=>array(
-                            'label'=>'Выбрать',
-                            'options'=>array(
-                                'class'=>'btn btn-mini btn-success',
+    		[
+    		    [
+                    'class'=>'bootstrap.widgets.BsButtonColumn',
+                    'template'=>'{insert}',
+                    'buttons' => [
+                        'insert' => [
+                            'label' => 'Выбрать',
+                            'options' => [
+                                'class' => 'btn btn-mini btn-success',
                                 'data-dismiss'=>'modal',
                                 'onclick'=>$onclick,
-                            ),
-                        ),
-                    ),
-    		))
-     )));     
+                            ],
+                        ],
+                    ],
+                ],
+    		]
+        ),
+        'pager'=>array(
+            'class'=>'bootstrap.widgets.BsPager',
+            'size' => BsHtml::BUTTON_SIZE_DEFAULT,
+        ),
+    ]);
 ?>

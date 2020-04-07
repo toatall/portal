@@ -1,7 +1,7 @@
 <?php
 
 // uncomment the following to define a path alias
-Yii::setPathOfAlias('bootstrap', dirname(__FILE__) . '/../extensions/bootstrap');
+Yii::setPathOfAlias('bootstrap', dirname(__FILE__) . '/../extensions/bootstrap4');
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
@@ -17,7 +17,10 @@ return array(
     'import' => array(
         'application.models.*',
         'application.components.*',
-        'ext.bootstrap.helpers.*',
+        'bootstrap.behaviors.*',
+        'bootstrap.helpers.*',
+        'bootstrap.widgets.*',
+        'application.assets.*',
     ),
     'language' => 'ru',
     'modules' => array(
@@ -64,7 +67,7 @@ return array(
           'defaultRoles'=>array('guest'),
           ), */
         'bootstrap' => array(
-            'class' => 'ext.bootstrap.components.Bootstrap',
+            'class' => 'ext.bootstrap4.components.BsApi',
         ),
         // uncomment the following to enable URLs in path-format
         'urlManager' => array(
@@ -111,7 +114,13 @@ return array(
             /**/
             ),
         ),
+
+        'dateHelper' => [
+            'class' => DateHelper::class,
+        ],
+
     ),
+
     // application-level parameters that can be accessed
     // using Yii::app()->params['paramName']
     'params' => array(
@@ -128,5 +137,9 @@ return array(
         // Profiles
         'urlProfiles' => '/images/profiles/',
         'heightImage' => 200,
+
+        'news' => [
+            'pageSize' => 10,
+        ],
     ),
 );

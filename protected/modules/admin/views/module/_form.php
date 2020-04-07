@@ -1,4 +1,4 @@
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
 	'id'=>'module-form',
 	'enableAjaxValidation'=>false,
 	'enableClientValidation'=>true,
@@ -14,17 +14,17 @@
 
 	<?php echo $form->errorSummary($model); ?>
 
-	<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>50)); ?>
+	<?php echo $form->textFieldControlGroup($model,'name',array('class'=>'span5','maxlength'=>50)); ?>
 
-	<?php echo $form->textFieldRow($model,'description',array('class'=>'span5','maxlength'=>250)); ?>
+	<?php echo $form->textFieldControlGroup($model,'description',array('class'=>'span5','maxlength'=>250)); ?>
     
-    <?php echo $form->checkBoxRow($model,'only_one'); ?>
+    <?php echo $form->checkBoxControlGroup($model,'only_one'); ?>
     
-    <?php echo $form->checkBoxRow($model,'children_node'); ?>
+    <?php echo $form->checkBoxControlGroup($model,'children_node'); ?>
     
-    <?php echo $form->textFieldRow($model,'dop_action',array('class'=>'span5','maxlength'=>50)); ?>
+    <?php echo $form->textFieldControlGroup($model,'dop_action',array('class'=>'span5','maxlength'=>50)); ?>
     
-    <?php echo $form->checkBoxRow($model,'dop_action_right_admin'); ?>
+    <?php echo $form->checkBoxControlGroup($model,'dop_action_right_admin'); ?>
     
     
     <script type="text/javascript">
@@ -89,93 +89,71 @@
             <?php   
             
             // ГРУППЫ //              
-            echo $form->dropDownListRow($model, 'permissionGroup', $model->rightGroup,
+            echo $form->dropDownListControlGroup($model, 'permissionGroup', $model->rightGroup,
 	            array(
 	            	'multiple'=>true,
 	            	'style'=>'width: 300px; height: 200px;',
 	            ));                       
             ?>
             <br />
-            <?php $this->widget('bootstrap.widgets.TbButton', array(
-                'label'=>'Добавить',   
-            	'type'=>'success',
-                'url'=>'javascript:;',
-                'htmlOptions'=>array(
-                    'data-toggle'=>'modal', 
-                    'data-target'=>'#userGroupModal',
-                    'onclick'=>'getListGroups();',
-                ),
-            )); ?>
-            <?php $this->widget('bootstrap.widgets.TbButton', array(
-                'label'=>'Удалить',
-            	'type'=>'danger',
-                'url'=>'javascript:;',
-                'htmlOptions'=>array(
-                    'onclick'=>'$(\'#'.CHtml::activeId($model, 'permissionGroup').' option:selected\').remove();',
-                ),
-            )); ?>                        
+            <?= BsHtml::button('Добавить', [
+                'class' => 'btn btn-success',
+                'data-toggle'=>'modal',
+                'data-target'=>'#userGroupModal',
+                'onclick'=>'getListGroups();',
+            ]) ?>
+            <?= BsHtml::button('Удалить', [
+                'class' => 'btn btn-danger',
+                'onclick'=>'$(\'#'.CHtml::activeId($model, 'permissionGroup').' option:selected\').remove();',
+            ]) ?>
+
         </td>
         <td>
            <?php 
             
            // ПОЛЬЗОВАТЕЛИ //
-           echo $form->dropDownListRow($model, 'permissionUser', $model->rightUser,
+           echo $form->dropDownListControlGroup($model, 'permissionUser', $model->rightUser,
            		array(
            			'multiple'=>true,
            			'style'=>'width: 300px; height: 200px;',
            		));
          	?>
             <br />
-            <?php $this->widget('bootstrap.widgets.TbButton', array(
-                'label'=>'Добавить',
-            	'type'=>'success',
-                'url'=>'javascript:;',
-                'htmlOptions'=>array(
-                    'data-toggle'=>'modal', 
-                    'data-target'=>'#userGroupModal',
-                    'onclick'=>'getListUsers();',
-                ),
-            )); ?>
-            <?php $this->widget('bootstrap.widgets.TbButton', array(
-                'label'=>'Удалить',
-            	'type'=>'danger',
-                'url'=>'javascript:;',
-                'htmlOptions'=>array(
-                    'onclick'=>'$(\'#'.CHtml::activeId($model, 'permissionUser').' option:selected\').remove();',
-                ),
-            )); ?>                                            
+           <?= BsHtml::button('Добавить', [
+                'class' => 'btn btn-success',
+                'data-toggle'=>'modal',
+                'data-target'=>'#userGroupModal',
+                'onclick'=>'getListUsers();',
+           ]) ?>
+            <?= BsHtml::button('Удалить', [
+                'class' => 'btn btn-danger',
+                'onclick'=>'$(\'#'.CHtml::activeId($model, 'permissionUser').' option:selected\').remove();',
+            ]) ?>
         </td></tr>
         <tr><td colspan="2" style="padding-top: 20px;" id="ajaxTree"></td></tr>
         </table>
-    
-        <?php $this->beginWidget('bootstrap.widgets.TbModal', array(
-            'id'=>'userGroupModal',
-            'htmlOptions'=>array('style'=>'width:800px; margin-left:-400px;'),
-            
-        ));?>
-        <div class="modal-header">
-            <a class="close" data-dismiss="modal">&times;</a>
-            <h4>Пользователи и группы</h4>        
+
+
+        <div class="modal fade" id="userGroupModal" role="dialog" data-backdrop="static" data-result="false" data-dialog="">
+            <div class="modal-dialog modal-dialog-large modal-dialog-super-large" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-label="Close">&times;</span></button>
+                        <h4>Пользователи и группы</h4>
+                    </div>
+                    <div class="modal-body" id="user_group_body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" data-dismiss="modal" class="btn btn-primary">Закрыть</button>
+                    </div>
+                </div>
+            </div>
         </div>
-                
-        <div class="modal-body" id="user_group_body"></div>
-                
-        <div class="modal-footer">
-            <?php $this->widget('bootstrap.widgets.TbButton', array(
-                'label'=>'Отмена',
-                'url'=>'#',
-                'htmlOptions'=>array('data-dismiss'=>'modal'),
-            )); ?>
-        </div>        
-        <?php $this->endWidget(); ?>                                                
+
     </div>
     
 	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'=>'submit',
-			'type'=>'primary',
-			'label'=>$model->isNewRecord ? 'Создать' : 'Сохранить',
-		)); ?>
+        <?= BsHtml::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => 'btn btn-primary']); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

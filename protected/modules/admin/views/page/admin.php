@@ -26,11 +26,13 @@ Yii::app()->clientScript->registerScript('search', "
 <h3>Раздел: <?php echo $modelTree->name; ?></h3>
 
 
-<?php echo CHtml::link('Расширенный поиск','#',array('class'=>'search-button btn')); ?>
-<div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
+<?php echo CHtml::link('Расширенный поиск','#',array('class'=>'search-button btn btn-success')); ?>
+<div class="search-form panel panel-default" style="display:none">
+    <div class="panel-body">
+        <?php $this->renderPartial('_search',array(
+            'model'=>$model,
+        )); ?>
+    </div>
 </div><!-- search-form -->
 
 
@@ -51,7 +53,7 @@ Yii::app()->clientScript->registerScript('search', "
     }
 </style>
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php $this->widget('bootstrap.widgets.BsGridView',array(
 	'id'=>'news-grid',
 	'dataProvider'=>$model->search($modelTree->id),
 	'filter'=>$model,
@@ -72,7 +74,7 @@ Yii::app()->clientScript->registerScript('search', "
         ),        
         'author',           
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',         
+			'class'=>'bootstrap.widgets.BSButtonColumn',
             'buttons'=>array(
                 'view'=>array(
                     'url'=>'Yii::app()->createUrl("admin/page/view", array("id"=>$data->id,"idTree"=>$data->id_tree))',                    
@@ -86,6 +88,9 @@ Yii::app()->clientScript->registerScript('search', "
             ),
             
 		),
-        
 	),
+    'pager'=>array(
+        'class'=>'bootstrap.widgets.BsPager',
+        'size' => BsHtml::BUTTON_SIZE_DEFAULT,
+    ),
 )); ?>

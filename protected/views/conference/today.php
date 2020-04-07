@@ -1,3 +1,10 @@
+<?php
+/**
+ * @var $modelConference Conference
+ * @var $modelVksUfns Conference
+ * @var $modelVksFns
+ */
+?>
 <style>
 	div.popover {
 		width:300px;

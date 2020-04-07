@@ -11,7 +11,18 @@ $this->menu=array(
 
 <h1>Структура отдела</h1>
 
-<?php 
+<?php
+    echo BsHtml::tabbableTabs([
+        [
+            'label'=>'Сотрудники отдела (' . $model->concatened . ')',
+            'content'=>$this->renderPartial('_card', [
+                'model'=>$model,
+                'modelCard'=>$modelCard
+            ], true, true),
+            'active'=>'true',
+        ],
+    ]);
+    /*
 	$this->widget('bootstrap.widgets.TbTabs', array(
         'id'=>'myTabs',
         'type'=>'tabs',
@@ -28,5 +39,6 @@ $this->menu=array(
         ),
     
     ));
+    */
 ?>
 

@@ -27,7 +27,7 @@ $('.search-form form').submit(function(){
 
 <h1>Телефонный справочник</h1>
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php $this->widget('bootstrap.widgets.BsGridView',array(
 	'id'=>'telephone-grid',
 	'dataProvider'=>$model->searchAdmin($idTree),
 	'filter'=>$model,
@@ -44,7 +44,7 @@ $('.search-form form').submit(function(){
 		'actions_log',
 		*/
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'class'=>'bootstrap.widgets.BsButtonColumn',
             'buttons'=>array(
                 'view'=>array(
                     'url'=>'Yii::app()->createUrl("admin/telephone/view", array("id"=>$data->id,"idTree"=>$data->id_tree))',                    
@@ -58,4 +58,8 @@ $('.search-form form').submit(function(){
             ),
 		),
 	),
+    'pager'=>array(
+        'class'=>'bootstrap.widgets.BsPager',
+        'size' => BsHtml::BUTTON_SIZE_DEFAULT,
+    ),
 )); ?>

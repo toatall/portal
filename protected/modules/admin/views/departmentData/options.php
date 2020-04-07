@@ -20,21 +20,28 @@ endif;
 ?>
 
 <h1>Настройки отдела <?= $model->concatened; ?></h1>
-<?php 
-	$this->widget('bootstrap.widgets.TbAlert', array('block'=>true));
+<?php
+    $flashMessages = Yii::app()->user->getFlashes();
+    if ($flashMessages) {
+        foreach ($flashMessages as $key => $message) {
+            echo BsHtml::alert($key, $message);
+        }
+    }
+//    BsHtml::alert()
+//	$this->widget('bootstrap.widgets.BsAlert', array('block'=>true));
 ?>
 
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
 	'id'=>'department-form',
 )); ?>
 
 	<div class="well">
-		<?php echo $form->checkBoxRow($model,'use_card'); ?>
+		<?php echo $form->checkBoxControlGroup($model,'use_card'); ?>
 		<hr />
-		<?php echo $form->dropDownListRow($model,'general_page_type',$model->typeGeneralPage, array('id'=>'general_page_type')); ?>
+		<?php echo $form->dropDownListControlGroup($model,'general_page_type',$model->typeGeneralPage, array('id'=>'general_page_type')); ?>
 		
 		<div class="thumbnail" id="container-general-page-tree-id">
-			<?php echo $form->dropDownListRow($model,'general_page_tree_id',$model->treeList, array('id'=>'general_page_type')); ?>
+			<?php echo $form->dropDownListControlGroup($model,'general_page_tree_id',$model->treeList, array('id'=>'general_page_type')); ?>
 		</div>
 	</div>
 	
@@ -61,11 +68,7 @@ endif;
 </script>	
 	
     <div class="form-actions">
-    	<?php $this->widget('bootstrap.widgets.TbButton', array(
-    		'buttonType'=>'submit',
-    		'type'=>'primary',
-    		'label'=>'Сохранить',
-    	)); ?>
+        <?= BsHtml::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
     </div>
 
 <?php $this->endWidget(); ?>

@@ -1,17 +1,15 @@
 <?php
+/**
+ * @var $this CController
+ * @var $form BsActiveForm
+ */
+
 
 $this->breadcrumbs = array(
     'Анкетирование по ГР (Детализация)',
 );
 
 ?>
-
-<style type="text/css">	
-    table th 
-    {
-        background: #eaeaea;
-    }	
-</style>
 
 <div class="content content-color">
 <h1>Анкетирование по ГР (Детализация)</h1>
@@ -20,55 +18,44 @@ $this->breadcrumbs = array(
 <?= CHtml::link('В виде графика', ['regecr/chart'], ['class'=>'btn btn-default']) ?>
 <hr />
 <div class="alert alert-info">
-    <h4>Фильтр</h4><br />
-    <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
-	'action'=>Yii::app()->createUrl($this->route),
-	'method'=>'get',
-        'id'=>'search-form',
-    )); ?>
-    
-    <?php echo $form->textField($model,'date1',array('class'=>'span2','data-type'=>'date')); ?>
-    <?php echo $form->textField($model,'date2',array('class'=>'span2','data-type'=>'date')); ?>
-    
-    <?php $this->widget('bootstrap.widgets.TbButton', array(
-        'buttonType'=>'submit',
-        'type'=>'primary',
-        'label'=>'Поиск',
-        'htmlOptions'=>[
-            'style'=>'margin-top:-10px;',
-        ],
-    )); ?>
+    <div class="panel-body">
 
-    <?php $this->endWidget(); ?>
+        <?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
+            'action'=>Yii::app()->createUrl($this->route),
+            'method'=>'get',
+                'id'=>'search-form',
+            )); ?>
+
+        <div class="col-sm-3">
+            <?php echo $form->textField($model,'date1',[
+                'class' => 'datepicker',
+                'placeholder'=>'Поиск по дате от ...',
+                'prepend'=>'<i class="glyphicon glyphicon-calendar kv-dp-icon"></i>',
+            ]); ?>
+        </div>
+
+        <div class="col-sm-3">
+            <?php echo $form->textField($model,'date2',[
+                'data-type'=>'date',
+                'placeholder'=>'Поиск по дате от ...',
+                'prepend'=>'<i class="glyphicon glyphicon-calendar kv-dp-icon"></i>',
+            ]); ?>
+        </div>
+
+        <?= BsHtml::submitButton('Поиск', ['class' => 'btn btn-primary']) ?>
+
+        <?php $this->endWidget(); ?>
+
+    </div>
 </div>
 
 <?php
-Yii::app()->clientScript->registerScript('search', "   
-    $('#search-form').submit(function(){
-        $.fn.yiiGridView.update('regecr-grid', {
-            data: $(this).serialize()
-        });
-        return false;
-    });
-    jQuery('input[data-type=\"date\"]').datepicker({
-        'format':'dd.mm.yyyy',
-        'autoclose':'true',
-        'todayBtn':'linked',
-        'language':'ru',
-        'weekStart':0            
-    });   
-");
-?>
-<?php    
-    Yii::app()->clientScript->registerScriptFile(
-        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.js');
-    Yii::app()->clientScript->registerScriptFile(
-        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.ru.js');
-    Yii::app()->getClientScript()->registerCssFile(
-        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.css');
+
+    $assetDatepicker = new DatepickerAsset();
+    $assetDatepicker->register();
 ?>
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php $this->widget('bootstrap.widgets.BsGridView',array(
 	'id'=>'regecr-grid',	
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,     	
@@ -99,9 +86,9 @@ Yii::app()->clientScript->registerScript('search', "
                 'sortable' => false,
             ],
 	),
-	'pager'=>array(	
-		'class'=>'bootstrap.widgets.TbPager',
-		'displayFirstAndLast'=>true,
-	),
+    'pager'=>array(
+        'class'=>'bootstrap.widgets.BsPager',
+        'size' => BsHtml::BUTTON_SIZE_DEFAULT,
+    ),
 )); ?>
 </div>

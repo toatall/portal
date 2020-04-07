@@ -1,4 +1,4 @@
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
 	'id'=>'rating-main-form',
 	'enableAjaxValidation'=>false,
 	'htmlOptions'=>array(
@@ -10,11 +10,11 @@
 
 	<?php echo $form->errorSummary($model); ?>
 	
-	<?php echo $form->dropDownListRow($model,'rating_year',$model->years,array('class'=>'span3')); ?>
+	<?php echo $form->dropDownListControlGroup($model,'rating_year',$model->years,array('class'=>'span3')); ?>
 
-	<?php echo $form->dropDownListRow($model,'rating_period',$model->periods,array('class'=>'span3')); ?>
+	<?php echo $form->dropDownListControlGroup($model,'rating_period',$model->periods,array('class'=>'span3')); ?>
 
-	<?php echo $form->textAreaRow($model,'note',array('class'=>'span5','maxlength'=>-1,'rows'=>5)); ?>
+	<?php echo $form->textAreaControlGroup($model,'note',array('maxlength'=>-1,'ControlGroups'=>5)); ?>
 	
 	<div class="well">
         <h4>Загрузка файлов</h4>
@@ -23,8 +23,8 @@
                 'name'=>'files',
                 'accept'=>'*',
                 'duplicate'=>'Файл уже выбран!',
-                'remove'=>'<i class="icon-remove"></i>',
-            ));        
+                'remove'=>'<i class="glyphicon glyphicon-remove"></i>',
+            ));
         ?>
         <?php
         	if (!$model->isNewRecord):
@@ -47,11 +47,7 @@
 	
 	
 	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'=>'submit',
-			'type'=>'primary',
-			'label'=>$model->isNewRecord ? 'Создать' : 'Сохранить',
-		)); ?>
+        <?= BsHtml::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => 'btn btn-primary']) ?>
 	</div>
 
 <?php $this->endWidget(); ?>

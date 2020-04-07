@@ -5,8 +5,8 @@
  * @author alexeeivch
  * @see News
  */
-class NewsSearch extends News {
-
+class NewsSearch extends News
+{
     /**
      * Количество новостей
      * @var integer
@@ -24,20 +24,32 @@ class NewsSearch extends News {
      * Используется для поиска на главной странице
      * @var string
      */
-    public $date_create_1;
+    public $date_from;
 
     /**
      * Дата создания "до"
      * Используется для поиска на главной странице
      * @var string
      */
-    public $date_create_2;
+    public $date_to;
 
     /**
      * Поисковое поле
      * @var string
      */
     public $team;
+
+
+    /**
+     * @inheritDoc
+     * @return array
+     */
+    public function rules()
+    {
+        return array_merge(parent::rules(), [
+            ['date_from, date_to, team', 'safe', 'on' => 'searchPublic'],
+        ]);
+    }
 
     /**
      * Retrieves a list of models based on the current search/filter conditions.
@@ -51,7 +63,8 @@ class NewsSearch extends News {
      * @return CActiveDataProvider the data provider that can return the models
      * based on the search/filter conditions.
      */
-    public function search($idTree = null) {
+    public function search($idTree = null)
+    {
         $criteria = new CDbCriteria;
 
         $criteria->compare('id', $this->id);
@@ -79,7 +92,7 @@ class NewsSearch extends News {
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
             'sort' => array(
-                'defaultOrder' => 'id desc',
+                'defaultOrder' => 'date_sort desc, id desc',
             ),
         ));
     }
@@ -88,44 +101,173 @@ class NewsSearch extends News {
      * Search for frontend
      * @return CActiveDataProvider
      */
-    public function searchPublic($id = 0, $moduleNews = true) {
+    public function searchPublic(/*$id = 0, $moduleNews = true*/)
+    {
+        /*
         $criteria = new CDbCriteria;
 
         $criteria->with = array('tree', 'organization');
 
         if ($id > 0)
-            $criteria->compare("CONVERT(varchar,t.date_create,112)+right('0'+cast(DATEPART(HOUR,t.date_create) as varchar),2)+right('0'+cast(DATEPART(MINUTE,t.date_create) as varchar),2)+right('0'+cast(DATEPART(SECOND,t.date_create) as varchar),2)+CAST(t.id as varchar)", '<' . $id);
+        {
+            //$criteria->compare("CONVERT(varchar,t.date_create,112)+right('0'+cast(DATEPART(HOUR,t.date_create) as varchar),2)+right('0'+cast(DATEPART(MINUTE,t.date_create) as varchar),2)+right('0'+cast(DATEPART(SECOND,t.date_create) as varchar),2)+CAST(t.id as varchar)", '<' . $id);
+            $criteria->compare('convert(varchar,t.date_create,120) + cast(t.id as varchar)', '<' . $id);
+        }
 
         $criteria->limit = self::LIMIT_TOP_NEWS;
-        $criteria->compare('t.title', $this->title, true);
-        $criteria->compare('t.message1', $this->message1, true);
-        $criteria->compare('t.message2', $this->message2, true);
+
+        if (!empty($this->team))
+        {
+            $criteriaTeam = new CDbCriteria();
+            $criteriaTeam->compare('t.title', $this->team, true, 'OR');
+            $criteriaTeam->compare('t.message2', $this->team, true, 'OR');
+            $criteria->mergeWith($criteriaTeam);
+        }
+        else
+        {
+            $criteria->compare('t.title', $this->title, true);
+            $criteria->compare('t.message1', $this->message1, true);
+            $criteria->compare('t.message2', $this->message2, true);
+        }
         $criteria->compare('t.author', $this->author, true);
         $criteria->compare('t.tags', $this->tags, true);
         //$criteria->compare('t.date_start_pub',$this->date_start_pub,true);
         //$criteria->compare('t.date_end_pub',$this->date_end_pub,true);
-        if ($this->date_create_1 != null)
-            $criteria->compare('t.date_create', '>=' . $this->date_create_1);
-        if ($this->date_create_2 != null)
-            $criteria->compare('t.date_create', '<=' . $this->date_create_2);
+        if ($this->date_from != null)
+        {
+            $criteria->compare('t.date_create', '>=' . $this->date_from);
+        }
+        if ($this->date_to != null)
+        {
+            $criteria->compare('t.date_create', '<=' . $this->date_to);
+        }
         if ($moduleNews)
+        {
             $criteria->compare('tree.module', 'news');
+        }
         $criteria->addCondition('t.flag_enable=1 AND t.date_delete is null
             AND tree.date_delete is null AND t.date_start_pub < getdate()
             AND t.date_end_pub > getdate()');
         $criteria->compare('t.id_organization', $this->id_organization);
         $criteria->compare('tree.id', $this->id_tree);
         $criteria->compare('tree.param1', $this->param1);
-        $criteria->order = "CONVERT(varchar,t.date_create,112)+right('0'+cast(DATEPART(HOUR,t.date_create) as varchar),2)+right('0'+cast(DATEPART(MINUTE,t.date_create) as varchar),2)+right('0'+cast(DATEPART(SECOND,t.date_create) as varchar),2)+CAST(t.id as varchar) desc";
+        //$criteria->order = "CONVERT(varchar,t.date_create,112)+right('0'+cast(DATEPART(HOUR,t.date_create) as varchar),2)+right('0'+cast(DATEPART(MINUTE,t.date_create) as varchar),2)+right('0'+cast(DATEPART(SECOND,t.date_create) as varchar),2)+CAST(t.id as varchar) desc";
+        $criteria->order = 'convert(varchar,t.date_create,120) + cast(t.id as varchar) desc';
 
-        return self::model()->findAll($criteria);
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+            'sort' => array('defaultOrder' => 't.date_create desc, t.id desc'),
+        ));*/
+        $criteria = $this->baseCriteria();
+        $criteria->compare('t.id_organization', $this->id_organization);
+//        if ($moduleNews)
+//        {
+//            $criteria->compare('tree.module', 'news');
+//        }
+
+        return new CActiveDataProvider($this, [
+            'criteria' => $criteria,
+            'sort' => ['defaultOrder' => 't.date_sort desc, t.id desc'],
+            'pagination' => [
+                'pageSize' => $this->getPageSize(),
+            ],
+        ]);
+
+    }
+
+    /**
+     * Новости для Управления
+     * @param integer $date_sort
+     * @return CActiveDataProvider
+     */
+    public function searchPublicUfns($date_sort = null)
+    {
+        $criteria = $this->baseCriteria();
+        $criteria->compare('tree.module', 'news');
+        $criteria->compare('t.id_organization', '8600');
+
+        return new CActiveDataProvider($this, [
+            'criteria' => $criteria,
+            'sort' => ['defaultOrder' => 't.date_sort desc, t.id desc'],
+            'pagination' => [
+                'pageSize' => $this->getPageSize(),
+            ],
+        ]);
+    }
+
+    /**
+     * Новости для Инспекций
+     * @param integer $date_sort
+     * @return CActiveDataProvider
+     */
+    public function searchPublicIfns($date_sort = null)
+    {
+        $criteria = $this->baseCriteria();
+        $criteria->compare('tree.module', 'news');
+        $criteria->compare('t.id_organization', '<>8600');
+
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+            'sort' => array('defaultOrder' => 't.date_sort desc, t.id desc'),
+            'pagination' => [
+                'pageSize' => $this->getPageSize(),
+            ],
+        ));
+    }
+
+    protected function baseCriteria()
+    {
+        $criteria = new CDbCriteria();
+
+        $criteria->with = array('tree', 'organization');
+
+        if (!empty($this->team))
+        {
+            $criteriaTeam = new CDbCriteria();
+            $criteriaTeam->compare('t.title', $this->team, true, 'OR');
+            $criteriaTeam->compare('t.message2', $this->team, true, 'OR');
+            $criteria->mergeWith($criteriaTeam);
+        }
+        else
+        {
+            $criteria->compare('t.title', $this->title, true);
+            $criteria->compare('t.message1', $this->message1, true);
+            $criteria->compare('t.message2', $this->message2, true);
+        }
+
+        $criteria->compare('t.author', $this->author, true);
+        $criteria->compare('t.tags', $this->tags, true);
+
+        if ($this->date_from != null)
+        {
+            $criteria->compare('t.date_create', '>=' . $this->date_from);
+        }
+        if ($this->date_to != null)
+        {
+            $criteria->compare('t.date_create', '<=' . $this->date_to);
+        }
+
+        $criteria->addCondition('t.flag_enable=1 AND t.date_delete is null
+            AND tree.date_delete is null AND t.date_start_pub < getdate()
+            AND t.date_end_pub > getdate()');
+        $criteria->compare('t.id_organization', $this->id_organization);
+        $criteria->compare('tree.id', $this->id_tree);
+        $criteria->compare('tree.param1', $this->param1);
+
+        return $criteria;
+    }
+
+    private function getPageSize()
+    {
+        return Yii::app()->params['news']['pageSize'];
     }
 
     /**
      * Search for frontend
      * @return CActiveDataProvider
      */
-    public function searchPublicOLD() {
+    public function searchPublicOLD()
+    {
         $criteria = new CDbCriteria;
 
         $criteria->with = array('tree', 'organization');

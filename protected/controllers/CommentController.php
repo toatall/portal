@@ -76,14 +76,16 @@ class CommentController extends Controller
 	        throw new CHttpException(403,'Доступ ограничен!');
 	    }
 	}
-	
-	/**
-	 * Форма для добавления комментария
-	 * @param int $id
-	 * @return string
-	 * @see Comment
-	 * @see UserInfo	 
-	 */
+
+    /**
+     * Форма для добавления комментария
+     * @param int $id
+     * @return string
+     * @throws CException
+     * @throws CHttpException
+     * @see Comment
+     * @see UserInfo
+     */
 	public function actionForm($id)
 	{
 		// для проверки наличия новости
@@ -111,15 +113,17 @@ class CommentController extends Controller
 			'modelAll'=>$modelAll,
 		]);
 	}
-	
-	
-	/**
-	 * Форма для добавления комментария
-	 * @param int $id
-	 * @return string
-	 * @see Comment
-	 * @see UserInfo
-	 */
+
+
+    /**
+     * Форма для добавления комментария
+     * @param int $id
+     * @return string
+     * @throws CException
+     * @throws CHttpException
+     * @see Comment
+     * @see UserInfo
+     */
 	public function actionFormMentor($id)
 	{
 	    // для проверки наличия новости
@@ -149,30 +153,33 @@ class CommentController extends Controller
 	        'urlUpdate' => Yii::app()->controller->createUrl('comment/updateMentor',array('id'=>$model->id)),
 	    ]);
 	}
-	
-	
-	
-	/**
-	 * Отображение комментариев,
-	 * которые привязаны к странице с идетификатором $id
-	 * @param int $id	 
-	 * @return string
-	 */
-	public function actionIndex($id)
+
+
+    /**
+     * Отображение комментариев,
+     * которые привязаны к странице с идетификатором $id
+     * @param int $id
+     * @return string
+     * @throws CException
+     * @throws CHttpException
+     */
+	public function actionComments($id)
 	{		
 		return $this->renderPartial('comments',array(	
 			'id'=>$id,
 			'model'=>$this->loadModels($id),
 		));
-	}		
-	
-	
-	/**
-	 * Отображение комментариев по наставничеству,
-	 * которые привязаны к странице с идетификатором $id
-	 * @param int $id
-	 * @return string
-	 */
+	}
+
+
+    /**
+     * Отображение комментариев по наставничеству,
+     * которые привязаны к странице с идетификатором $id
+     * @param int $id
+     * @return string
+     * @throws CException
+     * @throws CHttpException
+     */
 	public function actionIndexMentor($id)
 	{
 	    return $this->renderPartial('comments',array(
@@ -181,16 +188,16 @@ class CommentController extends Controller
 	        'urlUpdateStr' => 'comment/updateMentor',
 	        'urlDeleteStr' => 'comment/deleteMentor',
 	    ));
-	}	
-	
-	/**
-	 * Изменение комментария
-	 * Изменить комментарий может только администратор и автор
-	 * @param int $id идентификатор комментария
-	 * @throws CHttpException	 
-	 * @see UserInfo
-	 * @return string
-	 */
+	}
+
+    /**
+     * Изменение комментария
+     * Изменить комментарий может только администратор и автор
+     * @param int $id идентификатор комментария
+     * @return string
+     * @throws CException
+     * @throws CHttpException*@see UserInfo
+     */
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
@@ -228,14 +235,15 @@ class CommentController extends Controller
 			throw new CHttpException(403,'Доступ ограничен!');
 		}
 	}
-	
-	
-	/**
-	 * Update comment mentor
-	 * @param int $id
-	 * @throws CHttpException
-	 * @return string
-	 */
+
+
+    /**
+     * Update comment mentor
+     * @param int $id
+     * @return string
+     * @throws CException
+     * @throws CHttpException
+     */
 	public function actionUpdateMentor($id)
 	{
 	    $model=$this->loadModelMentor($id);
@@ -306,34 +314,36 @@ class CommentController extends Controller
 	        throw new CHttpException(404);
         return $model;
 	}
-	
-	/**
-	 * Поиск комментариев по родительскому идентификатору
-	 * @param int $id идентификатор комментария
-	 * @throws CHttpException
-	 * @return array
-	 * @uses actionForm()
-	 * @uses actionIndex()
-	 * @uses actionUpdate()
-	 */
+
+    /**
+     * Поиск комментариев по родительскому идентификатору
+     * @param int $id идентификатор комментария
+     * @return array
+     * @throws CException
+     * @throws CHttpException*@uses actionForm()
+     * @uses actionIndex()
+     * @uses actionUpdate()
+     */
 	private function loadModels($id)
 	{		
-		$model = Yii::app()->db->createCommand()
-		  ->from('{{comment}}')
-		  ->where('id_parent=:id_parent and date_delete is null', [':id_parent'=>$id])
-		  ->queryAll();
+//		$model = Yii::app()->db->createCommand()
+//		  ->from('{{comment}}')
+//		  ->where('id_parent=:id_parent and date_delete is null', [':id_parent'=>$id])
+//		  ->queryAll();
+        $model = Comment::model()->findAll('id_parent=:id_parent ', [':id_parent'=>$id]);
 		
-	  if ($model===null)
-			throw new CHttpException(404,'Страница не найдена!');
-		return $model;
+        if ($model===null)
+            throw new CHttpException(404,'Страница не найдена!');
+        return $model;
 	}
-	
-	
-	/**
-	 * @param int $id
-	 * @throws CHttpException
-	 * @return array|mixed
-	 */
+
+
+    /**
+     * @param int $id
+     * @return array|mixed
+     * @throws CException
+     * @throws CHttpException
+     */
 	private function loadModelsMentor($id)
 	{
 	    $model = Yii::app()->db->createCommand()

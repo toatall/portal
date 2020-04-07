@@ -26,14 +26,16 @@ $('.search-form form').submit(function(){
 <h1>Управление</h1>
 
 
-<?php echo CHtml::link('Расширенный поиск','#',array('class'=>'search-button btn')); ?>
-<div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
+<?php echo CHtml::link('Расширенный поиск','#',array('class'=>'search-button btn btn-success')); ?><br /><br />
+<div class="search-form panel panel-default" style="display:none">
+    <div class="panel-body">
+        <?php $this->renderPartial('_search',array(
+            'model'=>$model,
+        )); ?>
+    </div>
 </div><!-- search-form -->
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php $this->widget('bootstrap.widgets.BsGridView',array(
 	'id'=>'module-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
@@ -48,7 +50,11 @@ $('.search-form form').submit(function(){
 		'date_create',
         'author',		
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'class'=>'bootstrap.widgets.BsButtonColumn',
 		),
 	),
+    'pager'=>array(
+        'class'=>'bootstrap.widgets.BsPager',
+        'size' => BsHtml::BUTTON_SIZE_DEFAULT,
+    ),
 )); ?>

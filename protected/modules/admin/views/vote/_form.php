@@ -1,45 +1,44 @@
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
 	'id'=>'vote-main-form',
 	'enableAjaxValidation'=>false,
 )); ?>
 
 
 <?php    
-    Yii::app()->clientScript->registerScriptFile(
-        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.js');
-    Yii::app()->clientScript->registerScriptFile(
-        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.ru.js');
-    Yii::app()->getClientScript()->registerCssFile(
-        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.css');
+//    Yii::app()->clientScript->registerScriptFile(
+//        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.js');
+//    Yii::app()->clientScript->registerScriptFile(
+//        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.ru.js');
+//    Yii::app()->getClientScript()->registerCssFile(
+//        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.css');
+
+    $assetDatepicker = new DatepickerAsset();
+    $assetDatepicker->register();
 ?>
 
 	<p class="help-block">Поля обозначенные <span class="required">*</span> обязательны для заполнения.</p>
 
 	<?php echo $form->errorSummary($model); ?>
 
-	<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>200)); ?>
+	<?php echo $form->textFieldControlGroup($model,'name',array('class'=>'span5','maxlength'=>200)); ?>
 
-	<?php echo $form->textFieldRow($model,'date_start',array('class'=>'span2')); ?>
+	<?php echo $form->textFieldControlGroup($model,'date_start',array('class'=>'datepicker')); ?>
 
-	<?php echo $form->textFieldRow($model,'date_end',array('class'=>'span2')); ?>
+	<?php echo $form->textFieldControlGroup($model,'date_end',array('class'=>'datepicker')); ?>
 	
 	<div class="alert alert-info">	
-		<?php echo $form->checkBoxList($model,'orgList', CHtml::listData(Organization::model()->findAll(), 'code', 'name')) ?>
+		<?php echo $form->checkBoxListControlGroup($model,'orgList', CHtml::listData(Organization::model()->findAll(), 'code', 'name')) ?>
 	</div>
 
-	<?php echo $form->checkBoxRow($model,'multi_answer'); ?>
+	<?php echo $form->checkBoxControlGroup($model,'multi_answer'); ?>
 	
-	<?php echo $form->checkBoxRow($model,'on_general_page'); ?>
+	<?php echo $form->checkBoxControlGroup($model,'on_general_page'); ?>
 	
 	<br />
-	<?php echo $form->textAreaRow($model,'description',array('class'=>'span6', 'rows'=>6)); ?>
+	<?php echo $form->textAreaControlGroup($model,'description',array('rows'=>6)); ?>
 	
 	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'=>'submit',
-			'type'=>'primary',
-			'label'=>$model->isNewRecord ? 'Создать' : 'Сохранить',
-		)); ?>
+        <?= BsHtml::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => 'btn btn-primary']) ?>
 	</div>
 
 <?php $this->endWidget(); ?>

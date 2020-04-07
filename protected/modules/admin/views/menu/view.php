@@ -20,7 +20,7 @@ $this->menu=array(
 
 <h1>Просмотр меню ИД#<?php echo $model->id; ?></h1>
 
-<?php $this->widget('bootstrap.widgets.TbDetailView',array(
+<?php $this->widget('bootstrap.widgets.BsDetailView',array(
 	'data'=>$model,
 	'attributes'=>array(
 		'id',

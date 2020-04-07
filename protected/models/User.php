@@ -371,7 +371,7 @@ class User extends CActiveRecord
     	}    		    	
     	return Organization::model()->findAll($criteria);    	    	
     }
-    
+
     /**
      * Список пользователей текущей организации Yii::app()->session['organization']
      * @see CActiveDataProvider

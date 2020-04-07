@@ -12,9 +12,9 @@ class DepartmentController extends Controller
 	 * Используемые модули
 	 * @var array
 	 */
-	private $useModules = array(
+	private $useModules = [
 		'ratingData', // рейтинги
-	);
+	];
 	
 	/**	
 	 * Модель отдела
@@ -36,11 +36,11 @@ class DepartmentController extends Controller
 	 */
     public function accessRules()
 	{
-		return array(
-			 array('allow',                
-                'users'=>array('@'),
-            ),            
-		);
+		return [
+            ['allow',
+                'users'=>['@'],
+            ],
+		];
 	}
     
 	/**
@@ -81,17 +81,18 @@ class DepartmentController extends Controller
 	        throw new CHttpException(404,'Страница не найдена.');
         return $model;
 	}
-	
-	/**
-	 * Возвращается модель RatingMain
-	 * Поиск выполняется в БД по идентификатору $pk
-	 * В случае, если запись не найдена, то возвращается исключение CHttpException
-	 * @param int $pk идентификатор
-	 * @see RatingMain
-	 * @exception CHttpException
-	 * @return RatingMain
-	 * @uses actionRatingData()
-	 */
+
+    /**
+     * Возвращается модель RatingMain
+     * Поиск выполняется в БД по идентификатору $pk
+     * В случае, если запись не найдена, то возвращается исключение CHttpException
+     * @param int $pk идентификатор
+     * @return RatingMain
+     * @throws CHttpException
+     * @uses actionRatingData()
+     * @see  RatingMain
+     * @exception CHttpException
+     */
 	public function loadModelRatingMain($pk)
 	{
 	    $model = RatingMain::model()->findByPk($pk);
@@ -117,15 +118,16 @@ class DepartmentController extends Controller
 	        throw new CHttpException(404,'Страница не найдена.');
         return $model;
 	}
-	
-	/**
-	 * Возвращается список годов, 
-	 * на основании размещенных рейтингов 
-	 * @param int $idMain идентификатор рейтинга
-	 * @see CHtml
-	 * @return array
-	 * @uses actionRatingData()
-	 */
+
+    /**
+     * Возвращается список годов,
+     * на основании размещенных рейтингов
+     * @param int $idMain идентификатор рейтинга
+     * @return array
+     * @throws CException
+     * @uses actionRatingData()
+     * @see  CHtml
+     */
 	public function loadModelRatingDataYears($idMain)
 	{
 	    $model = Yii::app()->db->createCommand();
@@ -135,12 +137,13 @@ class DepartmentController extends Controller
 	    $model->distinct = true;
 	    return CHtml::listData($model->queryAll(), 'rating_year', 'rating_year');
 	}
-	
-	/**
-	 * Performs the AJAX validation.
-	 * @param CModel the model to be validated
-	 * @deprecated
-	 */
+
+    /**
+     * Performs the AJAX validation.
+     * @param CModel the model to be validated
+     * @throws CHttpException
+     * @deprecated
+     */
 	protected function performAjaxValidation($model)
 	{
 	    throw new CHttpException(410);
@@ -197,9 +200,11 @@ class DepartmentController extends Controller
 	{	    
 	    // 1. model Department
 	    $this->model = $this->loadModel($id);
-	    // load left menu
+
+	    // Загрузка меню слева
 	    $this->loadMenu($this->model);
-	    
+
+	    //
 	    if ($idTree==null)
 	    {
             return $this->showDepartment($id);   
@@ -251,51 +256,86 @@ class DepartmentController extends Controller
     	        ]);
     	    }
 	    }
-	    
+
 	    // 2. Поиск новостей по текущему разделу
-	    $tree = ($idTree===null) ? $this->model->id_tree : $idTree;
-	    $modelNews = News::model()->findAll('id_tree=:id_tree and date_delete is null and flag_enable=1 and date_start_pub < getdate() and date_end_pub > getdate()', [':id_tree'=>$tree]);
+	    //$tree = ($idTree===null) ? $this->model->id_tree : $idTree;
+	    //$modelNews = News::model()->findAll('id_tree=:id_tree and date_delete is null and flag_enable=1 and date_start_pub < getdate() and date_end_pub > getdate()', [':id_tree'=>$tree]);
 	    
-	    $modelNewsSearch = new NewsSearch('searchPublic');
-	    $modelNewsSearch->unsetAttributes();	    
-        $modelNewsSearch->id_tree = $tree;
+
+
+        return $this->render('news', [
+            'model' => $this->model,
+            'modelTree' => $this->modelTree,
+        ]);
+
 	       
         // 2.1. Проверить если в новостях текущего раздела имеется 1 новость,
         // то вывести эту новость в 
-	    if (count($modelNews) == 1 && isset($modelNews[0]) && $modelNews[0] instanceof News)
-        {
-            $dirs = FileHelper::fileImageDirByNewsId($modelNews[0]->id, $modelNews[0]->id_organization);
-            return $this->render('view', [
-                'model'=>$this->model,
-                'modelNews'=>$modelNews,
-                'dirImage'=>$dirs['dirImage'],
-                'dirFile'=>$dirs['dirFile'],
-                'files'=>File::filesForDownload($modelNews[0]['id'], 'news'),
-                'images'=>Image::imagesForDownload($modelNews[0]['id'], 'news'),
-                'breadcrumbsTreePath'=>$this->breadcrumbsTreePath($idTree),
-            ]);            
-        }
-        // 2.2. Вывести весь список новостей
-        elseif (count($modelNews)>1)
-        {            
-            $modelNewsSearch = $modelNewsSearch->searchPublic(0, false);
-            
-            $lastId = isset($modelNewsSearch[count($modelNewsSearch)-1]['id']) 
-                    ? date('YmdHis', strtotime($modelNewsSearch[count($modelNewsSearch)-1]['date_create'])) . $modelNewsSearch[count($modelNewsSearch)-1]['id'] 
-                    : 0;
-            
-            return $this->render('news', [
-                'model'=>$this->model,
-                'modelNews'=>$modelNewsSearch,
-                'modelTree'=>$this->modelTree,
-                'type'=>'department',
-                'urlAjax'=>Yii::app()->controller->createUrl('news/newsTree', ['id'=>$lastId, 'idTree'=>$this->modelTree->id]),
-                'lastId'=>$lastId,
-            ]);            
-        }	
-        
-	    return $this->render('noData', ['model'=>$this->model]); // представление с информацией, что нет данных
+//	    if (count($modelNews) == 1 && isset($modelNews[0]) && $modelNews[0] instanceof News)
+//        {
+//            $dirs = FileHelper::fileImageDirByNewsId($modelNews[0]->id, $modelNews[0]->id_organization);
+//            return $this->render('view', [
+//                'model'=>$this->model,
+//                'modelNews'=>$modelNews,
+//                'dirImage'=>$dirs['dirImage'],
+//                'dirFile'=>$dirs['dirFile'],
+//                'files'=>File::filesForDownload($modelNews[0]['id'], 'news'),
+//                'images'=>Image::imagesForDownload($modelNews[0]['id'], 'news'),
+//                'breadcrumbsTreePath'=>$this->breadcrumbsTreePath($idTree),
+//            ]);
+//        }
+//        // 2.2. Вывести весь список новостей
+//        elseif (count($modelNews)>1)
+//        {
+//            //$modelNewsSearch = $modelNewsSearch->searchPublic(0, false);
+//            $modelNewsSearchData = $modelNewsSearch->searchPublic()->getData();
+//
+//            $lastId = isset($modelNewsSearchData[count($modelNewsSearchData)-1]['id'])
+//                    ? date('YmdHis', strtotime($modelNewsSearchData[count($modelNewsSearchData)-1]['date_create'])) . $modelNewsSearchData[count($modelNewsSearchData)-1]['id']
+//                    : 0;
+//
+//            return $this->render('news', [
+//                'model'=>$this->model,
+//                'modelNews'=>$modelNewsSearchData,
+//                'modelTree'=>$this->modelTree,
+//                'type'=>'department',
+//                'urlAjax'=>Yii::app()->controller->createUrl('news/newsTree', ['id'=>$lastId, 'idTree'=>$this->modelTree->id]),
+//                'lastId'=>$lastId,
+//            ]);
+//        }
+//
+//	    return $this->render('noData', ['model'=>$this->model]); // представление с информацией, что нет данных
 	}
+
+	public function actionNews($idTree)
+    {
+        $this->loadModelTree($idTree);
+
+        $modelNewsSearch = new NewsSearch('searchPublic');
+        $searchModel = $modelNewsSearch->searchPublic();
+        $searchModel->criteria->compare('id_tree', $idTree);
+        $searchData = $searchModel->getData();
+        $pagination = $searchModel->getPagination();
+
+        $urlNextPage = null;
+        if ($pagination->currentPage < $pagination->pageCount-1)
+        {
+            $urlNextPage = $pagination->createPageUrl($this, $pagination->currentPage + 1);
+        }
+
+        if (count($searchData) == 0)
+        {
+            return $this->renderPartial('/share/partials/notFound');
+        }
+
+        return $this->renderPartial('/site/index/_news', [
+            'urlAjax' => $this->createUrl('department/news', ['idTree'=>$idTree]),
+            'type' => 'department',
+            'model' => $searchData,
+            'urlNextPage' => $urlNextPage,
+            'pagination' => $searchModel->getPagination(),
+        ]);
+    }
 	
 	private function breadcrumbsTreePath($idTree)
 	{
@@ -313,34 +353,35 @@ class DepartmentController extends Controller
 	    return array_merge($this->breadcrumbsTreePath($modelTree['id_parent']),
 	        [$modelTree['name'] => ['department/view', 'id'=>$this->model->id, 'idTree'=>$idTree]]);
 	}
-		
-	/**
-	 * Главная страница отдела
-	 * 1. Поиск указанного отдела (с id = $id) для просмотра настроек отдела
-	 * 1.1. Если не найдно, то вызывается исключение CHttpException(404)
-	 * 1.2. Если у отдела свойство general_page = 0 (отображать первую новость),
-	 * то необходимо выполнить поиск первой новости в корне отдела (отсортировав id asc)
-	 * Если не удалось найти новость, то устанавливается флаг того, 
-	 * что ничего не найдено ($flagFind = false)
-	 * 1.3. Если у отдела свойство general_page = 1  (показывать новость из списка), то
-	 * нужно найти новость в модели News с id_tree = Department->general_page_tree_id
-	 * (+ условия не удалена и не заблокирована), если нашлась то показать ее, иначе 
-	 * установить флаг того, что ничего не найдено ($flagFind = false)
-	 * 1.4. Если у отдела свойство general_page = 2 (показывать структуру отдела), то 
-	 * проверить включена ли опция Department->use_card и если да, то вывести структуру,
-	 * иначе установить флаг того, что ничего не найдено ($flagFind = false)
-	 * 2. Если ни одно из вышеприведенных действий не выполнено, 
-	 * то показать дерево отдела (список подразделов)
-	 * 	 
-	 * @param int $id  
-	 * @author oleg
-	 * @see FileHelper
-	 * @see File
-	 * @see Image
-	 * @see News
-	 * @see Department
-	 * @uses actionView()
-	 */
+
+    /**
+     * Главная страница отдела
+     * 1. Поиск указанного отдела (с id = $id) для просмотра настроек отдела
+     * 1.1. Если не найдно, то вызывается исключение CHttpException(404)
+     * 1.2. Если у отдела свойство general_page = 0 (отображать первую новость),
+     * то необходимо выполнить поиск первой новости в корне отдела (отсортировав id asc)
+     * Если не удалось найти новость, то устанавливается флаг того,
+     * что ничего не найдено ($flagFind = false)
+     * 1.3. Если у отдела свойство general_page = 1  (показывать новость из списка), то
+     * нужно найти новость в модели News с id_tree = Department->general_page_tree_id
+     * (+ условия не удалена и не заблокирована), если нашлась то показать ее, иначе
+     * установить флаг того, что ничего не найдено ($flagFind = false)
+     * 1.4. Если у отдела свойство general_page = 2 (показывать структуру отдела), то
+     * проверить включена ли опция Department->use_card и если да, то вывести структуру,
+     * иначе установить флаг того, что ничего не найдено ($flagFind = false)
+     * 2. Если ни одно из вышеприведенных действий не выполнено,
+     * то показать дерево отдела (список подразделов)
+     *
+     * @param int $id
+     * @return string
+     * @see  FileHelper
+     * @see  File
+     * @see  Image
+     * @see  News
+     * @see  Department
+     * @uses actionView()
+     * @author oleg
+     */
 	private function showDepartment($id)
 	{
 	    // отображение новости

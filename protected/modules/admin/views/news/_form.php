@@ -1,4 +1,10 @@
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php
+/**
+ * @var $this NewsController
+ * @var $form BsActiveForm
+ */
+
+$form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
 	'id'=>'news-form',
 	'enableAjaxValidation'=>false,
     'htmlOptions'=>array(
@@ -11,21 +17,8 @@
             <strong>Данная запись была удалена 
                 <?php echo DateHelper::explodeDateTime($model->date_delete); ?>
             </strong>&nbsp;&nbsp;
-            <?php 
-                $this->widget('bootstrap.widgets.TbButton', array(
-                	'url'=>array('restore','id'=>$model->id,'idTree'=>$modelTree->id),
-                    'type'=>'primary',		
-                	'label'=>'Восстановить',
-                )); ?>
-            <?php 
-                $this->widget('bootstrap.widgets.TbButton', array(                    
-                	'url'=>array('delete','id'=>$model->id,'idTree'=>$modelTree->id),
-                    'type'=>'danger',		
-                	'label'=>'Удалить безвозвратно',
-                    'htmlOptions'=>array(
-                        'confirm'=>'Вы уверены, что хотите удалить эту запись?',
-                    ),
-                )); ?>
+            <?= BsHtml::link('Восстановить', ['restore', 'id'=>$model->id, 'idTree'=>$modelTree->id], ['class' => 'btn btn-primary']) ?>
+            <?= BsHtml::link('Удалить безвозвратно', ['delete', 'id'=>$model->id, 'idTree'=>$modelTree->id], ['class' => 'btn btn-danger', 'confirm' => 'Вы уверены, что хотите удалить эту запись?']) ?>
         </div>                    
     <?php endif; ?>
     
@@ -58,17 +51,16 @@
 	<?php echo $modelTree->name; ?>
     </h3>
     
-	<?php echo $form->textFieldRow($model,'title',array('class'=>'span5','maxlength'=>500)); ?>    
+	<?php echo $form->textFieldControlGroup($model,'title',array('class'=>'span5','maxlength'=>500)); ?>    
     
     <?php
+
         Yii::app()->clientScript->registerScriptFile(
             Yii::app()->baseUrl.'/extension/ckeditor/ckeditor/ckeditor.js');
-        Yii::app()->clientScript->registerScriptFile(
-            Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.js');
-        Yii::app()->clientScript->registerScriptFile(
-            Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.ru.js');
-        Yii::app()->getClientScript()->registerCssFile(
-            Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.css');
+
+        $assetDatepicker =  new DatepickerAsset();
+        $assetDatepicker->register();
+
 
         // for tags    
         Yii::app()->clientScript->registerCssFile(
@@ -87,9 +79,9 @@
             Yii::app()->baseUrl.'/extension/jquery-ui/jquery-ui.min.css');  
     ?>
     
-	<?php echo $form->textAreaRow($model,'message1',array('rows'=>6, 'cols'=>50, 'class'=>'ckeditor')); ?>
+	<?php echo $form->textAreaControlGroup($model,'message1',array('ControlGroups'=>6, 'cols'=>50, 'class'=>'ckeditor')); ?>
     <br />
-	<?php echo $form->textAreaRow($model,'message2',array('rows'=>6, 'cols'=>50, 'class'=>'ckeditor')); ?>
+	<?php echo $form->textAreaControlGroup($model,'message2',array('ControlGroups'=>6, 'cols'=>50, 'class'=>'ckeditor')); ?>
     
     
     <br />
@@ -103,33 +95,44 @@
                     <?php echo basename($model->thumbail_image); ?>
                 </a> 
                 &nbsp;&nbsp;
-                <?php $this->widget('bootstrap.widgets.TbButton', array(
-                    'buttonType'=>'button',			
-        			'label'=>'Загрузить другое изображение',
-                    'htmlOptions'=>array(
-                        'onclick'=>'js:$("#thumbail_image").show();'
-                    ),
-        		)); ?>                       
-            <?php   endif; ?><br />
-            <div id="thumbail_image"<?php echo (!$model->isNewRecord && ($model->thumbail_image!=='')) 
+                <?= BsHtml::button('Загрузить другое изображение', ['class' => 'btn btn-default', 'onclick' => 'js:$("#thumbnail_image").toggle();']) ?>
+            <?php   endif; ?><br /><br />
+            <div class="panel panel-default" id="thumbnail_image" <?php echo (!$model->isNewRecord && ($model->thumbail_image!==''))
                 ? 'style="display:none;"' : ''; ?>>
-            <?php echo $form->fileField($model, '_thumbail_image'); ?>
+                <div class="panel-body">
+                    <?php echo $form->fileField($model, '_thumbail_image'); ?>
+                </div>
             </div>
             <br />            
         </div>
     </div>
     <?php endif; ?>
-    
-	<?php echo $form->textFieldRow($model,'date_start_pub',array(
-        'style'=>'width:120px;',
-        'prepend'=>'<i class="icon-calendar"></i>'        
-    )); ?>   
-        
-	<?php echo $form->textFieldRow($model,'date_end_pub',array(
-        'style'=>'width:120px;',
-        'prepend'=>'<i class="icon-calendar"></i>'
-    )); ?>
-    
+
+    <div class="row">
+        <?php echo $form->textFieldControlGroup($model,'date_start_pub',array(
+            'prepend'=>'<i class="fas fa-calendar-alt"></i>',
+            'class' => 'datepicker',
+            'groupOptions' => ['class' => 'col-sm-3'],
+        )); ?>
+    </div>
+
+    <div class="row">
+        <?php echo $form->textFieldControlGroup($model,'date_end_pub',array(
+            'prepend'=>'<i class="fas fa-calendar-alt"></i>',
+            'class' => 'datepicker',
+            'groupOptions' => ['class' => 'col-sm-3'],
+        )); ?>
+    </div>
+
+    <div class="row">
+        <?php echo $form->textFieldControlGroup($model,'date_top',[
+            'data-type' => 'date',
+            'prepend'=>'<i class="fas fa-calendar-alt"></i>',
+            'class' => 'datepicker',
+            'groupOptions' => ['class' => 'col-sm-3'],
+        ]); ?>
+    </div>
+
     <script type="text/javascript">
     
         CKEDITOR.replace( '<?php echo CHtml::activeId($model, 'message1'); ?>', {
@@ -162,23 +165,7 @@
             ],
             
         });
-        
-        jQuery('#<?php echo CHtml::activeId($model, 'date_end_pub'); ?>').datepicker({
-            'format':'dd.mm.yyyy',
-            'autoclose':'true',
-            'todayBtn':'linked',
-            'language':'ru',
-            'weekStart':0            
-        }); 
-        
-        jQuery('#<?php echo CHtml::activeId($model, 'date_start_pub'); ?>').datepicker({
-            'format':'dd.mm.yyyy',
-            'autoclose':'true',
-            'todayBtn':'linked',
-            'language':'ru',
-            'weekStart':0            
-        });   
-            
+
     </script>
 	
     <div class="well">
@@ -188,7 +175,7 @@
                 'name'=>'files',
                 'accept'=>'*',
                 'duplicate'=>'Файл уже выбран!',  
-                'remove'=>'<i class="icon-remove"></i>',       
+                'remove'=>'<i class="glyphicon glyphicon-remove text-danger"></i>',
             ));        
         ?>
         <?php
@@ -216,7 +203,7 @@
                 'accept'=>'jpg|jpeg|gif|bmp|png',
                 'duplicate'=>'Этот файл уже выбран!',  
                 'denied'=>'Недопустимый тип файла. Разрешены изображения следующих форматов: jpg, jpeg, gif, bmp, png',
-                'remove'=>'<i class="icon-remove"></i>',              
+                'remove'=>'<i class="glyphicon glyphicon-remove text-danger"></i>',
             ));        
         ?>
         <?php
@@ -245,11 +232,11 @@
         });
     </script>
     
-	<?php echo $form->checkBoxRow($model,'flag_enable'); ?>
+	<?php echo $form->checkBoxControlGroup($model,'flag_enable'); ?>
 	
 	<?php if (Yii::app()->user->isUFNS && $modelTree->module=='news'): ?>
-        <?php echo $form->checkBoxRow($model,'on_general_page'); ?>
-        <?php echo $form->textFieldRow($model,'tags'); ?>
+        <?php echo $form->checkBoxControlGroup($model,'on_general_page'); ?>
+        <?php echo $form->textFieldControlGroup($model,'tags'); ?>
         <script type="text/javascript">            
             $('#<?= CHtml::activeId($model, 'tags'); ?>').autocomplete({
                 source: '<?= Yii::app()->createUrl('/admin/news/tags') ?>',
@@ -259,11 +246,7 @@
 	<?php endif; ?>
     
 	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'=>'submit',
-			'type'=>'primary',
-			'label'=>$model->isNewRecord ? 'Создать' : 'Сохранить',
-		)); ?>
+        <?= BsHtml::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => 'btn btn-primary']); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

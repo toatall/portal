@@ -14,13 +14,13 @@ $this->menu=array(
 <h1>Управление Отделами</h1>
 
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php $this->widget('bootstrap.widgets.BsGridView',array(
 	'id'=>'department-grid',
 	'dataProvider'=>$model->search(true),
 	'filter'=>$model,
 	'columns'=>array(
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'class'=>'bootstrap.widgets.BsButtonColumn',
 			'template'=>'{struct}',
 			'buttons'=>array(	
 				'struct'=>array(
@@ -38,7 +38,11 @@ $this->menu=array(
 		'date_create',
 		
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',			
+			'class'=>'bootstrap.widgets.BsButtonColumn',
 		),
 	),
+    'pager'=>array(
+        'class'=>'bootstrap.widgets.BsPager',
+        'size' => BsHtml::BUTTON_SIZE_DEFAULT,
+    ),
 )); ?>

@@ -1,4 +1,4 @@
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
 	'id'=>'vks-form',
 	'enableAjaxValidation'=>false,
 )); ?>
@@ -7,35 +7,29 @@
 
 	<?php echo $form->errorSummary($model); ?>
 
-	<?php echo $form->textFieldRow($model,'theme',array('class'=>'span5','maxlength'=>500)); ?>
+	<?php echo $form->textFieldControlGroup($model,'theme',array('class'=>'span5','maxlength'=>500)); ?>
 
-	<?php echo $form->textAreaRow($model,'responsible',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
+	<?php echo $form->textAreaControlGroup($model,'responsible',array('ControlGroups'=>6, 'cols'=>50, 'class'=>'span8')); ?>
 
-	<?php echo $form->textAreaRow($model,'members_people',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
+	<?php echo $form->textAreaControlGroup($model,'members_people',array('ControlGroups'=>6, 'cols'=>50, 'class'=>'span8')); ?>
 
-	<?php echo $form->textAreaRow($model,'members_organization',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
+	<?php echo $form->textAreaControlGroup($model,'members_organization',array('ControlGroups'=>6, 'cols'=>50, 'class'=>'span8')); ?>
     
-    <?php       
+    <?php
+        /*
         Yii::app()->clientScript->registerScriptFile(
             Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.js');
         Yii::app()->clientScript->registerScriptFile(
             Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.ru.js');
         Yii::app()->getClientScript()->registerCssFile(
             Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.css');
+        */
+        $assetDatepicker = new DatepickerAsset();
+        $assetDatepicker->register();
     ?>
     
-	<?php echo $form->textFieldRow($model,'_tempDateStart',array('class'=>'span2')); ?>
+	<?php echo $form->textFieldControlGroup($model,'_tempDateStart',array('class'=>'datepicker')); ?>
 
-    <script type="text/javascript">
-        jQuery('#<?php echo CHtml::activeId($model, '_tempDateStart'); ?>').datepicker({
-            'format':'dd.mm.yyyy',
-            'autoclose':'true',
-            'todayBtn':'linked',
-            'language':'ru',
-            'weekStart':0            
-        });         
-    </script>
-    
     
     <?php echo Chtml::activeLabel($model,'_tempTimeStart'); ?>
     <?php
@@ -44,9 +38,6 @@
             'attribute' => '_tempTimeStart',
             'mask' => '99:99',            
             'placeholder' => '*',
-            'htmlOptions'=>array(
-                'class'=>'span1',
-            ),
         ));
     ?>
     
@@ -57,35 +48,14 @@
             'attribute' => 'duration',
             'mask' => '99:99',            
             'placeholder' => '*',
-            'htmlOptions'=>array(
-                'class'=>'span1',
-            ),
         ));
     ?>
-    
-	<?php //echo $form->textFieldRow($model,'duration',array('class'=>'span1','maxlength'=>20)); ?>
-
-	<?php //echo $form->textFieldRow($model,'date_create',array('class'=>'span5')); ?>
-
-	<?php //echo $form->textFieldRow($model,'date_delete',array('class'=>'span5')); ?>
-
-	<?php //echo $form->textFieldRow($model,'action_log',array('class'=>'span5','maxlength'=>5000)); ?>
-
-	<?php //echo $form->textFieldRow($model,'type_vks',array('class'=>'span5')); ?>
 
 	<div class="form-actions">
-    
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'=>'submit',
-			'type'=>'primary',
-			'label'=>$model->isNewRecord ? 'Создать' : 'Сохранить',
-		)); ?>
+
+        <?= BsHtml::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => 'btn btn-primary']) ?>
+		<?= BsHtml::link('Отмена', ['admin', 'idTree' => $idTree], ['class' => 'btn btn-default']) ?>
         
-        <?php $this->widget('bootstrap.widgets.TbButton', array(
-			'url'=>array('admin','idTree'=>$idTree),
-			//'type'=>'primary',
-			'label'=>'Отмена',
-		)); ?>
         
 	</div>
 

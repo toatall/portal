@@ -1,6 +1,13 @@
 <?php
+/**
+ * @var $model array
+ * @var $dirFile string
+ * @var $dirImage string
+ * @var $files array
+ * @var $images array
+ */
+
 $this->breadcrumbs=array(
-	//'Новости'=>
 	Organization::model()->findByPk($model['id_organization'])->name.' (новости)'=>
     array('news/index', 'organization'=>$model['id_organization']),
     $model['title'],    

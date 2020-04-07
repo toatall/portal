@@ -1,4 +1,15 @@
-<h3>Комментарии <button class="btn btn-default" onclick="loadData('<?= Yii::app()->controller->createUrl('comment/index',array('id'=>$id)) ?>', '#container-comments-<?= $id ?>');"><i class="icon-refresh"></i></button></h3>
+<?php
+/**
+ * @var $this CommentController
+ * @var $id int
+ */
+?>
+<h3>
+    Комментарии4
+    <button class="btn btn-default" onclick="loadData('<?= $this->createUrl('comment/index',array('id'=>$id)) ?>', '#container-comments-<?= $id ?>');">
+        <i class="glyphicon glyphicon-refresh"></i>
+    </button>
+</h3>
 
 
 <script type="text/javascript">

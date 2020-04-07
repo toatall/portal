@@ -2,38 +2,42 @@
     /* @var $form TbActiveForm */
     /* @var $model RegEcr */
 ?>
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
     'id'=>'regecr-main-form',
     'enableAjaxValidation'=>false,
 )); ?>
 
 
-<?php    
+<?php
+    /*
     Yii::app()->clientScript->registerScriptFile(
         Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.js');
     Yii::app()->clientScript->registerScriptFile(
         Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.ru.js');
     Yii::app()->getClientScript()->registerCssFile(
         Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.css');
+    */
+    $assetDatepicker = new DatepickerAsset();
+    $assetDatepicker->register();
 ?>
 
     <p class="help-block">Поля обозначенные <span class="required">*</span> обязательны для заполнения.</p>
 
     <?php echo $form->errorSummary($model); ?>
 
-    <?php echo $form->dropDownListRow($model, 'code_org', $model->getDropDownIfns(),array('class'=>'span8')); ?>
+    <?php echo $form->dropDownListControlGroup($model, 'code_org', $model->getDropDownIfns(),array('class'=>'span8')); ?>
 
-    <?php echo $form->textFieldRow($model,'date_reg', array('class'=>'span3')); ?>
+    <?php echo $form->textFieldControlGroup($model,'date_reg', array('class'=>'datepicker')); ?>
     
-    <?php echo $form->textFieldRow($model,'count_create', array('class'=>'span3')); ?>
+    <?php echo $form->textFieldControlGroup($model,'count_create', array('class'=>'span3')); ?>
 
-    <?php echo $form->textFieldRow($model,'count_vote', array('class'=>'span3')); ?>
+    <?php echo $form->textFieldControlGroup($model,'count_vote', array('class'=>'span3')); ?>
     
-    <?php echo $form->textFieldRow($model,'avg_eval_a_1_1', array('class'=>'span3')); ?>
+    <?php echo $form->textFieldControlGroup($model,'avg_eval_a_1_1', array('class'=>'span3')); ?>
     
-    <?php echo $form->textFieldRow($model,'avg_eval_a_1_2', array('class'=>'span3')); ?>
+    <?php echo $form->textFieldControlGroup($model,'avg_eval_a_1_2', array('class'=>'span3')); ?>
     
-    <?php echo $form->textFieldRow($model,'avg_eval_a_1_3', array('class'=>'span3')); ?>
+    <?php echo $form->textFieldControlGroup($model,'avg_eval_a_1_3', array('class'=>'span3')); ?>
     
     <br /><br />
     <div class="alert alert-info">
@@ -47,23 +51,7 @@
     </div>
 
     <div class="form-actions">
-        <?php $this->widget('bootstrap.widgets.TbButton', array(
-            'buttonType'=>'submit',
-            'type'=>'primary',
-            'label'=>$model->isNewRecord ? 'Создать' : 'Сохранить',
-        )); ?>
+        <?= BsHtml::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => 'btn btn-primary']) ?>
     </div>
 
 <?php $this->endWidget(); ?>
-
-<script type="text/javascript">
-
-    jQuery('#<?php echo CHtml::activeId($model, 'date_reg'); ?>').datepicker({
-        'format':'dd.mm.yyyy',
-        'autoclose':'true',
-        'todayBtn':'linked',
-        'language':'ru',
-        'weekStart':0            
-    });        
-    
-</script>

@@ -5,7 +5,6 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Список','url'=>array('index'), 'icon'=>'list'),
 	array('label'=>'Управление','url'=>array('admin'), 'icon'=>'user'),
 );
 ?>

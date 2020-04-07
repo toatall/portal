@@ -21,12 +21,16 @@
  * @property integer $count_comment
  * @property integer $count_visit
  * @property string $organization_name
+ * @property string $date_sort
  * 
  * The followings are the available model relations:
- * @property Organization $idOrganization
- * @property Section $idSection
+ * @property Organization $organization
+ * @property Tree $tree
+ * @property File $files
+ * @property Image $images
  */
-class News extends CActiveRecord {
+class News extends CActiveRecord
+{
 
     /**
      * Имя модуля по умолчанию
@@ -59,9 +63,16 @@ class News extends CActiveRecord {
     public $_thumbail_image;
 
     /**
+     * Дата закрепления новости
+     * @var string
+     */
+    public $date_top;
+
+    /**
      * @return string the associated database table name
      */
-    public function tableName() {
+    public function tableName()
+    {
         return '{{news}}';
     }
 
@@ -77,14 +88,16 @@ class News extends CActiveRecord {
      * @param string $className active record class name.
      * @return News the static model class
      */
-    public static function model($className = __CLASS__) {
+    public static function model($className = __CLASS__)
+    {
         return parent::model($className);
     }
 
     /**
      * @return array validation rules for model attributes.
      */
-    public function rules() {
+    public function rules()
+    {
         return array(
             array('id_tree, title, date_start_pub, date_end_pub, message2', 'required'),
             array('id_tree, flag_enable, general_page, id_organization, on_general_page, count_like, count_comment, count_visit',
@@ -94,12 +107,12 @@ class News extends CActiveRecord {
             array('thumbail_image, thumbail_title', 'length', 'max' => 250),
             array('thumbail_text, tags', 'length', 'max' => 1000),
             array('message1, message2, date_create, date_edit, date_delete, 
-                flag_enable, general_page, _thumbail_image, team', 'safe'),
+                flag_enable, general_page, _thumbail_image, team, date_sort', 'safe'),
             array('id_tree, count_like, count_comment, count_visit', 'unsafe'),
             // search	
             array('id, id_tree, id_organization, title, message1, message2, author, date_start_pub, date_end_pub, date_create,
-                date_edit, date_delete, flag_enable, thumbail_image, general_page, param1, tags, team', 'safe', 'on' => 'search'),
-            array('id_organization, title, message1, message2, author, date_create, organization_name, date_create_1, date_create_2, param1, tags, team', 'safe', 'on' => 'searchPublic'),
+                date_edit, date_delete, flag_enable, thumbail_image, general_page, param1, tags, team, date_sort', 'safe', 'on' => 'search'),
+//            array('id_organization, title, message1, message2, author, date_create, organization_name, date_create_1, date_create_2, param1, tags, team', 'safe', 'on' => 'searchPublic'),
             array('_thumbail_image', 'file', 'types' => 'jpg, jpeg, gif, png', 'allowEmpty' => true),
         );
     }
@@ -107,7 +120,8 @@ class News extends CActiveRecord {
     /**
      * @return array relational rules.
      */
-    public function relations() {
+    public function relations()
+    {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
@@ -123,7 +137,8 @@ class News extends CActiveRecord {
     /**
      * @return array customized attribute labels (name=>label)
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return array(
             'id' => 'УН',
             'id_tree' => 'Раздел',
@@ -147,6 +162,7 @@ class News extends CActiveRecord {
             'count_comment' => 'Количество комментариев',
             'count_visit' => 'Количество просмотров',
             'tags' => 'Теги',
+            'date_top' => 'Закрепить новость до',
         );
     }
 
@@ -154,40 +170,76 @@ class News extends CActiveRecord {
      * {@inheritDoc}
      * @see CActiveRecord::beforeSave()
      */
-    protected function beforeSave() {
-        if ($this->isNewRecord) {
+    protected function beforeSave()
+    {
+        if (!parent::beforeSave())
+        {
+            return false;
+        }
+
+        /* @var $dateHelper DateHelper */
+        $dateHelper = Yii::app()->dateHelper;
+
+        if ($this->isNewRecord)
+        {
             $this->date_create = new CDbExpression('getdate()');
             $this->author = Yii::app()->user->name;
             $this->id_organization = Yii::app()->session['organization'];
         }
 
-        if ($this->date_delete == null)
-            $date_delete = new CDbExpression('null');
+        // Для корректной сортировки при просмотре новостей добавлен столбец date_sort
+        // Поле date_top содрежит дату по которую необходимо закрепить новость
+        // Если поле date_top заполнено, то в поле date_sort устанавливается эта дата,
+        // в противном случае в поле date_sort устанавливается значение date_create
+        if ($this->date_top != null)
+        {
+            $this->date_sort = $dateHelper->asDateWithHighTime($this->date_top);
+        }
+        else
+        {
+            $this->date_sort = $dateHelper->asDateTime($this->date_create);
+        }
 
-        if ($this->general_page) {
+        if ($this->date_delete == null)
+        {
+            $date_delete = new CDbExpression('null');
+        }
+
+        if ($this->general_page)
+        {
             News::model()->updateAll(
-                    array('general_page' => 0),
-                    'id_tree=:id_tree AND id<>:id',
-                    array(
-                        ':id_tree' => $this->id_tree,
-                        ':id' => $this->id,
-                    )
+                ['general_page' => 0],
+                'id_tree=:id_tree AND id<>:id',
+                [
+                    ':id_tree' => $this->id_tree,
+                    ':id' => $this->id,
+                ]
             );
         }
-        return parent::beforeSave();
+
+        return true;
     }
 
     /**
      * {@inheritDoc}
      * @see CActiveRecord::afterFind()
      */
-    protected function afterFind() {
+    protected function afterFind()
+    {
         parent::afterFind();
-        $this->date_create = DateHelper::explodeDateTime($this->date_create);
-        $this->date_edit = DateHelper::explodeDateTime($this->date_edit);
-        $this->date_delete = DateHelper::explodeDateTime($this->date_delete);
-        $this->date_start_pub = DateHelper::explodeDateTime($this->date_start_pub, true);
-        $this->date_end_pub = DateHelper::explodeDateTime($this->date_end_pub, true);
+
+        /* @var $dateHelper DateHelper */
+        $dateHelper = Yii::app()->dateHelper;
+
+        $this->date_create = $dateHelper->asDateTime($this->date_create);
+        $this->date_edit = $dateHelper->asDateTime($this->date_edit);
+        $this->date_delete = $dateHelper->asDateTime($this->date_delete);
+        $this->date_start_pub = $dateHelper->asDate($this->date_start_pub, true);
+        $this->date_end_pub = $dateHelper->asDate($this->date_end_pub, true);
+        if (!$dateHelper->equalsDate($this->date_create, $this->date_sort))
+        {
+            $this->date_top = $this->date_sort;
+        }
     }
 
     /**
@@ -203,7 +255,8 @@ class News extends CActiveRecord {
      * @uses PageController::actionUpdate() (admin)
      * @uses PageController::actionDelete() (admin)
      */
-    public function deleteFilesImages($id, $delFile, $delImage, $idTree) {
+    public function deleteFilesImages($id, $delFile, $delImage, $idTree)
+    {
         // удаление файлов
         if (count($delFile) > 0) {
             $dir = str_replace('{code_no}', Yii::app()->session['organization'],

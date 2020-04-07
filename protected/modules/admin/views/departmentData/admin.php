@@ -20,7 +20,7 @@ endif;
 
 <h1>Страницы (<?= $modelDepartment->concatened ?>)</h1>
 <p>
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php $this->widget('bootstrap.widgets.BsGridView',array(
 	'id'=>'department-news-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
@@ -40,7 +40,7 @@ endif;
         ),
         'author',
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'class'=>'bootstrap.widgets.BsButtonColumn',
 			'buttons'=>array(
 				'view'=>array(
 					'url'=>'Yii::app()->createUrl("admin/departmentData/view", array("id"=>$data->id,"idTree"=>$data->id_tree))',
@@ -54,4 +54,8 @@ endif;
 			),
 		),
 	),
+    'pager'=>array(
+        'class'=>'bootstrap.widgets.BsPager',
+        'size' => BsHtml::BUTTON_SIZE_DEFAULT,
+    ),
 )); ?>

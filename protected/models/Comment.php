@@ -48,7 +48,8 @@ class Comment extends CActiveRecord
 	public function relations()
 	{		
 		return array(
-			'idParent' => array(self::BELONGS_TO, 'News', 'id_parent'),
+			'idParent' => [self::BELONGS_TO, 'News', 'id_parent'],
+            'user' => [self::BELONGS_TO, 'User', ['username' => 'username_windows']],
 		);
 	}
 
@@ -180,6 +181,16 @@ class Comment extends CActiveRecord
 		}
 		*/
 	}
+
+	public function allowUpdate()
+    {
+        return (Yii::app()->user->inRole(['admin']) || $this->username == UserInfo::inst()->userLogin);
+    }
+
+    public function allowDelete()
+    {
+        return (Yii::app()->user->inRole(['admin']) || $this->username == UserInfo::inst()->userLogin);
+    }
 	
 	
 }

@@ -4,8 +4,8 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Создать Organization','url'=>array('create'), 'icon'=>'asterisk'),
-	array('label'=>'Управление Organization','url'=>array('admin'), 'icon'=>'user'),
+	array('label'=>'Создать','url'=>array('create'), 'icon'=>'asterisk'),
+	array('label'=>'Управление','url'=>array('admin'), 'icon'=>'user'),
 );
 ?>
 

@@ -1,4 +1,4 @@
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
 	'id'=>'conference-form',
 	'enableAjaxValidation'=>false,
 )); ?>
@@ -7,39 +7,32 @@
 
 	<?php echo $form->errorSummary($model); ?>
 
-	<?php echo $form->textFieldRow($model,'theme',array('class'=>'span5','maxlength'=>500)); ?>
+	<?php echo $form->textFieldControlGroup($model,'theme',array('class'=>'span5','maxlength'=>500)); ?>
 	
 	<?php if ($model->type_conference == Conference::TYPE_VKS_UFNS): ?>
-	<?php echo $form->textAreaRow($model,'responsible',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
+	<?php echo $form->textAreaControlGroup($model,'responsible',array('ControlGroups'=>6, 'cols'=>50)); ?>
 	<?php endif; ?>
 
-	<?php echo $form->textAreaRow($model,'members_people',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
+	<?php echo $form->textAreaControlGroup($model,'members_people',array('ControlGroups'=>6, 'cols'=>50)); ?>
 
 	<?php if ($model->type_conference == Conference::TYPE_VKS_UFNS): ?>
-	<?php echo $form->textAreaRow($model,'members_organization',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
+	<?php echo $form->textAreaControlGroup($model,'members_organization',array('ControlGroups'=>6, 'cols'=>50)); ?>
 	<?php endif; ?>
     
-    <?php       
+    <?php
+        /*
         Yii::app()->clientScript->registerScriptFile(
             Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.js');
         Yii::app()->clientScript->registerScriptFile(
             Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.ru.js');
         Yii::app()->getClientScript()->registerCssFile(
             Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.css');
+        */
+        $assetDatepicker = new DatepickerAsset();
+        $assetDatepicker->register();
     ?>
     
-	<?php echo $form->textFieldRow($model,'_tempDateStart',array('class'=>'span2')); ?>
-
-    <script type="text/javascript">
-        jQuery('#<?php echo CHtml::activeId($model, '_tempDateStart'); ?>').datepicker({
-            'format':'dd.mm.yyyy',
-            'autoclose':'true',
-            'todayBtn':'linked',
-            'language':'ru',
-            'weekStart':0            
-        });         
-    </script>
-        
+	<?php echo $form->textFieldControlGroup($model,'_tempDateStart',array('class'=>'datepicker')); ?>
     <?php echo Chtml::activeLabel($model,'_tempTimeStart'); ?>
     <?php
         $this->widget('CMaskedTextField', array(
@@ -47,9 +40,9 @@
             'attribute' => '_tempTimeStart',
             'mask' => '99:99',            
             'placeholder' => '-',
-            'htmlOptions'=>array(
-                'class'=>'span1',
-            ),
+            'htmlOptions' => [
+                'class' => 'form-control',
+            ],
         ));
     ?>
     
@@ -61,36 +54,28 @@
             'attribute' => 'duration',
             'mask' => '99:99',            
             'placeholder' => '-',
-            'htmlOptions'=>array(
-            	'class'=>'span1',	
-            ),
+            'htmlOptions' => [
+                'class' => 'form-control',
+            ],
         ));
     ?>
     <?php endif; ?>
     
     <?php if ($model->type_conference == Conference::TYPE_VKS_FNS): ?>
-    <?php echo $form->checkBoxRow($model,'time_start_msk'); ?>
+    <?php echo $form->checkBoxControlGroup($model,'time_start_msk'); ?>
     <?php endif; ?>
     
     <?php if ($model->type_conference == Conference::TYPE_CONFERENCE): ?>
-    <?= $form->textFieldRow($model,'place',array('class'=>'span5')) ?>
+    <?= $form->textFieldControlGroup($model,'place',array('class'=>'span5')) ?>
     <br />
-    <?= $form->checkBoxRow($model,'is_confidential'); ?>    
+    <?= $form->checkBoxControlGroup($model,'is_confidential'); ?>    
     <?php endif; ?>
 	
-	<?= $form->textAreaRow($model,'note',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
+	<?= $form->textAreaControlGroup($model,'note',array('ControlGroups'=>6, 'cols'=>50)); ?>
 	
-	<div class="form-actions">    
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'=>'submit',
-			'type'=>'primary',
-			'label'=>$model->isNewRecord ? 'Создать' : 'Сохранить',
-		)); ?>
-        
-        <?php $this->widget('bootstrap.widgets.TbButton', array(
-			'url'=>array_merge(array('admin')),			
-			'label'=>'Отмена',
-		)); ?>        
+	<div class="form-actions">
+        <?= BsHtml::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => 'btn btn-primary']) ?>
+		<?= BsHtml::link('Отмена', ['admin'], ['class' => 'btn btn-default']) ?>
 	</div>
 
 <?php $this->endWidget(); ?>

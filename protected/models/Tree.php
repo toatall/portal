@@ -305,17 +305,17 @@ class Tree extends CActiveRecord
             {
                 $data[] = array(
                     'id'=>$value->id,
-                    'text'=>'<i class="icon-folder-open"></i>&nbsp;'
+                    'text'=>'<i class="fas fa-folder-open"></i>&nbsp;'
                         .($value->date_delete!='' ? '<span style="color:red; text-decoration:line-through;">' : '')
                         .$value->name.($value->date_delete!='' ?'</span>':'').'&nbsp'
                         .($this->checkParentRight($value->id_parent) ?
-                             CHtml::link('<i class="icon-eye-open"></i>', 
+                             CHtml::link('<i class="fas fa-eye"></i>',
                                 array('view', 'id'=>$value->id),
                                 array('class'=>'view', 'data-original-title'=>'Просмотреть', 'rel'=>'tooltip')).'&nbsp'
-                            .CHtml::link('<i class="icon-pencil"></i>', 
+                            .CHtml::link('<i class="fas fa-edit"></i>',
                                 array('update', 'id'=>$value->id),
                                 array('class'=>'update', 'data-original-title'=>'Редактировать', 'rel'=>'tooltip')).'&nbsp'
-                            .CHtml::link('<i class="icon-trash"></i>', 
+                            .CHtml::link('<i class="fas fa-trash"></i>',
                                 '#', 
                                 array(
                                     'submit'=>array('delete', 'id'=>$value->id),
@@ -344,13 +344,14 @@ class Tree extends CActiveRecord
      * @return array
      */
     public function getTreeForMain($id=0, $parent_id=0)
-    {        
-        $criteria=new CDbCriteria;
+    {
+        $criteria = new CDbCriteria();
         $criteria->addCondition('id_parent='.$parent_id);
         $criteria->addCondition('id<>'.$id);
         $criteria->addInCondition('id_organization', array(Yii::app()->session['organization'],'0000'));                 
-        if (!Yii::app()->user->inRole(['admin']))
-            $criteria->addCondition('date_delete is null');  
+        if (!Yii::app()->user->inRole(['admin'])) {
+            $criteria->addCondition('date_delete is null');
+        }
         $criteria->order = 'sort asc, name asc, date_create asc';
                 
         $orgData = Tree::model()->findAll($criteria);
@@ -362,7 +363,7 @@ class Tree extends CActiveRecord
             {                                
                 $data[] = array(
                     'id'=>$value->id,
-                    'text'=>'<div style="margin-top:-4px; margin-left:4px;"><i class="icon-folder-open"></i>&nbsp;'
+                    'text'=>'<div style="margin-top:-4px; margin-left:4px;"><i class="fas fa-folder"></i>&nbsp;'
                         .($value->module!='' ? 
                             CHtml::link($value->name, array($value->module.'/admin', 'idTree'=>$value->id))
                             	: $value->name).'</div>',

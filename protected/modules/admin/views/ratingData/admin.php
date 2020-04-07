@@ -12,13 +12,13 @@ $this->menu=array(
 
 <h1>Управление рейтингами</h1>
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php $this->widget('bootstrap.widgets.BsGridView',array(
 	'id'=>'rating-main-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'class'=>'bootstrap.widgets.BsButtonColumn',
 			'template'=>'{rating_data}',
 			'buttons'=>array(
 				'rating_data'=>array(
@@ -34,7 +34,11 @@ $this->menu=array(
 		'order_asc',
 		'date_create',		
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',			
+			'class'=>'bootstrap.widgets.BsButtonColumn',
 		),
 	),
+    'pager'=>array(
+        'class'=>'bootstrap.widgets.BsPager',
+        'size' => BsHtml::BUTTON_SIZE_DEFAULT,
+    ),
 )); ?>

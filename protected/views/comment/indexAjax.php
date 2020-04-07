@@ -1,19 +1,20 @@
 <?php 
-    /* @var $this CController */
+    /* @var $this CommentController */
     /* @var $id int */
-    /* @var $urlIndex string */
+    /* @var $urlComments string */
     /* @var $urlUpdate string */
     /* @var $urlForm string */
 
-    $urlIndex = isset($urlIndex) ? $urlIndex : Yii::app()->controller->createUrl('comment/index',array('id'=>$id));
-    $urlUpdate = isset($urlUpdate) ? $urlUpdate : Yii::app()->controller->createUrl('comment/update',array('id'=>'_id_'));
-    $urlForm = isset($urlForm) ? $urlForm : Yii::app()->controller->createUrl('comment/form', ['id'=>$id]);
+    $urlComments = isset($urlComments) ? $urlComments : $this->createUrl('comment/comments',array('id'=>$id));
+    $urlUpdate = isset($urlUpdate) ? $urlUpdate : $this->createUrl('comment/update',array('id'=>'_id_'));
+    $urlForm = isset($urlForm) ? $urlForm : $this->createUrl('comment/form', ['id'=>$id]);
 ?>
 
 
 <h4>Комментарии
-	<button class="btn btn-default" onclick="loadData('<?= $urlIndex ?>', '#container-comments-<?= $id ?>');">
-		<i class="icon-refresh"></i></button>
+	<button class="btn btn-default" onclick="loadData('<?= $urlComments ?>', '#container-comments-<?= $id ?>');">
+        <i class="glyphicon glyphicon-refresh"></i>
+    </button>
 </h4>
 
 
@@ -36,7 +37,7 @@
 
 	function loadDataComments()
 	{
-		loadData('<?= $urlIndex ?>', '#container-comments-<?= $id ?>');
+		loadData('<?= $urlComments ?>', '#container-comments-<?= $id ?>');
 	}
 		
 	$(document).ready(function(){
@@ -50,20 +51,13 @@
 	{
 		if (!confirm('Вы уверены, что хотите удалить комментарий?'))
 			return;
-		
-		$.ajax({
-			url: url								
-   	   	})
+
+		$.get(url)
 		.done(function(data){			
 			if (data == 'OK')
 			{
-				$('#comment-body-' + id).hide();
+                loadDataComments();
 			}
-			else
-			{
-				alert(data);
-			}
-			// or refresh
 		})
 		.error(function(jqXHR){
 			alert('Ошибка удаления! ' + jqXHR.statusText);
@@ -75,7 +69,7 @@
 	{		
 	    // 1 подгрузить форму
 		$('#div-comment-' + id).attr('contenteditable', true);
-		$('#div-comment-' + id).addClass('uneditable-input span4');
+		$('#div-comment-' + id).addClass('uneditable-input form-control');
 		$('#div-comment-' + id).css('height', '100px');
 		$('#div-comment-' + id).focus();
 		$('#btn-form-update-' + id).show();		
@@ -144,7 +138,5 @@
 <script type="text/javascript">	
 	ajaxGET('<?= $urlForm ?>', {}, '#container-comment-form');
 </script>
-
-<hr />
 
 

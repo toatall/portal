@@ -1,51 +1,33 @@
 <?php
     /* @var $this CController */
-    Yii::app()->clientScript->registerScriptFile(
-        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.js');
-    Yii::app()->clientScript->registerScriptFile(
-        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.ru.js');
-    Yii::app()->getClientScript()->registerCssFile(
-        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.css');
+
+    $asset = new DatepickerAsset();
+    $asset->register();
+
 ?>
-<div class="thumbnail" style="padding: 20px;">
-    <form class="input-append" id="form-search-news-ifns" autocomplete="off">
-        <input type="text" id="input-search-news-ifns" class="span5" placeholder="Поиск по тексту..." />
-        <div class="input-prepend">
-            <span class="add-on"><i class="icon-search"></i></span>            
-        </div>
-        <input type="text" id="dateFrom-search-news-ifns" class="datepicker span3" placeholder="Поиск по дате от ..." />
-        <div class="input-prepend">
-            <span class="add-on"><i class="icon-calendar"></i></span>
-            
-        </div>
-        <input type="text" id="dateTo-search-news-ifns" class="datepicker span3" placeholder="Поиск по дате до ..." />
-        <div class="input-prepend">
-            <span class="add-on"><i class="icon-calendar"></i></span>
-        </div>        
-        <button type="submit" class="btn btn-primary" id="btn-search-news-ifns">Поиск</button>
-        <button type="reset" class="btn">Очистить</button>            
-    </form>
+<div class="news-container">
+    <div class="row">
+
+        <?php $this->renderPartial('application.views.news._search', [
+            'model' => new NewsSearch(),
+            'idForm' => 'form-search-news-ifns',
+            'actionForm' => $this->createUrl('news/newsIfns'),
+        ]) ?>
+
+        <div id="container_news_ifns"></div>
+
+    </div>
 </div>
-<br />
-<div id="container_news_ifns"></div>
+
 <script type="text/javascript">
     
-    var url_search_news_ifns = '<?= Yii::app()->controller->createUrl('news/newsIfns', ['team'=>'', 'dateFrom'=>'', 'dateTo'=>'']) ?>';
-    
-    $('#form-search-news-ifns').on('submit',function() {
-        url_search_news_ifns = changeParamUrl(url_search_news_ifns, 'team', $('#input-search-news-ifns').val());
-        url_search_news_ifns = changeParamUrl(url_search_news_ifns, 'dateFrom', $('#dateFrom-search-news-ifns').val());
-        url_search_news_ifns = changeParamUrl(url_search_news_ifns, 'dateTo', $('#dateTo-search-news-ifns').val());
-        ajaxNews(url_search_news_ifns, {}, '#container_news_ifns');
-        return false;
-    });
-    
-    jQuery('.datepicker').datepicker({
-        'format':'dd.mm.yyyy',
-        'autoclose':'true',
-        'todayBtn':'linked',
-        'language':'ru',
-        'weekStart':0            
+    $(document).ready(function() {
+
+        $('#form-search-news-ifns').on('submit',function() {
+            ajaxNews($(this).attr('action'), $(this).serialize(), '#container_news_ifns');
+            return false;
+        });
+
     });
 
 </script>

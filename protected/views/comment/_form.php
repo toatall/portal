@@ -11,7 +11,7 @@
     
 ?>
 
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
     'id'=>'comment-form',
     'enableAjaxValidation'=>false,
     'enableClientValidation'=>true,
@@ -26,32 +26,28 @@
 	
 	<?php echo $form->errorSummary($model); ?>	
 	
-	<?php echo $form->textAreaRow($model,'comment',
-		array('class'=>'span5','style'=>'display:none;')); ?>	
-	<div class="uneditable-input span5" contenteditable="true" id="<?= $commentDivId ?>" style="height: 100px;"></div>
-	
+	<?php echo $form->textArea($model,'comment',
+		array('class'=>'form-control','style'=>'display:none;')); ?>
+	<div class="uneditable-input form-control" contenteditable="true" id="<?= $commentDivId ?>" style="height: 100px; margin-bottom: 5px;"></div>
+
 	<?php $this->widget('application.extensions.mySmile.SmileysWidget',array(                    		   	             
-	   'textareaId'=>$commentDivId, 
-	   'prefix'=>$model->isNewRecord ? 'new' : $model->id,
+	    'textareaId'=>$commentDivId,
+	    'prefix'=>$model->isNewRecord ? 'new' : $model->id,
 	 ));?>
-	 
+
    	<br /><br />
-   	<?php $this->widget('bootstrap.widgets.TbButton', array(
-		'type'=>'primary',
-   	    'buttonType'=>'submit',
-		'label'=>'Сохранить',                    
-    )); ?>
-        
+    <?= BsHtml::submitButton('Сохранить', ['class'=>'btn btn-primary']) ?>
+
     <script type="text/javascript">
 
-		// отправка комментария на сохранение 
+		// отправка комментария на сохранение
     	$('#comment-form').on('submit', function() {
 			$('#<?= CHtml::activeId($model, 'comment') ?>').val($('#<?= $commentDivId ?>').html());        	
         	var dataForm = $('#comment-form').serialize();
 
     		$('#container-comment-form').html('<img src="/images/loading.gif" />');
 			var urlPost = '<?= ($model->isNewRecord ?  $urlForm : $urlUpdate) ?>';
-									 		
+
    	   		$.ajax({
    	   			type: 'POST',
 				url: urlPost,

@@ -226,8 +226,8 @@ function removeParametrDialog()
 function getJson(url)
 {
     ajaxJSON(url, {
-        title: '#modal-title-preview',
-        content: '#modal-content-preview'
+        title: '#modal-title',
+        content: '#modal-body'
     });
     changeUrlParam('w', url);
     return false;
@@ -277,29 +277,19 @@ $(document).ready(function () {
     /**
      * Удаление параметра w из адреса при закрытии диалогового окна
      */
-    $('#modalPreview').on('hide', function () {
+    $('#modal-dialog').on('hide.bs.modal', function () {
         removeParametrDialog();
     });
 
     /**
-     * Повесить на все ссылки с sw_dlg событие 'click' для отркытия диалогового окна
+     * Повесить на все ссылки с show-modal-dialog событие 'click' для отркытия диалогового окна
      */
-    $(document).on('click', '.sw_dlg', function () {
+    $(document).on('click', '.show-modal-dialog', function () {
         getJson($(this).attr('href'));
-        $('#modalPreview').modal('show');
+        $('#modal-dialog').modal('show');
         return false;
     });
 
-    /**
-     * Отключение прокрутки при открытии модального окна
-     */
-    $('.modal')
-            .on('shown', function () {
-                $('body').css({overflow: 'hidden'});
-            })
-            .on('hidden', function () {
-                $('body').css({overflow: ''});
-            });
 
     /**
      * Загрузка событий на сегодня
@@ -318,10 +308,10 @@ $(document).ready(function () {
     url_w = getURLParameter('w');
     if (url_w != null)
     {
-        $('#modalPreview').modal('show');
+        $('#modal-dialog').modal('show');
         ajaxJSON(url_w, {
-            title: '#modal-title-preview',
-            content: '#modal-content-preview'
+            title: '#modal-title',
+            content: '#modal-body'
         });
     }
 

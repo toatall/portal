@@ -401,7 +401,7 @@ class Conference extends CActiveRecord
 	 */
 	public function getTimeStartFormat()
 	{
-		return "<h3>".date('H:i',strtotime($this->date_start))."</h3>";
+		return '<h2 style="font-weight: 800;" class="text-info">'.date('H:i',strtotime($this->date_start)) . '</h2>';
 	}
 	
 	/**

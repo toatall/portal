@@ -5,7 +5,6 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Список','url'=>array('index'), 'icon'=>'list'),
 	array('label'=>'Создать','url'=>array('create'), 'icon'=>'asterisk'),
 	array('label'=>'Изменить','url'=>array('update','code'=>$model->code), 'icon'=>'pencil'),
 	array('label'=>'Удалить','url'=>'#',
@@ -21,13 +20,13 @@ $this->menu=array(
 
 <h1>Просмотр организации #<?php echo $model->code; ?></h1>
 
-<?php $this->widget('bootstrap.widgets.TbDetailView',array(
+<?php $this->widget('bootstrap.widgets.BsDetailView',array(
 	'data'=>$model,
-	'attributes'=>array(
+	'attributes' => [
 		'code',
 		'name',
 		'sort',
 		'date_create',
 		'date_modification',
-	),
+	],
 )); ?>

@@ -110,13 +110,14 @@ class VisitNews extends CActiveRecord
 	{
 		return parent::model($className);
 	}
-	
-	/**
-	 * Сохрание информации о пользователе,
-	 * открывшем новость идентификатором $id_news
-	 * @param int $id_news
-	 * @uses NewsController::actionView()
-	 */
+
+    /**
+     * Сохрание информации о пользователе,
+     * открывшем новость идентификатором $id_news
+     * @param int $id_news
+     * @throws CDbException
+     * @uses NewsController::actionView()
+     */
 	public static function saveVisit($id_news)
 	{
 		Yii::app()->db->createCommand('exec p_pr_visit_news @id_news=:id_news, @username=:username, @ip_address=:ip_address, @hostname=:hostname, @session_id=:session_id')

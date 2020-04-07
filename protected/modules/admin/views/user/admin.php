@@ -26,21 +26,23 @@
 
 <h1>Управление пользователями</h1>
 
-<?php echo CHtml::link('Расширенный поиск','#',array('class'=>'search-button btn')); ?>
-<div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
+<?php echo CHtml::link('Расширенный поиск','#',array('class'=>'btn btn-success search-button')); ?><br /><br />
+<div class="panel panel-default search-form" style="display:none">
+    <div class="panel-body">
+        <?php $this->renderPartial('_search',array(
+            'model'=>$model,
+        )); ?>
+    </div>
 </div><!-- search-form -->
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php $this->widget('bootstrap.widgets.BsGridView',array(
 	'id'=>'user-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
 		'id',
 		'username_windows',
-		'fio',
+		'fio:ФИО',
         array(
             'name'=>'blocked',            
             'value'=>'($data->blocked)?"Да":"Нет"',
@@ -53,7 +55,7 @@
         ),
 		
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',    
+			'class'=>'bootstrap.widgets.BsButtonColumn',
 			'template'=>'{view} {update} {updatePfofile} {delete}',
 				'buttons'=>array(
 					'updatePfofile'=>array(
@@ -66,4 +68,8 @@
 				),
 		),
 	),
+    'pager'=>array(
+        'class'=>'bootstrap.widgets.BsPager',
+        'size' => BsHtml::BUTTON_SIZE_DEFAULT,
+    ),
 )); ?>

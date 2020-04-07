@@ -1,6 +1,6 @@
 <ul class="thumbnails">	
 	<?php foreach ($model as $m): ?>
-	<li class="span3 thumbnail text-center">
+	<li class="col-sm-3 col-md-2 thumbnail text-center" style="margin-right: 15px;">
 		<div class="page-header">
 			<strong><?= $m->periodName ?></strong>
 		</div>		

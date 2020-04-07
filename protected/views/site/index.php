@@ -1,15 +1,13 @@
 <?php
 /* @var $this SiteController */
 
-$this->pageTitle=Yii::app()->name;
+$this->pageTitle = Yii::app()->name;
 ?>
 
 <?php
-    $this->widget('bootstrap.widgets.TbTabs', array(
-        'id'=>'myTabs',        
-        'type'=>'tabs',
-        'encodeLabel'=>false,
-        'tabs'=>array(           
+    $this->widget('bootstrap.widgets.BsNavs', array(
+        'id'=>'myTabs',
+        'items'=>array(
             array(
                 'label'=>'Новость дня',
                 'content'=>$this->renderPartial('tabs/newsDay', null, true),
@@ -30,27 +28,32 @@ $this->pageTitle=Yii::app()->name;
         ),
     
     ));
+
+
 ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array(
+<?php  /*
+$this->beginWidget('bootstrap.widgets.TbModal', array(
     'id'=>'modalPreviewNews',
     'htmlOptions'=>array('style'=>'width:90%; margin-left:-45%; margin-top:-3%;'),
 )); ?>
-<div class="modal-header" style="height1:30px;">
-    <a class="close" data-dismiss="modal"><h3 class="text-error">&times;</h3></a>
-    <h2 id="modal-title-news-preview"></h2>        
-</div>
-<div class="modal-body" id="modal-content-news-previwe" style="max-height:70vh;"></div>
-<div class="modal-footer">
+<div style="width:90%; margin-left:-45%; margin-top:-3%;" id="modalPreviewNews" class="modal hide fade">
+    <div class="modal-header" style="height1:30px;">
+        <a class="close" data-dismiss="modal"><h3 class="text-error">&times;</h3></a>
+        <h2 id="modal-title-news-preview"></h2>
+    </div>
+    <div class="modal-body" id="modal-content-news-previwe" style="max-height:70vh;"></div>
+    <div class="modal-footer">
     <?php $this->widget('bootstrap.widgets.TbButton', array(
         'label'=>'Закрыть',   
         'type'=>'primary',
         'htmlOptions'=>array('data-dismiss'=>'modal'),
     )); ?>
+    <?= BsHtml::button('Закрыть', ['class'=>'btn btn-primary', 'data-dismiss'=>'modal']) ?>
 </div>
 
 
-<?php $this->endWidget(); ?>
+<?php //$this->endWidget();*/ ?>
 
 <!--[if !IE]>-->
 <script type="text/javascript">

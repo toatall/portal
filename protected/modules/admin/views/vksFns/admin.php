@@ -40,10 +40,10 @@ $('.search-form form').submit(function(){
 )); ?>
 </div><!-- search-form -->
 
-<?php*/ $this->widget('bootstrap.widgets.TbGridView',array(
+<?php*/ $this->widget('bootstrap.widgets.BsGridView',array(
 	'id'=>'vksFns-grid',
-	'dataProvider'=>$model->search(),
-	'filter'=>$model,
+	'dataProvider' => $model->search(),
+	'filter' => $model,
     'rowCssClassExpression' => '($data["date_delete"] == "") ? "" : "delete-row"',
 	'columns'=>array(
 		'id',
@@ -53,7 +53,7 @@ $('.search-form form').submit(function(){
 		'members_organization',
 		'date_start',		
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'class'=>'bootstrap.widgets.BsButtonColumn',
             'buttons'=>array(
                 'view'=>array(
                     'url'=>'Yii::app()->createUrl("admin/vksFns/view", array("id"=>$data->id,"idTree"=>'.$idTree.'))',                    
@@ -67,4 +67,8 @@ $('.search-form form').submit(function(){
             ),
 		),
 	),
+    'pager'=>array(
+        'class'=>'bootstrap.widgets.BsPager',
+        'size' => BsHtml::BUTTON_SIZE_DEFAULT,
+    ),
 )); ?>

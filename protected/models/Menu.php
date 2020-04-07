@@ -184,18 +184,18 @@ class Menu extends CActiveRecord
             {
                 $data[] = array(
                     'id'=>$value->id,
-                    'text'=>'<i class="icon-folder-open"></i>&nbsp;'                                                
+                    'text'=>'<i class="fas fa-folder-open"></i>&nbsp;'
                         .$value->name.'&nbsp'.
                         
-                         CHtml::link('<i class="icon-eye-open"></i>', 
+                         CHtml::link('<i class="fas fa-eye"></i>',
                             array('view', 'id'=>$value->id),
                             array('class'=>'view', 'data-original-title'=>'Просмотреть', 
                                 'rel'=>'tooltip')).'&nbsp'
-                        .CHtml::link('<i class="icon-pencil"></i>', 
+                        .CHtml::link('<i class="fas fa-edit"></i>',
                             array('update', 'id'=>$value->id),
                             array('class'=>'update', 'data-original-title'=>'Редактировать', 
                                 'rel'=>'tooltip')).'&nbsp'
-                        .CHtml::link('<i class="icon-trash"></i>', 
+                        .CHtml::link('<i class="fas fa-trash"></i>',
                             '#', 
                             array(
                                 'submit'=>array('delete', 'id'=>$value->id),

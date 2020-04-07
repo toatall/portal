@@ -1,4 +1,4 @@
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
 	'id'=>'tree-form',
 	'enableAjaxValidation'=>false,
 	'enableClientValidation'=>true,
@@ -17,25 +17,25 @@
     <?php $array_parent = Yii::app()->user->admin ? array(0=>'Родитель') : array(); ?>        
     
 	<?php if ($model->isNewRecord): ?>    
-    <?php echo $form->dropDownListRow($model,'id_parent',$array_parent
+    <?php echo $form->dropDownListControlGroup($model,'id_parent',$array_parent
         + Tree::model()->getTreeDropDownList()); ?>
     <?php else: ?>    
-    <?php echo $form->dropDownListRow($model,'id_parent',$array_parent
+    <?php echo $form->dropDownListControlGroup($model,'id_parent',$array_parent
         + Tree::model()->getTreeDropDownList($model->id)); ?>        
     <?php endif; ?>
 
 
-	<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>250)); ?>       
+	<?php echo $form->textFieldControlGroup($model,'name',array('class'=>'span5','maxlength'=>250)); ?>       
     
-    <?php echo $form->textFieldRow($model,'sort',array('class'=>'span5')); ?>
+    <?php echo $form->textFieldControlGroup($model,'sort',array('class'=>'span5')); ?>
  	
  	<?php if (Yii::app()->user->admin): ?>
  		<div class="alert alert-info">
-    	<?php echo $form->checkBoxRow($model,'allOrganization'); ?>
+    	<?php echo $form->checkBoxControlGroup($model,'allOrganization'); ?>
     	</div>
     <?php endif; ?>
     
-    <?php echo $form->checkBoxRow($model,'use_material'); ?>
+    <?php echo $form->checkBoxControlGroup($model,'use_material'); ?>
      
     <script type="text/javascript">
 
@@ -85,7 +85,7 @@
     		if (Yii::app()->user->admin)
     		{
     		    echo '<div class="alert alert-info">';
-	    		echo $form->dropDownListRow($model, 'module',
+	    		echo $form->dropDownListControlGroup($model, 'module',
 	            	CHtml::listData(Module::listCurrentUser(),'name','description'),
 	                	array(
 	                    	'class'=>'span5',
@@ -94,7 +94,7 @@
 	    		echo '</div>';
     		}    		
         ?>
-    	<?php echo $form->checkBoxRow($model,'use_tape'); ?>    
+    	<?php echo $form->checkBoxControlGroup($model,'use_tape'); ?>    
     </div>
     
     <script type="text/javascript">
@@ -171,7 +171,7 @@
     
     <div id="content_permission" class="well alert alert-info">  
         <h5 style="background-color: white;" class="well">Доступ</h5>
-        <p><?php echo $form->checkBoxRow($model, 'useParentRight', 
+        <p><?php echo $form->checkBoxControlGroup($model, 'useParentRight', 
             $model->isNewRecord ? array('checked'=>'checked') : array()
         ); ?>
         </p>
@@ -180,7 +180,7 @@
             <?php   
             
             // ГРУППЫ // 
-            echo $form->dropDownListRow($model, 'permissionGroup',               
+            echo $form->dropDownListControlGroup($model, 'permissionGroup',               
                 CHtml::listData(AccessGroup::model()->with('group')->findAll(array(
                     'order'=>'[t].[id_organization], [group].[name]',
                     'condition'=>'t.id_tree=:id_tree and t.id_organization=:organization',
@@ -194,30 +194,23 @@
 	                'style'=>'width: 300px; height: 200px;',
             )); ?>
             <br />
-            <?php $this->widget('bootstrap.widgets.TbButton', array(
-                'label'=>'Добавить',   
-            	'type'=>'success',
-                'url'=>'javascript:;',
-                'htmlOptions'=>array(
-                    'data-toggle'=>'modal', 
-                    'data-target'=>'#userGroupModal',
-                    'onclick'=>'getListGroups();',
-                ),
-            )); ?>
-            <?php $this->widget('bootstrap.widgets.TbButton', array(
-                'label'=>'Удалить',
-            	'type'=>'danger',
-                'url'=>'javascript:;',
-                'htmlOptions'=>array(
-                    'onclick'=>'$(\'#'.CHtml::activeId($model, 'permissionGroup').' option:selected\').remove();',
-                ),
-            )); ?>                        
+            <?= BsHtml::button('Добавить', [
+                'class' => 'btn btn-success',
+                'data-toggle'=>'modal',
+                'data-target'=>'#userGroupModal',
+                'onclick'=>'getListGroups();',
+            ]) ?>
+            <?= BsHtml::button('Удалить', [
+                'class' => 'btn btn-danger',
+                'onclick'=>'$(\'#'.CHtml::activeId($model, 'permissionGroup').' option:selected\').remove();',
+            ]) ?>
+
         </td>
         <td>
            <?php 
             
             // ПОЛЬЗОВАТЕЛИ //
-            echo $form->dropDownListRow($model, 'permissionUser',                 
+            echo $form->dropDownListControlGroup($model, 'permissionUser',                 
             	CHtml::listData(AccessUser::model()->with('user')->findAll(array(
             		'order'=>'[t].[id_organization], [user].[username_windows]',
             		'condition'=>'t.id_tree=:id_tree and t.id_organization=:organization',
@@ -231,50 +224,37 @@
                     'style'=>'width: 300px; height: 200px;',
             )); ?>
             <br />
-            <?php $this->widget('bootstrap.widgets.TbButton', array(
-                'label'=>'Добавить',
-            	'type'=>'success',
-                'url'=>'javascript:;',
-                'htmlOptions'=>array(
-                    'data-toggle'=>'modal', 
-                    'data-target'=>'#userGroupModal',
-                    'onclick'=>'getListUsers();',
-                ),
-            )); ?>
-            <?php $this->widget('bootstrap.widgets.TbButton', array(
-                'label'=>'Удалить',
-            	'type'=>'danger',
-                'url'=>'javascript:;',
-                'htmlOptions'=>array(
-                    'onclick'=>'$(\'#'.CHtml::activeId($model, 'permissionUser').' option:selected\').remove();',
-                ),
-            )); ?>                                            
+            <?= BsHtml::button('Добавить', [
+                'class' => 'btn btn-success',
+                'data-toggle'=>'modal',
+                'data-target'=>'#userGroupModal',
+                'onclick'=>'getListUsers();',
+            ]) ?>
+            <?= BsHtml::button('Удалить', [
+                'class' => 'btn btn-danger',
+                'onclick'=>'$(\'#'.CHtml::activeId($model, 'permissionUser').' option:selected\').remove();',
+            ]) ?>
+
         </td></tr>
         <tr><td colspan="2" style="padding-top: 20px;" id="ajaxTree"></td></tr>
         </table>
-        
-    
-        <?php $this->beginWidget('bootstrap.widgets.TbModal', array(
-            'id'=>'userGroupModal',
-            'htmlOptions'=>array('style'=>'width:800px; margin-left:-400px;'),
-            
-        ));?>
-        <div class="modal-header">
-            <a class="close" data-dismiss="modal">&times;</a>
-            <h4>Пользователи и группы</h4>        
+
+
+        <div class="modal fade" id="userGroupModal" role="dialog" data-backdrop="static" data-result="false" data-dialog="">
+            <div class="modal-dialog modal-dialog-large modal-dialog-super-large" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-label="Close">&times;</span></button>
+                        <h4>Пользователи и группы</h4>
+                    </div>
+                    <div class="modal-body" id="user_group_body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" data-dismiss="modal" class="btn btn-primary">Закрыть</button>
+                    </div>
+                </div>
+            </div>
         </div>
-                
-        <div class="modal-body" id="user_group_body"></div>
-                
-        <div class="modal-footer">
-            <?php $this->widget('bootstrap.widgets.TbButton', array(
-                'label'=>'Отмена',
-                'url'=>'#',
-                'htmlOptions'=>array('data-dismiss'=>'modal'),
-            )); ?>
-        </div>
-        
-        <?php $this->endWidget(); ?>
                                                  
     </div>
     
@@ -286,21 +266,17 @@
 		});
     </script>
     <div id="params" class="well alert alert-info" style="display: none; padding: 10px;">
-    	<?php echo $form->textFieldRow($model,'param1',array('class'=>'span5','maxlength'=>250)); ?>
-    	<?php echo $form->textFieldRow($model,'alias',array('class'=>'span5','maxlength'=>50)); ?>
+    	<?php echo $form->textFieldControlGroup($model,'param1',array('class'=>'span5','maxlength'=>250)); ?>
+    	<?php echo $form->textFieldControlGroup($model,'alias',array('class'=>'span5','maxlength'=>50)); ?>
     </div>
         
     <?php endif; ?>
     
     <br/><br/>
-    <?= $form->checkBoxRow($model, 'disable_child') ?>
+    <?= $form->checkBoxControlGroup($model, 'disable_child') ?>
     
 	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'=>'submit',
-			'type'=>'primary',
-			'label'=>$model->isNewRecord ? 'Создать' : 'Сохранить',
-		)); ?>
+        <?= BsHtml::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => 'btn btn-primary']) ?>
 	</div>
 
 <?php $this->endWidget(); ?>

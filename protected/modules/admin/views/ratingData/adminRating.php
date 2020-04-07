@@ -12,7 +12,7 @@ $this->menu=array(
 
 <h1>Управление рейтингом "<?= $modelRatingMain->name ?>"</h1>
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php $this->widget('bootstrap.widgets.BsGridView',array(
 	'id'=>'rating-data-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
@@ -23,7 +23,7 @@ $this->menu=array(
 		'periodName',
 		'date_create',
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'class'=>'bootstrap.widgets.BsButtonColumn',
 			'buttons'=>array(
 				'view'=>array(
 					'url'=>function($data) { return Yii::app()->controller->createUrl('/admin/ratingData/viewRating',array('id'=>$data->id));  },		
@@ -37,4 +37,8 @@ $this->menu=array(
 			),
 		),
 	),
+    'pager'=>array(
+        'class'=>'bootstrap.widgets.BsPager',
+        'size' => BsHtml::BUTTON_SIZE_DEFAULT,
+    ),
 )); ?>

@@ -1,4 +1,4 @@
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
 	'id'=>'group-form',
 	'enableAjaxValidation'=>false,
 	'enableClientValidation'=>true,
@@ -14,14 +14,14 @@
     
 	<?php echo $form->errorSummary($model); ?>
 
-	<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>250)); ?>
+	<?php echo $form->textFieldControlGroup($model,'name',array('class'=>'span5','maxlength'=>250)); ?>
 
-	<?php echo $form->textAreaRow($model,'description',
-			array('class'=>'span5','maxlength'=>500,'style'=>'height:100px;')); ?>	
+	<?php echo $form->textAreaControlGroup($model,'description',
+			array('maxlength'=>500,'style'=>'height:100px;')); ?>
 
     <div class="well"> 
         
-        <?php echo $form->dropDownListRow($model, 'groupUsers', 
+        <?php echo $form->dropDownListControlGroup($model, 'groupUsers',
         	$model->getListGroupUsers(),        	
         	array(
 	            'multiple'=>true,
@@ -29,46 +29,34 @@
         )); ?>        
                 
         <br />
-        
-        <?php $this->widget('bootstrap.widgets.TbButton', array(
-            'label'=>'Добавить',
-            'url'=>'#',
-            'htmlOptions'=>array(
-                'data-toggle'=>'modal', 
-                'data-target'=>'#groupUsersModal',
-                'onclick'=>'getListUsers();',
-            ),
-        )); ?>
-        
-        <?php $this->widget('bootstrap.widgets.TbButton', array(
-            'label'=>'Удалить',           
-            'htmlOptions'=>array(
-                'onclick'=>'$(\'#'.CHtml::activeId($model, 'groupUsers').' option:selected\').remove();',
-            ),
-        )); ?>
+
+        <?= BsHtml::button('Добавить', [
+            'class' => 'btn btn-primary',
+            'data-toggle' => 'modal',
+            'data-target' => '#groupUsersModal',
+            'onclick' => 'getListUsers();',
+        ]) ?>
+
+        <?= BsHtml::button('Удалить', [
+            'onclick'=>'$(\'#'.CHtml::activeId($model, 'groupUsers').' option:selected\').remove();',
+        ]) ?>
         
     </div>
-        
-    <?php $this->beginWidget('bootstrap.widgets.TbModal', array(
-        'id'=>'groupUsersModal',
-        'htmlOptions'=>array('style'=>'width:800px; margin-left:-400px;'),
-    )); ?>
-    
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal">&times;</a>
-        <h4>Пользователи</h4>        
+
+    <div class="modal fade" id="groupUsersModal" role="dialog" data-backdrop="static" data-result="false" data-dialog="">
+        <div class="modal-dialog modal-dialog-large modal-dialog-super-large" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-label="Close">&times;</span></button>
+                    <h4>Пользователи</h4>
+                </div>
+                <div class="modal-body" id="users_body"></div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-primary">Закрыть</button>
+                </div>
+            </div>
+        </div>
     </div>
-            
-    <div class="modal-body" id="users_body"></div>
-            
-    <div class="modal-footer">
-        <?php $this->widget('bootstrap.widgets.TbButton', array(
-            'label'=>'Отмена',            
-            'htmlOptions'=>array('data-dismiss'=>'modal'),
-        )); ?>
-    </div>
-    
-    <?php $this->endWidget(); ?>
     
     <script type="text/javascript">
         
@@ -131,13 +119,7 @@
         }
         
     </script>
-    
-	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'=>'submit',
-			'type'=>'primary',
-			'label'=>$model->isNewRecord ? 'Создать' : 'Сохранить',
-		)); ?>
-	</div>
+
+    <?= BsHtml::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => 'btn btn-primary']) ?>
 
 <?php $this->endWidget(); ?>

@@ -16,7 +16,7 @@ $this->menu=array(
 <h1>Управление вопросами "<?= $modelMain->name ?>"</h1>
 
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php $this->widget('bootstrap.widgets.BsGridView',array(
 	'id'=>'vote-question-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
@@ -26,7 +26,7 @@ $this->menu=array(
 		'date_create',
 		'date_edit',
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'class'=>'bootstrap.widgets.BsButtonColumn',
 		    'buttons'=>array(
 		        'view'=>array(		           
 		            'url'=>function($data) {
@@ -46,4 +46,8 @@ $this->menu=array(
 		    ),
 		),
 	),
+    'pager'=>array(
+        'class'=>'bootstrap.widgets.BsPager',
+        'size' => BsHtml::BUTTON_SIZE_DEFAULT,
+    ),
 )); ?>

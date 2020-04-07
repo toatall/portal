@@ -1,4 +1,8 @@
 <?php
+/**
+ * @var $this CController
+ * @var $model Conference
+ */
 
 $this->pageTitle = $model->typeName;
 
@@ -10,7 +14,7 @@ $this->breadcrumbs = array(
 
 <div class="content content-color">
 <h1><?= $model->typeName ?></h1>
-
+<hr />
 
 <style type="text/css">
 	time.icon
@@ -60,7 +64,7 @@ $this->breadcrumbs = array(
 		width: 100%;
 		font-size: 2.8em;
 		letter-spacing: -0.05em;
-		padding-top: 1.2em;
+		padding-top: 0.8em;
 		color: #2f2f2f;
 	}
 	
@@ -78,26 +82,31 @@ $this->breadcrumbs = array(
 	{
 		background: white;
 	}
-	
+
+    .grid-view td {
+        white-space: normal;
+    }
+
+
 </style>
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php $this->widget('bootstrap.widgets.BsGridView',array(
 	'id'=>'conference-grid',	
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,     
-	'rowCssClassExpression'=>'$data->isPast ? "conference-finish" : "conference-not-begin"', //'(date("YmdHi") > date("YmdHi",strtotime($data->date_start))) ? "conference-finish" : "conference-not-begin"',
-	'columns'=>array(	
-        array(
-        	'name'=>'date_start',
-        	'type'=>'raw',
-        	'value'=>'$data->dateStartFormat',
-		),
-		array(
-			'name'=>'timeStartFormat',
-			'type'=>'raw',
-			'value'=>'$data->timeStartFormat . ($data->time_start_msk ? " (МСК)" : "")',
-			'filter'=>false,
-		),				
+	'rowCssClassExpression'=>'$data->isPast ? "conference-finish" : "conference-not-begin"',
+	'columns'=>[
+        [
+        	'name' => 'date_start',
+        	'type' => 'raw',
+        	'value' => '$data->dateStartFormat',
+		],
+		[
+			'name' => 'timeStartFormat',
+			'type' => 'raw',
+			'value' => '$data->timeStartFormat . ($data->time_start_msk ? " (МСК)" : "")',
+			'filter' => false,
+		],
 		'theme',
 		//'responsible',
 		array(
@@ -106,27 +115,25 @@ $this->breadcrumbs = array(
 		),
 		'place',
 		'duration',
-		//'members_organization',
-		//'date_start',
 		'date_create',
 			
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'class'=>'bootstrap.widgets.BsButtonColumn',
 			'template'=>'{v}',
 			'buttons'=>array(
 				'v'=>array(
 					'label' => 'Подробно',
-					'options' => array('class'=>'btn btn-default'),
+					'options' => ['class'=>'btn btn-default'],
 					'context' => '<i class="icon-eye"></i> Просмотр',
-					'url' => function($data) { return Yii::app()->controller->createUrl('conference/view', array('id'=>$data->id)); },
-					'options'=>array('class'=>'btn btn-default sw_dlg'),
+					'url' => function($data) { return $this->createUrl('conference/view', ['id'=>$data->id]); },
+					'options' => ['class'=>'btn btn-default show-modal-dialog'],
 				),
 			),
 		),
-	),
-	'pager'=>array(	
-		'class'=>'bootstrap.widgets.TbPager',
-		'displayFirstAndLast'=>true,
+	],
+	'pager'=>array(
+		'class'=>'bootstrap.widgets.BsPager',
+        'size' => BsHtml::BUTTON_SIZE_DEFAULT,
 	),
 )); ?>
 </div>

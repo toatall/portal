@@ -87,10 +87,10 @@ class SmileysWidget extends CWidget{
      * @param bool $loadAssets
      * @return
      */
-    /*
+
     protected function publishAssets($loadAssets=true)
     {
-        $publish=Yii::app()->assetManager->publish(Yii::getPathOfAlias('ext.smileys').'/assets/',false,-1,$this->forcePublish);
+        $publish=Yii::app()->assetManager->publish(Yii::getPathOfAlias('ext.mySmile').'/assets/',false,-1,$this->forcePublish);
         
         if($loadAssets)
         {
@@ -108,7 +108,7 @@ class SmileysWidget extends CWidget{
         }
         return $publish;
     }
-	*/
+
     
     
 }

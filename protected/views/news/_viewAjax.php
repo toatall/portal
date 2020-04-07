@@ -1,9 +1,21 @@
-<i class="icon-calendar"></i> <i><?php echo date('d.m.Y',strtotime($model['date_create'])); ?></i>,
-<i class="icon-user"></i> <i><?php echo User::nameByLogin($model['author']); ?></i>,
-<i class="icon-heart"></i> <i><?= $model['count_like'] ?></i>,
-<i class="icon-comment"></i> <i><?= $model['count_comment'] ?></i>,
-<i class="icon-eye-open" title="Просмотров"></i> <i><?= $model['count_visit'] ?></i>,
-<br /><i class="icon-home"></i> <i><?= $model['organization_name'] ?></i>
+<?php
+/**
+ * @var $this NewsController
+ * @var $model News
+ * @var $dirFile string
+ * @var $dirImage string
+ * @var $files File[]
+ * @var $images Image[]
+ *
+ */
+?>
+
+<i class="glyphicon glyphicon-calendar"></i> <i><?php echo date('d.m.Y',strtotime($model['date_create'])); ?></i>,
+<i class="glyphicon glyphicon-user"></i> <i><?php echo User::nameByLogin($model['author']); ?></i>,
+<i class="glyphicon glyphicon-heart"></i> <i><?= $model['count_like'] ?></i>,
+<i class="glyphicon glyphicon-comment"></i> <i><?= $model['count_comment'] ?></i>,
+<i class="glyphicon glyphicon-eye-open" title="Просмотров"></i> <i><?= $model['count_visit'] ?></i>,
+<br /><i class="glyphicon glyphicon-home"></i> <i><?= $model['organization_name'] ?></i>
 <hr />
 
 <div style="text-align: justify;" class="gallery">
@@ -53,7 +65,7 @@
     </div>
 </div>
 <script type="text/javascript">
-	$(document).ready(function() {		
+	$(document).ready(function() {
 		baguetteBox.run('.gallery');
 	});
 </script>

@@ -1,4 +1,4 @@
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
 	'id'=>'organization-form',
 	'enableAjaxValidation'=>false,
 )); ?>
@@ -7,18 +7,14 @@
 
 	<?php echo $form->errorSummary($model); ?>
     
-    <?php echo $form->textFieldRow($model,'code',array('class'=>'span5','maxlength'=>4)); ?>
+    <?php echo $form->textFieldControlGroup($model,'code',array('class'=>'span5','maxlength'=>4)); ?>
     
-	<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>250)); ?>
+	<?php echo $form->textFieldControlGroup($model,'name',array('class'=>'span5','maxlength'=>250)); ?>
 
-	<?php echo $form->textFieldRow($model,'sort',array('class'=>'span5')); ?>	
+	<?php echo $form->textFieldControlGroup($model,'sort',array('class'=>'span5')); ?>
 
 	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'=>'submit',
-			'type'=>'primary',
-			'label'=>$model->isNewRecord ? 'Создать' : 'Сохранить',
-		)); ?>
+        <?= BsHtml::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => 'btn btn-primary']) ?>
 	</div>
 
 <?php $this->endWidget(); ?>

@@ -1,5 +1,11 @@
-
-<?php 
+<?php
+/**
+ * @var $model array
+ * @var $dirFile string
+ * @var $dirImage string
+ * @var $files array
+ * @var $images array
+ */
 
     // скрипты для просмотра изображений //
     Yii::app()->clientScript->registerScriptFile(
@@ -65,9 +71,7 @@
 
 <?php
     // изображения
-    if (isset($images) && count($images)): 
-    
-            
+    if (isset($images) && count($images)):
 ?>
 <div class="spoiler-wrap">
     <div class="spoiler-head folded clickable unfolded"><i class="icon-picture"></i> Изображения</div>

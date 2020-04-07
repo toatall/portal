@@ -1,4 +1,4 @@
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+<?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm',array(
 	'id'=>'vote-question-form',
 	'enableAjaxValidation'=>false,
 )); ?>
@@ -8,14 +8,10 @@
 
 	<?php echo $form->errorSummary($model); ?>
 
-	<?php echo $form->textArea($model,'text_question',array('class'=>'span6', 'rows'=>6)); ?>
+	<?php echo $form->textAreaControlGroup($model,'text_question',array('rows'=>6)); ?>
 	
 	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'=>'submit',
-			'type'=>'primary',
-			'label'=>$model->isNewRecord ? 'Создать' : 'Сохранить',
-		)); ?>
+        <?= BsHtml::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => 'btn btn-primary']) ?>
 	</div>
 
 <?php $this->endWidget(); ?>

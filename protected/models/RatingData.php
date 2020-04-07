@@ -295,7 +295,7 @@ class RatingData extends CActiveRecord {
         $result = '';
         foreach ($this->files as $file) {
             $result .= CHtml::link($file->file_name, ['file/download', 'id' => $file->id], array('target' => '_blank'))
-                    . ' (<i class="icon-download" title="Загрузок"></i> ' . $file->count_download . ')<br />';
+                    . ' (<i class="glyphicon glyphicon-download" title="Загрузок"></i> ' . $file->count_download . ')<br />';
         }
         return $result;
     }

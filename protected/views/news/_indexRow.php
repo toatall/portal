@@ -1,5 +1,8 @@
-<?php 	
-       
+<?php
+/**
+ * @var $this CController
+ * @var $data array
+ */
     // для проверки существавания файла нужно использовать iconv    
     $imageUrl = iconv('UTF-8', 'windows-1251', $data['thumbail_image']);
     if ($imageUrl == null || !file_exists(Yii::app()->params['siteRoot'] . $imageUrl) 
@@ -9,43 +12,42 @@
 	}
 	else
 	{
-	   // ... но для отображения не нужно!!
+	    // ... но для отображения не нужно!!
 	    $imageUrl = $data['thumbail_image'];
 	}
 	
 	$url = Yii::app()->getController()->createUrl('news/view',array( 
 		'id'=>$data['id'], 'organization'=>$data['id_organization']));	
 ?>
-<style type="text/css">
-<!--
-blockquote p {
-    font-size: inherit;
-}
--->
-</style>
 
-
-<div class="row">
-    <div class="span12 thumbnail">
-    	<div class="span2 links">
-    		<a href="<?= $url ?>" class="sw_dlg">
-    			<img src="<?= $imageUrl ?>" class="thumbnails" style="float: left; margin-right: 10px; max: 200px; max:150px;" />
-    		</a>
-    	</div>
-    	<div class="span10 text-left" style="padding-right:20px;">
-    		<h4><a href="<?= $url ?>" class="link-title sw_dlg"><?php echo $data['title']; ?></a></h4>
-    		<blockquote>
-    			<span style="text-align: justify; font-style: normal;"><?= $data['message1'] ?></span>    			
-    		</blockquote>
-    		<small>
-    			<i class="icon-calendar" title="Дата создания"></i> <i><?= date('d.m.Y H:i:s',strtotime($data['date_create'])) ?></i>,
-    			<i class="icon-user" title="Автор"></i> <i><?= User::nameByLogin($data['author']) ?></i>,    			
-	            <i class="icon-heart" title="Понравилось"></i> <i><?= $data['count_like'] ?></i>,
-	            <i class="icon-comment" title="Комментарии"></i> <i><?= $data['count_comment'] ?></i>,
-	            <i class="icon-eye-open" title="Просмотров"></i> <i><?= $data['count_visit'] ?></i>,
-	            <br /><i class="icon-home"></i> <i><?= $data['organization_name'] ?></i>
-    		</small>
-    	</div>
-    </div>    
+<div class="panel panel-default">
+    <div class="panel-body vertical-align" style="background: #fbfbfb">
+        <div class="col-sm-4 col-md-3 col-lg-2">
+            <a href="<?= $url ?>" class="show-modal-dialog">
+                <img src="<?= $imageUrl ?>" class="thumbnail" style="width: 100%;">
+            </a>
+        </div>
+        <div class="col-sm-8 col-md-9 col-lg-10">
+            <div class="icerik-bilgi">
+                <a href="<?= $url ?>" class="show-modal-dialog">
+                    <h4 style="color: #3B5998; font-weight: bold;">
+                        <?= $data['title']; ?>
+                    </h4>
+                </a>
+                <div class="icon-group">
+                    <span class="label label-default"><?= $data['count_like'] ?> <i class="fa fa-heart"></i></span>
+                    <span class="label label-default"><?= $data['count_comment'] ?> <i class="fa fa-comments"></i></span>
+                    <span class="label label-default"><?= $data['count_visit'] ?> <i class="fa fa-eye"></i></span>
+                </div>
+                <p></p>
+                <hr>
+                <span style="color:#666; font-size:12px;">
+                    <i class="fa fa-building"></i> <?= $data['organization_name'] ?><br>
+                    <i class="fa fa-clock"></i> <?= date('d.m.Y H:i:s',strtotime($data['date_create'])) ?>
+                    <i class="fa fa-user-edit"></i> <?= User::nameByLogin($data['author']) ?>
+                </span>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
 </div>
-<br />

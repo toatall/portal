@@ -2,6 +2,9 @@
     /* @var $queryResult array */
     /* @var $sum array */
 
+    $assetDatepicker = new DatepickerAsset();
+    $assetDatepicker->register();
+
 $this->breadcrumbs = array(
     'Анкетирование по ГР',
 );
@@ -14,15 +17,33 @@ $this->breadcrumbs = array(
     <?= CHtml::link('Детализация', ['regecr/detail'], ['class'=>'btn btn-default']) ?>&nbsp;&nbsp;
     <?= CHtml::link('В виде графика', ['regecr/chart'], ['class'=>'btn btn-default']) ?>
     <hr />
-    
+
+
     <div class="alert alert-info">
-        <h4>Фильтр</h4><br />
-        <form method="get">
-            <input type="text" name="date1" class="span2" data-type="date" value="<?= $date1 ?>" />
-            <input type="text" name="date2" class="span2" data-type="date" value="<?= $date2 ?>" />        
-            <button type="submit" class="btn btn-primary" style="margin-top:-10px;">Поиск</button>
-        </form>    
+        <div class="panel-body">
+            <form method="get">
+                <div class="col-sm-3">
+                    <?= BsHtml::textField('date1', $date1, [
+                        'class'=>'datepicker form-control krajee-datepicker',
+                        'placeholder'=>'Поиск по дате от ...',
+                        'prepend'=>'<i class="glyphicon glyphicon-calendar kv-dp-icon"></i>',
+                        'data-type' => 'date',
+                    ]) ?>
+                </div>
+                <div class="col-sm-3">
+                    <?= BsHtml::textField('date2', $date2, [
+                        'class'=>'datepicker form-control krajee-datepicker',
+                        'placeholder'=>'Поиск по дате от ...',
+                        'prepend'=>'<i class="glyphicon glyphicon-calendar kv-dp-icon"></i>',
+                        'data-type' => 'date',
+                    ]) ?>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="">Поиск</button>
+            </form>
+        </div>
     </div>
+
     
     <table class="table table-bordered table-striped table-hover">
         <tr>
@@ -53,25 +74,3 @@ $this->breadcrumbs = array(
         <?php endforeach; ?>
     </table>
 </div>    
-
-
-<?php
-Yii::app()->clientScript->registerScript('search2', "       
-    jQuery('input[data-type=\"date\"]').datepicker({
-        'format':'dd.mm.yyyy',
-        'autoclose':'true',
-        'todayBtn':'linked',
-        'language':'ru',
-        'weekStart':0            
-    });   
-");
-?>
-
-<?php    
-    Yii::app()->clientScript->registerScriptFile(
-        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.js');
-    Yii::app()->clientScript->registerScriptFile(
-        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.ru.js');
-    Yii::app()->getClientScript()->registerCssFile(
-        Yii::app()->baseUrl.'/extension/date-picker/bootstrap-datepicker.css');
-?>

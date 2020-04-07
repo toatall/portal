@@ -7,40 +7,145 @@
  */
 class DateHelper extends CComponent
 {
+    /**
+     * Формат даты
+     * @var string
+     */
+    public $formatDate = 'd.m.Y';
+
+    /**
+     * Формат времени
+     * @var string
+     */
+    public $formatTime = 'H:i:s';
+
+    /**
+     * Формат даты и времени
+     * @var string
+     */
+    public $formatDateTime = 'd.m.Y H:i:s';
+
+    /**
+     * Привести к формату даты
+     * @param $date
+     * @return false|string
+     */
+    public function asDate($date)
+    {
+        if ($date == null) {
+            return null;
+        }
+        return date($this->formatDate, strtotime($date));
+    }
+
+    /**
+     * Привести к формату времени
+     * @param $time
+     * @return false|string
+     */
+    public function asTime($time)
+    {
+        if ($time == null) {
+            return null;
+        }
+        return date($this->formatTime, strtotime($time));
+    }
+
+    /**
+     * Привести к формату дата, время
+     * @param $dateTime
+     * @return false|string
+     */
+    public function asDateTime($dateTime)
+    {
+        if ($dateTime == null) {
+            return null;
+        }
+        return date($this->formatDateTime, strtotime($dateTime));
+    }
+
+    /**
+     * Приветсти к формату дата и текущее время
+     * @param $date
+     * @return false|string
+     */
+    public function asDateWithCurrentTime($date)
+    {
+        if ($date == null) {
+            return  null;
+        }
+        return date($this->formatDateTime, strtotime($date . ' ' . date($this->formatTime)));
+    }
+
+    /**
+     * Привести к формату дата и верхняя граница времени (23:59:59)
+     * @param $date
+     * @return false|string
+     */
+    public function asDateWithHighTime($date)
+    {
+        if ($date == null) {
+            return null;
+        }
+        return date($this->formatDateTime, strtotime($date . ' 23:59:59'));
+    }
+
+    /**
+     * Сравнить 2 даты в формате дата
+     * @param $date1
+     * @param $date2
+     * @return bool
+     */
+    public function equalsDate($date1, $date2)
+    {
+        if ($date1 == null || $date2 == null) {
+            return false;
+        }
+        return date($this->formatDate, strtotime($date1)) == date($this->formatDate, strtotime($date2));
+    }
+
+    /**
+     * init
+     */
+    public function init() { }
+
+
+
+
 	/**
 	 * Спсиок месяцев
 	 * @var array
 	 * @uses arrayMonths()
 	 */
-	private static $_monthNames = array(
-			'01' => 'Январь',
-			'02' => 'Февраль',
-			'03' => 'Март',
-			'04' => 'Апрель',
-			'05' => 'Май',
-			'06' => 'Июнь',
-			'07' => 'Июль',
-			'08' => 'Август',
-			'09' => 'Сентябрь',
-			'10' => 'Октябрь',
-			'11' => 'Ноябрь',
-			'12' => 'Декабрь',				
-		);
+	private static $_monthNames = [
+        '01' => 'Январь',
+        '02' => 'Февраль',
+        '03' => 'Март',
+        '04' => 'Апрель',
+        '05' => 'Май',
+        '06' => 'Июнь',
+        '07' => 'Июль',
+        '08' => 'Август',
+        '09' => 'Сентябрь',
+        '10' => 'Октябрь',
+        '11' => 'Ноябрь',
+        '12' => 'Декабрь',
+    ];
 	
 	/**
 	 * Список дней недели
 	 * @var array
 	 * @uses weekByNumber()
 	 */
-	private static $_weekNames = array(
-			1 => 'Понедельник',
-			2 => 'Вторник',
-			3 => 'Среда',
-			4 => 'Четверг',
-			5 => 'Пятница',
-			6 => 'Суббота',
-			7 => 'Воскресение'
-	);
+	private static $_weekNames = [
+        1 => 'Понедельник',
+        2 => 'Вторник',
+        3 => 'Среда',
+        4 => 'Четверг',
+        5 => 'Пятница',
+        6 => 'Суббота',
+        7 => 'Воскресение'
+	];
 	
 	/**
 	 * Список месяцев (на рус.)
@@ -110,7 +215,7 @@ class DateHelper extends CComponent
 	 */
 	public static function explodeDate($date)
 	{
-		return date('d.m.Y',strtotime($date));
+		return date('d.m.Y', strtotime($date));
 	}
 	
 	/**

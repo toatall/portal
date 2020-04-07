@@ -34,6 +34,11 @@ class WebUser extends CWebUser
 				'last_action' => new CDbExpression('getdate()'),
 			], 'id=:id', [':id'=>$lastId]);
 	}
+
+	public function getModel()
+    {
+        return User::model()->findByPk(Yii::app()->user->id);
+    }
 		
 	/**
 	 * Проверка, состоит ли пользователь в указанных группах

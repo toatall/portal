@@ -1,10 +1,16 @@
+<?php
+/* @var $this CController */
+/* @var $modelYear array */
+/* @var $model RatingMain */
+?>
+
 <hr class="hr-sm" />
 
 <?php 
     
 	$flagActive=true;
 	
-	$tabs = array();
+	$tabs = [];
 	
 	foreach ($modelYear as $year)
 	{
@@ -25,9 +31,9 @@
 </div>
 <?php endif; ?>
 
-<?php $this->widget('bootstrap.widgets.TbTabs', array(	
-	'placement'=>'left',
-	'htmlOptions'=>['class'=>'bold', 'id'=>'tabs_' . $model->id],
-	'tabs'=>$tabs,
-));
-?>
+
+<?= BsHtml::tabbableTabs($tabs, [
+    'class'=>'bold',
+    'id'=>'tabs_' . $model->id,
+    'placement'=> BsHtml::TABS_PLACEMENT_LEFT,
+]) ?>

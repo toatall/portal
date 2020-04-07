@@ -4,18 +4,6 @@ $this->breadcrumbs=array(
 	'Управление',
 );
 
-Yii::app()->clientScript->registerScript('search', "
-$('.search-button').click(function(){
-	$('.search-form').toggle();
-	return false;
-});
-$('.search-form form').submit(function(){
-	$.fn.yiiGridView.update('menu-grid', {
-		data: $(this).serialize()
-	});
-	return false;
-});
-");
 ?>
 
 <h1>Управление Меню</h1>
@@ -24,15 +12,9 @@ $('.search-form form').submit(function(){
 <div class="well" style="background-color: white;">
     <h1>Верхнее меню</h1>
     <hr />
-        
-    <?php 
-        $this->widget('bootstrap.widgets.TbButton', array(
-			'url'=>array('create','typeMenu'=>1),
-			'type'=>'primary',
-			'label'=>'Создать',
-        )); 
-    ?>
-    
+
+    <?= BsHtml::link('Создать', $this->createUrl('create', ['typeMenu' => 1]), ['class' => 'btn btn-primary']) ?>
+
     <?php 
     
     $tree = Menu::model()->getTree(0,0,1);
@@ -52,14 +34,8 @@ $('.search-form form').submit(function(){
 <div class="well" style="background-color: white;">
     <h1>Левое меню</h1>
     <hr />
-    
-    <?php 
-        $this->widget('bootstrap.widgets.TbButton', array(
-			'url'=>array('create','typeMenu'=>2),
-			'type'=>'primary',
-			'label'=>'Создать',
-        )); 
-    ?>
+
+    <?= BsHtml::link('Создать', $this->createUrl('create', ['typeMenu' => 2]), ['class' => 'btn btn-primary']) ?>
     
     
     <?php 

@@ -15,7 +15,7 @@ $this->menu=array(
 <h1><?= $title ?></h1>
 
 <?php 
-    $this->widget('bootstrap.widgets.TbGridView',array(
+    $this->widget('bootstrap.widgets.BsGridView',array(
     	'id'=>'vksFns-grid',
     	'dataProvider'=>$model->search($model->type_conference),
     	'filter'=>$model,
@@ -29,8 +29,12 @@ $this->menu=array(
     		'date_start',
     		'date_create',
     		array(
-    			'class'=>'bootstrap.widgets.TbButtonColumn',            
+    			'class'=>'bootstrap.widgets.BsButtonColumn',
     		),
     	),
+        'pager'=>array(
+            'class'=>'bootstrap.widgets.BsPager',
+            'size' => BsHtml::BUTTON_SIZE_DEFAULT,
+        ),
     )); 
 ?>

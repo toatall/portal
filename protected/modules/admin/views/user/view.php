@@ -21,11 +21,11 @@ $this->menu=array(
 
 <h1>Просмотр пользователя #<?php echo $model->id; ?></h1>
 
-<?php $this->widget('bootstrap.widgets.TbDetailView',array(
+<?php $this->widget('bootstrap.widgets.BsDetailView',array(
 	'data'=>$model,
 	'attributes'=>array(
 		'id',
-		'username',
+		//'username',
 		'username_windows',		
 		'date_create',	
 		'date_edit',
@@ -46,7 +46,7 @@ $this->menu=array(
 
 <?php if (isset($model->profile)): ?>
 	
-	<?php $this->widget('bootstrap.widgets.TbDetailView',array(
+	<?php $this->widget('bootstrap.widgets.BsDetailView',array(
 		'data'=>$model->profile,
 		'attributes'=>array(			
 			'name',
