@@ -35,10 +35,10 @@
     ?>
 
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
-    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/menu.css" />
-    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/menu.css?v=07042020" />
+    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css?v=07042020" />
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/fontawesome/fontawesome-all.min.css" />
-    <?php $cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/main.js', CClientScript::POS_END); ?>
+    <?php $cs->registerScriptFile(Yii::app()->request->baseUrl . '/js/main.js?v=07042020', CClientScript::POS_END); ?>
     <?php
         $cs
         ->registerScriptFile(
