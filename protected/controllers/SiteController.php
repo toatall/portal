@@ -25,7 +25,7 @@ class SiteController extends Controller {
     public function accessRules() {
         return array(
             array('allow',
-                'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'hallFame', 'contact', 'captcha', 'error', 'bruteforce', 'test'),
+                'actions' => array('index', 'browsers', 'telephones', 'telephoneDownload', 'hallFame', 'contact', 'captcha', 'error', 'bruteforce', 'vov'),
                 'users' => array('@'),
             ),
             array(
@@ -162,6 +162,11 @@ class SiteController extends Controller {
             'year' => $model->getYear(),
             'yearList' => $model->getYears(),
         ]);
+    }
+
+    public function actionVov()
+    {
+        return $this->render('vov');
     }
     
     /**

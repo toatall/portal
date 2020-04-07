@@ -57,47 +57,13 @@
 <div class="wrap">
     <div id="logo-background">
         <div id="logo-image"></div>
+        <div style="float: right; padding: 10px;">
+            <a href="<?= $this->createUrl('/site/vov') ?>" data-toggle="popover" data-content='Проект "Помним! Гордимся!"' data-placement="left">
+                <img src="/images/War.png" width="200px;" />
+            </a>
+        </div>
     </div>
-    <?php
-    /*
-    NavBar::begin([
-        'id' => 'navbar-main-menu',
-        'brandLabel' => false,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inner',
-        ],
-        'innerContainerOptions' => [
-            'style' => 'width: 100%;',
-        ],
-    ]);
 
-    $menuItems = frontend\modules\menu\models\BuilderMenuMain::build();
-
-    $menuItemsRight = array();
-    if (Yii::$app->user->isGuest) {
-        $menuItemsRight[] = ['label' => 'Вход', 'url' => ['/site/login']];
-    } else {
-        $menuItemsRight[] = '<li>'
-            . Html::beginForm(['/site/logout'], 'post')
-            . Html::submitButton(
-                'Выход (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout', 'style' => 'padding:0; padding-top:5px;']
-            )
-            . Html::endForm()
-            . '</li>';
-    }
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-left'],
-        'items' => $menuItems,
-    ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItemsRight,
-    ]);
-
-    NavBar::end();*/
-    ?>
     <?php $this->widget('bootstrap.widgets.BsNavbar',array(
         'brandLabel' => false,
         'position' => BsHtml::NAVBAR_POSITION_STATIC_TOP,
