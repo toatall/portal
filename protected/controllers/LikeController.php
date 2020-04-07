@@ -94,7 +94,9 @@ class LikeController extends Controller
 			->andWhere('username=:username',array(':username'=>UserInfo::inst()->userLogin))
 			->queryScalar();
 		
-		return '<span class="ic-like'.($countByUser>0 ? '' : '-not').'"></span> Мне нравится <span class="badge" style="background: #3d6899;">'.($count>0 ? $count : '').'</span>';
+		return '<button class="btn btn-' . ($countByUser > 0 ? 'primary' : 'default') .'">
+            <span class="far fa-heart"></span> Мне нравится <span class="badge">'.($count>0 ? $count : '').'</span>
+        </button>';
 	}
 	
 	

@@ -1,4 +1,6 @@
-<button class="btn btn-default btn-like" id="like-btn-<?= $id ?>"></button>
+<!--button class="btn btn-default btn-like" id="like-btn-<?= $id ?>"></button-->
+<div id="like-btn-<?= $id ?>"></div>
+
 
 <script type="text/javascript">
 
@@ -18,11 +20,11 @@
 	
 	// добавление/удаление лайка
 	$('#like-btn-<?= $id ?>').on('click',function(){
-		loadAjax('<?= Yii::app()->controller->createUrl('like/add', array('id'=>$id)) ?>');
+		loadAjax('<?= $this->createUrl('like/add', array('id'=>$id)) ?>');
 		this.blur();
 	});
 
 	// загрузка лайков
-	loadAjax('<?= Yii::app()->controller->createUrl('like/count', array('id'=>$id)) ?>');
+	loadAjax('<?= $this->createUrl('like/count', array('id'=>$id)) ?>');
 	
 </script>
