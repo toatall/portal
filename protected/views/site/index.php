@@ -4,6 +4,7 @@
 $this->pageTitle = Yii::app()->name;
 ?>
 
+<div style="padding-right: 10px;">
 <?php
     $this->widget('bootstrap.widgets.BsNavs', array(
         'id'=>'myTabs',
@@ -28,10 +29,8 @@ $this->pageTitle = Yii::app()->name;
         ),
     
     ));
-
-
 ?>
-
+</div>
 <?php  /*
 $this->beginWidget('bootstrap.widgets.TbModal', array(
     'id'=>'modalPreviewNews',

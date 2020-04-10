@@ -104,6 +104,23 @@ class DateHelper extends CComponent
         return date($this->formatDate, strtotime($date1)) == date($this->formatDate, strtotime($date2));
     }
 
+    public function dateDiff($date1, $date2)
+    {
+        $d1 = date_create($date1);
+        $d2 = date_create($date2);
+        return date_diff($d1, $d2);
+    }
+
+    public function dateDiffDays($date1, $date2 = null)
+    {
+        if ($date2 == null)
+        {
+            $date2 = date($this->formatDateTime, strtotime('now'));
+        }
+        $diff = $this->dateDiff($date1, $date2);
+        return $diff->d;
+    }
+
     /**
      * init
      */

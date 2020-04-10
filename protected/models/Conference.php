@@ -228,6 +228,8 @@ class Conference extends CActiveRecord
 		    $criteria->addCondition('date_delete is null');
 		}		
 		
+		$criteria->addCondition('datediff(day,date_create,getdate()) <= 365');
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(

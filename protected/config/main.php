@@ -125,7 +125,7 @@ return array(
     // using Yii::app()->params['paramName']
     'params' => array(
         // this is used in contact page
-        'adminEmail' => 'trusov@r86.nalog.ru',
+        'adminEmail' => 'o.trusov.r8600@nalog.ru',
         'siteRoot' => $_SERVER['DOCUMENT_ROOT'],
         //'pathFiles' => '/files/{code_no}/{module}/{id}/',
         'pathDocumets' => '/files/{code_no}/{module}/{id}/documents/',

@@ -28,9 +28,17 @@
             </a>
         </div>
         <div class="col-sm-8 col-md-9 col-lg-10">
+            <?php if ($data['date_top'] != ''): ?>
+            <div style="float:right; font-size: xx-large; margin-top: 0px;">
+                <i class="fa fa-thumbtack text-muted" data-toggle="popover" data-placement="bottom" data-content="Закреплена до <?= $data['date_top'] ?>"></i>
+            </div>
+            <?php endif; ?>
             <div class="icerik-bilgi">
                 <a href="<?= $url ?>" class="show-modal-dialog">
                     <h4 style="color: #3B5998; font-weight: bold;">
+                        <?php if (Yii::app()->dateHelper->dateDiffDays($data['date_create']) <= 0): ?>
+                        <span class="label label-success">Новое</span>
+                        <?php endif ?>
                         <?= $data['title']; ?>
                     </h4>
                 </a>
@@ -43,11 +51,13 @@
                 <hr>
                 <span style="color:#666; font-size:12px;">
                     <i class="fa fa-building"></i> <?= $data['organization_name'] ?><br>
-                    <i class="fa fa-clock"></i> <?= date('d.m.Y H:i:s',strtotime($data['date_create'])) ?>
+                    <i class="fa fa-clock"></i> <?= $data['date_create'] ?>
                     <i class="fa fa-user-edit"></i> <?= User::nameByLogin($data['author']) ?>
                 </span>
                 <div class="clearfix"></div>
             </div>
         </div>
+
     </div>
+
 </div>
