@@ -27,6 +27,7 @@ return array(
         'admin' => array(
             'layout' => '/layouts/column2',
         ),
+        'zg',
         /*
           'reestrSVT' => array(
           'layout' => '/layouts/column2',
@@ -140,6 +141,19 @@ return array(
 
         'news' => [
             'pageSize' => 10,
+        ],
+
+        // настройки модуля обращения граждан
+        'zg' => [
+            // база электронных адресов органов государственной власти
+            'emailGoverment' => [
+                // количество строк при отображении базы адресов
+                'pageSize' => 100,
+                // группы и учетные записи, которым доступно редактирование базы адресов
+                'editAccounts' => [
+                    'u8600-Obshhij',
+                ],
+            ],
         ],
     ),
 );

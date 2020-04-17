@@ -62,10 +62,11 @@ function ajaxGET(url, data, container, gif, append)
             });
 }
 
-function ajaxJSON(url, containers, gif)
+function ajaxJSON(url, containers, gif, method, postData)
 {
     gif = gif || IMAGE_LOADER;
     gif = '<div id="img_loader">' + gif + '</div>';
+    method = method || 'get';
 
     // заголовок
     if (('title' in containers))
@@ -81,7 +82,9 @@ function ajaxJSON(url, containers, gif)
 
     $.ajax({
         url: url,
-        dataType: "json"
+        dataType: 'json',
+        method: method,
+        data: postData
     })
             .done(function (data) {
 
@@ -236,8 +239,9 @@ function getJson(url)
 
 function urlConcationation(url, params)
 {
-    if (url.indexOf('?') > 1)
+    if (url.indexOf('?') > 1) {
         return url + '&' + params;
+    }
     return url + '?' + params;
 }
 
@@ -289,7 +293,6 @@ $(document).ready(function () {
         $('#modal-dialog').modal('show');
         return false;
     });
-
 
     /**
      * Загрузка событий на сегодня
