@@ -5,7 +5,7 @@
 
 $this->breadcrumbs=array(
 	'Проект Обращения'=>array('index'),
-	'База знаний',
+	'Шаблоны ответов на однотипные обращения',
 );
 
 
@@ -22,7 +22,7 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
-<?php echo BsHtml::pageHeader('Проект Обращения','База знаний') ?>
+<?php echo BsHtml::pageHeader('Проект Обращения','Шаблоны ответов на однотипные обращения') ?>
 <?php if ($this->isEditor()): ?>
 <?= BsHtml::link('Добавить', '/zg/template/create', ['class' => 'btn btn-primary'])  //BsHtml::button('Добавить', ['class' => 'btn btn-primary', 'id' => 'btn-add']) ?><br /><br />
 <?php endif; ?>
