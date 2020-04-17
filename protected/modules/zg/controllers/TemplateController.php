@@ -1,6 +1,6 @@
 <?php
 
-class EmailGovermentController extends Controller
+class TemplateController extends Controller
 {
 
 	/**
@@ -27,7 +27,7 @@ class EmailGovermentController extends Controller
 				'users'=>array('@'),
 			),
             array('allow',
-                'actions'=>array('create','update','delete'),
+                'actions'=>array('create', 'update', 'delete'),
                 'expression'=>function() {
                     return $this->isEditor();
                 },
@@ -43,15 +43,17 @@ class EmailGovermentController extends Controller
 		);
 	}
 
-	/**
-	* Displays a particular model.
-	* @param integer $id the ID of the model to be displayed
-	*/
+    /**
+     * Displays a particular model.
+     * @param integer $id the ID of the model to be displayed
+     * @throws CException
+     * @throws CHttpException
+     */
 	public function actionView($id)
 	{
 	    $model = $this->loadModel($id);
         echo CJSON::encode([
-            'title' => $model->org_name,
+            'title' => $model->kind,
             'content' => $this->renderPartial('view', [
                 'model' => $model,
             ], true, true),
@@ -64,71 +66,67 @@ class EmailGovermentController extends Controller
 	*/
 	public function actionCreate()
 	{
-		$model=new EmailGoverment;
+		$model=new Template();
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['EmailGoverment']))
+		if(isset($_POST['Template']))
 		{
-			$model->attributes=$_POST['EmailGoverment'];
+			$model->attributes=$_POST['Template'];
 			if($model->save())
             {
-
-                echo CJavaScript::jsonEncode([
-                    'title' => $model->org_name,
-                    'content' => $this->renderPartial('success', [],true),
-                ]);
-                Yii::app()->end();
+                $model->saveFiles();
+                return $this->redirect('/zg/template/index');
             }
 		}
 
-
-        echo CJavaScript::jsonEncode([
-            'title' => 'Создание адреса',
-            'content' => $this->renderPartial('create', [
-                'model' => $model,
-            ], true),
+        return $this->render('create', [
+            'model' => $model,
         ]);
 
 	}
 
-	/**
-	* Updates a particular model.
-	* If update is successful, the browser will be redirected to the 'view' page.
-	* @param integer $id the ID of the model to be updated
-	*/
+    /**
+     * Updates a particular model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id the ID of the model to be updated
+     * @return string|void
+     * @throws CException
+     * @throws CHttpException
+     */
 	public function actionUpdate($id)
 	{
-		$model=$this->loadModel($id);
+		$model = $this->loadModel($id);
+        // Uncomment the following line if AJAX validation is needed
+		//$this->performAjaxValidation($model);
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['EmailGoverment'])) {
-            $model->attributes = $_POST['EmailGoverment'];
-            if ($model->save()) {
-                echo CJavaScript::jsonEncode([
-                    'title' => $model->org_name,
-                    'content' => $this->renderPartial('success', [], true),
-                ]);
-                Yii::app()->end();
+		if(isset($_POST['Template']))
+		{
+            $model->attributes = $_POST['Template'];
+            if ($model->save())
+            {
+                if ($model->deleteFile)
+                {
+                    $model->deleteFiles($model->deleteFile);
+                }
+                $model->saveFiles();
+                return $this->redirect('/zg/template/index');
             }
         }
 
-        echo CJavaScript::jsonEncode([
-            'title' => $model->org_name,
-            'content' => $this->renderPartial('update', [
-                'model' => $model,
-            ], true),
+        return $this->render('update', [
+            'model' => $model,
         ]);
 
 	}
 
-	/**
-	* Deletes a particular model.
-	* If deletion is successful, the browser will be redirected to the 'admin' page.
-	* @param integer $id the ID of the model to be deleted
-	*/
+    /**
+     * Deletes a particular model.
+     * If deletion is successful, the browser will be redirected to the 'admin' page.
+     * @param integer $id the ID of the model to be deleted
+     * @throws CDbException
+     * @throws CHttpException
+     */
 	public function actionDelete($id)
 	{
 		if(Yii::app()->request->isPostRequest)
@@ -151,10 +149,10 @@ class EmailGovermentController extends Controller
 	*/
 	public function actionIndex()
 	{
-		$model=new EmailGoverment('search');
+		$model=new Template('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['EmailGoverment']))
-			$model->attributes=$_GET['EmailGoverment'];
+		if(isset($_GET['Template']))
+			$model->attributes=$_GET['Template'];
 
 		$this->render('index',array(
 			'model'=>$model,
@@ -165,13 +163,13 @@ class EmailGovermentController extends Controller
 	* Returns the data model based on the primary key given in the GET variable.
 	* If the data model is not found, an HTTP exception will be raised.
 	* @param integer $id the ID of the model to be loaded
-	* @return EmailGoverment the loaded model
+	* @return Template the loaded model
 	* @throws CHttpException
 	*/
 	public function loadModel($id)
 	{
-		$model=EmailGoverment::model()->findByPk($id);
-		if($model===null)
+		$model = Template::model()->findByPk($id);
+		if($model === null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
 	}
@@ -200,7 +198,7 @@ class EmailGovermentController extends Controller
             return true;
         }
 
-        $accounts = Yii::app()->params['zg']['emailGoverment']['editAccounts'];
+        $accounts = Yii::app()->params['zg']['template']['editAccounts'];
 
         // поиск по имени учетной записи
         if (in_array(Yii::app()->user->name, $accounts)) {

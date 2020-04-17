@@ -84,6 +84,8 @@ function ajaxJSON(url, containers, gif, method, postData)
         url: url,
         dataType: 'json',
         method: method,
+        processData: false,
+        contentType: false,
         data: postData
     })
             .done(function (data) {

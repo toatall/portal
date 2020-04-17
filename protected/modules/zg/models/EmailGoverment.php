@@ -109,6 +109,10 @@ class EmailGoverment extends CActiveRecord
 		));
 	}
 
+    /**
+     * Количество строк при выводе информации по базе адресов
+     * @return mixed
+     */
 	private function getPageSize()
     {
         return Yii::app()->params['zg']['emailGoverment']['pageSize'];
@@ -148,7 +152,7 @@ class EmailGoverment extends CActiveRecord
     /**
      * @inheritDoc
      */
-    public function afterFind()
+    protected function afterFind()
     {
         parent::afterFind();
         /* @var $dateHelper DateHelper */
@@ -156,36 +160,4 @@ class EmailGoverment extends CActiveRecord
         $this->date_create = $dateHelper->asDateTime($this->date_create);
         $this->date_update = $dateHelper->asDateTime($this->date_update);
     }
-
-    /**
-     * Права редактора
-     * @return bool
-     */
-    public static function isRight()
-    {
-        // если права администратора
-        if (Yii::app()->user->admin)
-        {
-            return true;
-        }
-
-        $accounts = Yii::app()->params['zg']['emailGoverment']['editAccounts'];
-
-        // поиск по имени учетной записи
-        if (in_array(Yii::app()->user->name, $accounts))
-        {
-            return true;
-        }
-
-        // поиск по группам
-        foreach ($accounts as $account)
-        {
-            if (in_array($account, UserInfo::inst()->ADMemberOf)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
 }
