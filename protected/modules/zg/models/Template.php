@@ -66,6 +66,7 @@ class Template extends CActiveRecord
 			'date_create' => 'Дата создания',
 			'date_update' => 'Дата изменения',
 			'author' => 'Автор',
+            'files' => 'Шаблоны',
 		);
 	}
 
@@ -94,8 +95,20 @@ class Template extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+            'pagination' => [
+                'pageSize' => $this->getPageSize(),
+            ],
 		));
 	}
+
+    /**
+     * Количество строк при выводе информации по базе адресов
+     * @return mixed
+     */
+    private function getPageSize()
+    {
+        return Yii::app()->params['zg']['template']['pageSize'];
+    }
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -114,10 +127,6 @@ class Template extends CActiveRecord
      */
     protected function beforeSave()
     {
-        if (!parent::beforeSave()) {
-            return false;
-        }
-
         if ($this->isNewRecord)
         {
             $this->date_create = new CDbExpression('getdate()');
@@ -125,7 +134,7 @@ class Template extends CActiveRecord
         $this->date_update = new CDbExpression('getdate()');
         $this->author = Yii::app()->user->name;
 
-        return true;
+        return parent::beforeSave();
     }
 
     /**
@@ -140,6 +149,11 @@ class Template extends CActiveRecord
         $this->date_update = $dateHelper->asDateTime($this->date_update);
     }
 
+    /**
+     * @inheritDoc
+     * @return bool
+     * @throws CException
+     */
     protected function beforeDelete()
     {
         if (!parent::beforeDelete())
@@ -205,6 +219,11 @@ class Template extends CActiveRecord
         return $fullPath;
     }
 
+    /**
+     * Подготовка ссылки на файл
+     * @param string $file
+     * @return string
+     */
     public function getUrlFile($file = '')
     {
         $path = Yii::app()->params['zg']['template']['pathFiles'];
@@ -225,6 +244,7 @@ class Template extends CActiveRecord
     /**
      * Добавление записи в БД
      * @param $filename
+     * @throws CDbException
      */
     protected function addDbFile($filename)
     {
@@ -234,6 +254,11 @@ class Template extends CActiveRecord
             ")->execute();
     }
 
+    /**
+     * Список файлов (массив)
+     * @return array|CDbDataReader
+     * @throws CException
+     */
     public function getUploadedFiles()
     {
         /** @var $command CDbCommand */
@@ -243,11 +268,21 @@ class Template extends CActiveRecord
             ->queryAll();
     }
 
+    /**
+     * Список файлов (массив для dropDownList и т.п.)
+     * @return array
+     * @throws CException
+     */
     public function getListFiles()
     {
         return CHtml::listData($this->getUploadedFiles(), 'id', 'filename');
     }
-    
+
+    /**
+     * Удаление файлов
+     * @param array $files
+     * @throws CException
+     */
     public function deleteFiles($files = [])
     {
         /** @var $command CDbCommand */
@@ -266,6 +301,10 @@ class Template extends CActiveRecord
         }
     }
 
+    /**
+     * Удаление файла с диска
+     * @param $file
+     */
     private function deleteFileFromDisk($file)
     {
         $file = $this->preparePath() . $this->prepareFileName($file);
@@ -275,6 +314,10 @@ class Template extends CActiveRecord
         }
     }
 
+    /**
+     * Удаление файла с таблицы
+     * @param $idFile
+     */
     private function deleteFileFromDb($idFile)
     {
         /** @var $command CDbCommand */

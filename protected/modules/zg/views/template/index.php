@@ -28,10 +28,11 @@ $('.search-form form').submit(function(){
 <?php endif; ?>
 <div class="panel panel-default">
     <div class="panel-body">
-        <div class="search-form" style="display:none">
+        <div class="search-form" style="display:block;">
             <?php $this->renderPartial('_search',array(
                 'model'=>$model,
             )); ?>
+            <hr />
         </div>
         <!-- search-form -->
 
@@ -41,10 +42,19 @@ $('.search-form form').submit(function(){
 			    'class' => '',
             ],
 			'dataProvider'=>$model->search(),
-			'filter'=>$model,
+			'filter'=>null,//$model,
 			'columns'=>array(
         		'id',
                 'kind',
+                [
+                    'name' => 'files',
+                    'value' => function ($data) {
+                        /* @var $data Template */
+                        foreach ($data->getListFiles() as $listFile) {
+                            echo BsHtml::link('<i class="fas fa-file-word"></i> ' . $listFile, $data->getUrlFile($listFile)) . BsHtml::Tag('br');
+                        }
+                    }
+                ],
                 'description',
                 'date_create',
 				array(
@@ -63,11 +73,11 @@ $('.search-form form').submit(function(){
                                 return $this->isEditor();
                             }
                         ),
-                        /*'delete'=>array(
+                        'delete'=>array(
                             'visible' => function() {
                                 return $this->isEditor();
                             }
-                        ),*/
+                        ),
                     ],
 				),
 			),

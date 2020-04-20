@@ -7,17 +7,14 @@
 <?php $form=$this->beginWidget('bootstrap.widgets.BsActiveForm', array(
     'action'=>Yii::app()->createUrl($this->route),
     'method'=>'get',
+    'htmlOptions' => [
+        'id'=>'form-search-template',
+    ],
 )); ?>
-
-    <?php echo $form->textFieldControlGroup($model,'id'); ?>
-    <?php echo $form->textFieldControlGroup($model,'kind',array('maxlength'=>1000)); ?>
-    <?php echo $form->textFieldControlGroup($model,'description'); ?>
-    <?php echo $form->textFieldControlGroup($model,'date_create'); ?>
-    <?php echo $form->textFieldControlGroup($model,'date_update'); ?>
-    <?php echo $form->textFieldControlGroup($model,'author',array('maxlength'=>250)); ?>
-
-    <div class="form-actions">
-        <?php echo BsHtml::submitButton('Поиск',  array('color' => BsHtml::BUTTON_COLOR_PRIMARY,));?>
-    </div>
-
+    <?php echo $form->dropDownListControlGroup($model,'kind', array_merge(['' => '- все виды обращений -'], $model->listKinds())); ?>
 <?php $this->endWidget(); ?>
+<script type="text/javascript">
+    $('#<?= CHtml::activeId($model, 'kind') ?>').on('change', function () {
+       $('#form-search-template').submit();
+    });
+</script>
