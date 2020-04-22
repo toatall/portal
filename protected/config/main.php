@@ -28,15 +28,7 @@ return array(
             'layout' => '/layouts/column2',
         ),
         'zg',
-        /*
-          'reestrSVT' => array(
-          'layout' => '/layouts/column2',
-          ),
-
-          'sez' => array(
-          'layout' => '/layouts/column2',
-          ),
-         */
+        'test',
 
         // uncomment the following to enable the Gii tool
         'gii' => array(
@@ -169,6 +161,17 @@ return array(
 
                 'pathFiles' => '/files/8600/zg/template/{id}/',
             ],
+        ],
+
+        // настройки модуля по тестированию
+        'test' => [
+            'question' => [
+                'pathFiles' => '/files/8600/test/questions/{id}/',
+            ],
+            'answer' => [
+                'pathFiles' => '/files/8600/test/answers/{id}/',
+            ],
+            'pageSize' => 50,
         ],
     ),
 );

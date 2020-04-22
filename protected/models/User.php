@@ -119,7 +119,7 @@ class User extends CActiveRecord
 		    'about' => 'Описание',
 		    'departmnet' => 'Отдел',
 		    'organization_name' => 'Организация',
-		    
+		    'fio' => 'ФИО пользователя',
 		);
 	}
 	

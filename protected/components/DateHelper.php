@@ -29,13 +29,21 @@ class DateHelper extends CComponent
      * Привести к формату даты
      * @param $date
      * @return false|string
+     * @throws Exception
      */
-    public function asDate($date)
+    public function asDate($date = null)
     {
         if ($date == null) {
-            return null;
+            return date($this->formatDate, time());
         }
         return date($this->formatDate, strtotime($date));
+    }
+
+    public function maxDate()
+    {
+        $date = new DateTime();
+        $date->setDate(2038, 1, 1);
+        return $date->format($this->formatDate);
     }
 
     /**
