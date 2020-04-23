@@ -47,6 +47,12 @@ $('.search-form form').submit(function(){
 		//'description',
 		'date_create',
 		'author',
+		[
+            'value'=>function($data) {
+		        return BsHtml::link('<i class="fas fa-arrow-circle-down"></i> Вопросы', ['/test/question/admin', 'idTest'=>$data->id], ['class'=>'btn btn-primary']);
+            },
+            'type'=>'raw',
+        ],
 		array(
 			'class'=>'CButtonColumn',
 		),

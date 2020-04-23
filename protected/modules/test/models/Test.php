@@ -144,6 +144,21 @@ class Test extends CActiveRecord
         /* @var $dateHelper DateHelper */
         $dateHelper = Yii::app()->dateHelper;
         $this->date_create = $dateHelper->asDateTime($this->date_create);
+        $this->date_start = $dateHelper->asDate($this->date_start);
+        $this->date_end = $dateHelper->asDate($this->date_end);
     }
+
+    /**
+     * Активный тест
+     * @return bool
+     */
+    public function getActive()
+    {
+        $dateNow = time();
+        $dateStart = strtotime($this->date_start);
+        $dateEnd = strtotime($this->date_end);
+        return $dateNow >= $dateStart && $dateNow <= $dateEnd;
+    }
+
 
 }

@@ -3,19 +3,24 @@
 /* @var $model Test */
 
 $this->breadcrumbs=array(
-	'Tests'=>array('index'),
+	'Тесты'=>array('admin'),
 	$model->name=>array('view','id'=>$model->id),
-	'Update',
-);
-
-$this->menu=array(
-	array('label'=>'List Test', 'url'=>array('index')),
-	array('label'=>'Create Test', 'url'=>array('create')),
-	array('label'=>'View Test', 'url'=>array('view', 'id'=>$model->id)),
-	array('label'=>'Manage Test', 'url'=>array('admin')),
+	'Изменить',
 );
 ?>
 
-<h1>Update Test <?php echo $model->id; ?></h1>
+<?= BsHtml::pageHeader('Тесты', $model->name) ?>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Управление
+    </div>
+
+    <div class="panel-body btn-group">
+        <?= BsHtml::link('<i class="fas fa-eye"></i> Просмотр', ['/test/test/view', 'id'=>$model->id], ['class'=>'btn btn-primary']) ?>
+        <?= BsHtml::link('<i class="fas fa-trash"></i> Удалить', [], ['class' => 'btn btn-danger', 'confirm' => 'Вы уверены, что хотите удалить?', 'submit' => ['/test/test/delete', 'id'=>$model->id]]) ?>
+    </div>
+</div>
+
 
 <?php $this->renderPartial('_form', array('model'=>$model)); ?>

@@ -3,22 +3,21 @@
 /* @var $model Test */
 
 $this->breadcrumbs=array(
-	'Tests'=>array('index'),
+	'Тесты'=>array('admin'),
 	$model->name,
 );
 
-$this->menu=array(
-	array('label'=>'List Test', 'url'=>array('index')),
-	array('label'=>'Create Test', 'url'=>array('create')),
-	array('label'=>'Update Test', 'url'=>array('update', 'id'=>$model->id)),
-	array('label'=>'Delete Test', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
-	array('label'=>'Manage Test', 'url'=>array('admin')),
-);
 ?>
 
-<h1>View Test #<?php echo $model->id; ?></h1>
+<?= BsHtml::pageHeader('Тесты', $model->name) ?>
 
-<?php $this->widget('zii.widgets.CDetailView', array(
+<div class="btn-group">
+	<?= BsHtml::link('<i class="fas fa-edit"></i> Изменить', ['/test/test/update', 'id'=>$model->id], ['class'=>'btn btn-primary']) ?>
+	<?= BsHtml::link('<i class="fas fa-sitemap"></i> Управление вопросами', ['/test/question/admin', 'idTest'=>$model->id], ['class' => 'btn btn-default']) ?>&nbsp;
+	<?= BsHtml::link('<i class="fas fa-edit"></i> Удалить', [], ['class' => 'btn btn-danger', 'confirm' => 'Вы уверены, что хотите удалить?', 'submit' => ['/test/test/delete', 'id'=>$model->id]]) ?>
+</div>
+<br /><br />
+<?php $this->widget('bootstrap.widgets.BsDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
 		'id',

@@ -125,7 +125,7 @@
                 Load body...
             </div>
             <div class="modal-footer">
-                <button type="button" data-dismiss="modal" class="btn btn-primary">Закрыть</button>
+                <button type="button" data-dismiss="modal" class="btn btn-default"><i class="fas fa-sign-out-alt"></i> Закрыть</button>
             </div>
         </div>
     </div>

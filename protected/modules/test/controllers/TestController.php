@@ -9,11 +9,6 @@ class TestController extends Controller
 	public $layout='//layouts/column2';
 
     /**
-     * @var string
-     */
-	public $defaultAction = 'admin';
-
-	/**
 	 * @return array action filters
 	 */
 	public function filters()
@@ -135,11 +130,89 @@ class TestController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Test');
+	    $modelSearch = new TestSearch();
 		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
+			'dataProvider'=>$modelSearch->searchTest(),
 		));
 	}
+
+    /**
+     * Сдача теста
+     * @param $id
+     * @throws CException
+     * @throws CHttpException
+     */
+	public function actionStart($id)
+    {
+        /**
+         * Логика по загрузке теста, вопросов и ответов
+         * 0. Если прилетели post данные, то сохранить их и сказать спасибо!
+         * 1. Загрузить тест в соотвествии с идентификатором, если время активности закончилось, то вывести информацию, тест закрыт
+         * 2. Проверить сдавал ли пользователь ранее и можно ли еще сдавать
+         * 3. Загрузить вопросы, ответы и передать массивом
+         */
+
+
+        $model = $this->loadModel($id);
+        // Если тест уже закончился, то показать об этом информацию
+        if (!$model->getActive())
+        {
+            echo CJavaScript::jsonEncode([
+                'title' => $model->name,
+                'content' => $this->renderPartial('_message', [
+                    'message' => 'Тестирование завершено!',
+                ], true),
+            ]);
+            Yii::app()->end();
+        }
+        // Если ограничено количество попыток и пользователь уже истратил все свои попытки
+        $countUserAttempts = TestResult::countUserAttempts($model->id);
+        if ($model->count_attempt > 0 && $countUserAttempts >= $model->count_attempt)
+        {
+            echo CJavaScript::jsonEncode([
+                'title' => $model->name,
+                'content' => $this->renderPartial('_message', [
+                    'message' => 'Ваши попытки сдать тест закончились!',
+                ], true),
+            ]);
+            Yii::app()->end();
+        }
+
+        if (isset($_POST['Test']))
+        {
+            // сохранение теста
+            try {
+
+                $modelResult = new TestResult();
+                $result = $modelResult->saveResult($_POST['Test']);
+                $this->renderPartial('_result', [
+                    'result' => $result,
+                ]);
+
+            } catch (Exception $exception) {
+
+                $this->renderPartial('_message', [
+                    'typeMessage' => 'alert-danger',
+                    'message' => 'Во время сохранения произошли ошибки!<br />' . $exception->getMessage() . print_r($exception->getTrace(), true),
+                ]);
+
+            }
+            Yii::app()->end();
+        }
+
+        $modelSearch = new TestSearch();
+        echo CJavaScript::jsonEncode([
+            'title' => $model->name,
+            'content' => $this->renderPartial('start', [
+                'model' => $model,
+                'testData' => $modelSearch->searchTestData($model->id),
+                'attempts' => [
+                    'model' => $model->count_attempt,
+                    'user' => $countUserAttempts,
+                ],
+            ], true),
+        ]);
+    }
 
 	/**
 	 * Manages all models.
@@ -171,6 +244,7 @@ class TestController extends Controller
 		return $model;
 	}
 
+
 	/**
 	 * Performs the AJAX validation.
 	 * @param Test $model the model to be validated
@@ -184,14 +258,13 @@ class TestController extends Controller
 		}
 	}
 
+    /**
+     * Права администратора
+     * @return mixed
+     */
 	protected function isManager()
     {
         return Yii::app()->user->inRole(['admin']);
     }
 
-    protected function isReadAnswers()
-    {
-        // @todo реализовать
-        return true;
-    }
 }

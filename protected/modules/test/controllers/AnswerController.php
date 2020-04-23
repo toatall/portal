@@ -38,10 +38,11 @@ class AnswerController extends Controller
 		);
 	}
 
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
+    /**
+     * Displays a particular model.
+     * @param integer $id the ID of the model to be displayed
+     * @throws CHttpException
+     */
 	public function actionView($id)
 	{
 		$this->render('view',array(
@@ -67,7 +68,6 @@ class AnswerController extends Controller
 			$model->attributes=$_POST['TestAnswer'];
 			if($model->save()) {
 			    $model->saveFile();
-                //$this->redirect(array('view', 'id' => $model->id));
                 $this->redirect(['/test/answer/admin', 'idQuestion'=>$idQuestion]);
             }
 		}
@@ -136,10 +136,11 @@ class AnswerController extends Controller
             $model->attributes = $_GET['TestAnswer'];
         }
 
+        $model->id_test_question = $idQuestion;
 		$this->render('admin',array(
 			'model'=>$model,
             'modelQuestion'=>$modelQuestion,
-		),false,false);
+		));
 	}
 
 	/**
